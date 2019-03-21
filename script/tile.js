@@ -1,4 +1,4 @@
-function Tile(x,y,char,color,bgColor,seeThrough,passable,door=null) {
+function Tile(x,y,char,color,bgColor,seeThrough,passable,door=null,name="") {
     this.x=x;
     this.y=y;
     this.char=char;
@@ -10,6 +10,8 @@ function Tile(x,y,char,color,bgColor,seeThrough,passable,door=null) {
     this.passable=passable;
     this.door=door;
     this.open=false;
+    this.important=false;
+    this.name=name;
 }
 
 Tile.prototype.getArt = function() {

@@ -1,4 +1,4 @@
-function Entity(x,y,char,color,hp=1,tags={},level=1) {
+function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.x=x;
     this.y=y;
     this.char=char;
@@ -8,6 +8,9 @@ function Entity(x,y,char,color,hp=1,tags={},level=1) {
     this.tags=tags;
     this.active=false;
     this.alive=true;
+    this.spreading=null;
+    this.spreadCount=0;
+    this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
     }
@@ -37,12 +40,19 @@ Entity.prototype.adventurerAct = function() {
     }
     else if ('monster' in this.tags) {
         this.hp -= Game.adventurer.dmg;
+        let dx = Math.floor(3*ROT.RNG.getUniform())-1;
+        let dy = Math.floor(3*ROT.RNG.getUniform())-1;
+        let newMess1=makeMess(this.x,this.y,"BloodPool");
+        let newMess2=makeMess(this.x+dx,this.y+dy,"BloodPool");
         if (this.hp <= 0) {
             this.alive=false;
             let key = this.x+','+this.y;
             if (key in Game.map && Game.map[key].entity==this) {
                 Game.map[key].entity=null;
             }
+        }
+        else {
+            Game.adventurer.damage();
         }
     }
 };
@@ -51,9 +61,24 @@ Entity.prototype.act = function() {
     if (!this.alive) {
         return;
     }
+    this.drinking--;
+    if (this.drinking==0) {
+        this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
+        let options=["EmptyBottle","EmptyMug","AppleCore"];
+        let newmess=makeMess(this.x,this.y,ROT.RNG.getItem(options));
+    }
+    if (this.spreadCount>0 && this.spreading != null) {
+        let newMess = makeMess(this.x,this.y,this.spreading);
+        this.spreadCount--;
+    }
     if (!this.active) {
         let dx = Math.floor(3*ROT.RNG.getUniform())-1;
         let dy = Math.floor(3*ROT.RNG.getUniform())-1;
+        this.moveTo(this.x+dx,this.y+dy);
+    }
+    else {
+        let dx = Math.sign(Game.adventurer.x - this.x);
+        let dy = Math.sign(Game.adventurer.y - this.y);
         this.moveTo(this.x+dx,this.y+dy);
     }
 }
@@ -74,6 +99,9 @@ Entity.prototype.moveTo=function(x,y) {
         Game.map[newKey].entity=this;
         this.x=x;
         this.y=y;
+        if (Game.map[newKey].mess != null) {
+            Game.map[newKey].mess.spread(this);
+        }
     }
     else {
         return false;
@@ -112,19 +140,19 @@ function GetEntity(name,x,y) {
     switch (name) {
         default:
         case 'Goblin':
-        newEntity = new Entity(x,y,'g','#0f0',2,{monster:true},1);
+        newEntity = new Entity(x,y,'g','#0f0',name,2,{monster:true},1);
         break;
         case 'Ogre':
-        newEntity = new Entity(x,y,'O','#fa0',4,{monster:true},2);
+        newEntity = new Entity(x,y,'O','#fa0',name,4,{monster:true},2);
         break;
         case 'Troll':
-        newEntity = new Entity(x,y,'T','#0c0',6,{monster:true},3);
+        newEntity = new Entity(x,y,'T','#0c0',name,6,{monster:true},3);
         break;
         case 'Balor':
-        newEntity = new Entity(x,y,'&','#f00',9,{monster:true},4);
+        newEntity = new Entity(x,y,'&','#f00',name,9,{monster:true},4);
         break;
         case 'Gold':
-        newEntity = new Entity(x,y,'$','#ff0',1,{loot:true});
+        newEntity = new Entity(x,y,'$','#ff0',name,1,{loot:true});
         break;
     }
     return newEntity;

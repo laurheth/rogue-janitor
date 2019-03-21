@@ -5,6 +5,7 @@ function Adventurer(x,y) {
     this.turns=-1;
     this.blood=0;
     this.dmg=1;
+    this.hp=5;
     this.char='H';
     this.color='#0ff';
     this.moveTo(x,y);
@@ -16,6 +17,8 @@ function Adventurer(x,y) {
     this.active=true;
     this.path=[];
     this.recalculate=true;
+    this.spreading=null;
+    this.spreadCount=0;
     this.fov = new ROT.FOV.PreciseShadowcasting(function(x,y){
         return Game.lightPasses(x,y);
     });
@@ -26,7 +29,7 @@ function Adventurer(x,y) {
             this.destinations.push([center[0],center[1]]);
         }
     }
-    console.log(this.destinations);
+    //console.log(this.destinations);
     Game.scheduler.add(this,true);
     this.path=null;
 }
@@ -67,11 +70,12 @@ Adventurer.prototype.look = function() {
         let key = x+','+y;
         if (key in Game.map && Game.map[key].entity != null && Game.map[key].entity instanceof Entity) {
             if ('monster' in Game.map[key].entity.tags) {
-                console.log('monster spotted');
+                //console.log('monster spotted');
+                Game.map[key].entity.active=true;
                 Game.adventurer.targets.push(Game.map[key].entity);
             }
             else if ('loot' in Game.map[key].entity.tags) {
-                console.log('loot identified');
+                //console.log('loot identified');
                 
                 Game.adventurer.destinations.push([x,y]);
                 Game.adventurer.newDestinationFound=true;
@@ -85,15 +89,37 @@ Adventurer.prototype.look = function() {
     }
 }
 
+Adventurer.prototype.damage = function() {
+    this.hp--;
+    let dx = Math.floor(3 * ROT.RNG.getUniform()) - 1;
+    let dy = Math.floor(3 * ROT.RNG.getUniform()) - 1;
+    //let newMess1 = makeMess(this.x, this.y, "BloodPool");
+    let newMess2 = makeMess(this.x + dx, this.y + dy, "BloodPool");
+
+}
+
 // How does the brave and noble adventurer proceed?
 Adventurer.prototype.act = function () {
-    console.log(this.active);
+    console.log(this.hp);
     if (!this.active) {
         return;
+    }
+    if (this.spreadCount>0 && this.spreading != null) {
+        let newMess = makeMess(this.x,this.y,this.spreading);
+        this.spreadCount--;
+    }
+    if (this.hp<=0 && this.turns % 5 ==0) {
+        console.log("Dropping potion");
+        let newMess1 = makeMess(this.x, this.y, "EmptyPotion");
+        this.hp+=6;
     }
     //console.log(this.x+','+this.y);
     //console.log(this.destinations);
     this.hunger--;
+    if (this.hunger<=0) {
+        let newMess = makeMess(this.x,this.y,"Wrapper");
+        this.hunger += Math.floor(15*ROT.RNG.getUniform())+20;
+    }
     this.turns++;
     if (this.blood>0) {
         this.blood--;
@@ -170,6 +196,9 @@ Adventurer.prototype.moveTo=function(x,y) {
         Game.map[newKey].entity=this;
         this.x=x;
         this.y=y;
+        if (Game.map[newKey].mess != null) {
+            Game.map[newKey].mess.spread(this);
+        }
     }
     else {
         return false;

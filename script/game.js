@@ -303,6 +303,8 @@ var Game = {
         let key1=center1[0]+','+center1[1];
         let key2=center2[0]+','+center2[1];
         this.map[key1].char='<';
+        this.map[key1].important=true;
+        this.map[key2].important=true;
         this.map[key2].char='>';
         this.stairs=[ [center1[0],center1[1],best[0]] , [center2[0],center2[1],best[1]] ];
         console.log(this.stairs);
