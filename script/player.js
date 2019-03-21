@@ -29,7 +29,8 @@ function Player(x,y) {
     this.keyMap[89] = 7;
     this.keyMap[36] = 7;//89
     this.keyMap[103] = 7;
-
+    this.spreading=null;
+    this.spreadCount=0;
 }
 
 Player.prototype.getArt = function() {
@@ -38,6 +39,13 @@ Player.prototype.getArt = function() {
 
 Player.prototype.act = function() {
     Game.engine.lock();
+    if (this.spreadCount>0 && this.spreading != null) {
+        let newMess = makeMess(this.x,this.y,this.spreading);
+        this.spreadCount--;
+        if (this.spreadCount==0 && newMess.spreads!=null && newMess.spreads!="") {
+            newMess.spread(this);
+        }
+    }
     Game.drawMap();
     window.addEventListener("keydown", this);
 }
@@ -76,6 +84,9 @@ Player.prototype.moveTo = function(x,y) {
         Game.map[newKey].entity=this;
         this.x=x;
         this.y=y;
+        if (Game.map[newKey].mess != null) {
+            Game.map[newKey].mess.spread(this);
+        }
     }
     else {
         return false;

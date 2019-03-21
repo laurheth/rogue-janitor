@@ -58,10 +58,10 @@ function makeMess(x,y,name) {
         newMess = new Mess(x,y,",",'#f00','#000','"Blood" Footprints',3,"",0,'"Blood" Covered');
         break;
         case 'AcidPool':
-        newMess = new Mess(x,y,"~",'#0f0','#000','Acid',7,"AcidPrints",6,'Acid Covered');
+        newMess = new Mess(x,y,"~",'#0f0','#000','Acid',6,"AcidPrints",6,'Acid Covered');
         break;
         case 'AcidPrints':
-        newMess = new Mess(x,y,",",'#0f0','#000','Acid Footprints',4,"",0,'Acid Covered');
+        newMess = new Mess(x,y,",",'#0f0','#000','Acid Footprints',3,"",0,'Acid Covered');
         break;
         case 'MudPrints':
         newMess = new Mess(x,y,",",'#960','#000','Muddy Footprints',3,"",0,'Mud Covered');
@@ -76,10 +76,10 @@ function makeMess(x,y,name) {
         newMess = new Mess(x,y,'C','#ccc','#000',"Tipped Over Cauldron",12,"Water",2,"");
         break;
         case 'Water':
-        newMess = new Mess(x,y,'~','#00f','#000',"Water",5,"WetPrints",6,"Soggy");
+        newMess = new Mess(x,y,'~','#00f','#000',"Water",6,"WetPrints",6,"Soggy");
         break;
         case 'WetPrints':
-        newMess = new Mess(x,y,',','#00f','#000',"Wet Footprints",2,"",0,"Soggy");
+        newMess = new Mess(x,y,',','#00f','#000',"Wet Footprints",3,"",0,"Soggy");
         break;
         case 'Scorch':
         newMess = new Mess(x,y,'*','#999','#000',"Scorch Marks",7,"",0,"Scorched");
