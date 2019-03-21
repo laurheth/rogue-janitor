@@ -52,29 +52,39 @@ Player.prototype.handleEvent = function(e) {
     // movement
     let diff = ROT.DIRS[8][this.keyMap[code]];
     let testKey = (this.x+diff[0])+','+(this.y+diff[1]);
-    if (testKey in Game.map && Game.map[testKey].passThrough()) {
-        let parts = testKey.split(',');
-        this.moveTo(Math.round(parseInt(parts[0])),Math.round(parseInt(parts[1])))
+    let parts = testKey.split(',');
+
+    if (this.moveTo(Math.round(parseInt(parts[0])), Math.round(parseInt(parts[1])))) {
+        //console.log(this.x+','+this.y);
+        Game.drawMap();
+        window.removeEventListener("keydown", this);
+        Game.engine.unlock();
     }
-    //console.log(this.x+','+this.y);
-    Game.drawMap();
-    window.removeEventListener("keydown",this);
-    Game.engine.unlock();
 }
 
 Player.prototype.moveTo = function(x,y) {
     let oldKey = this.x+','+this.y;
     let newKey = x+','+y;
-    if (newKey in Game.map && Game.map[newKey].entity==null) {
+
+    if (newKey in Game.map && Game.map[newKey].door != null && !Game.map[newKey].open) {
+        Game.map[newKey].open=true;
+        return true;
+    }
+
+    if (newKey in Game.map && Game.map[newKey].passThrough()) {
         Game.map[newKey].entity=this;
         this.x=x;
         this.y=y;
     }
-    /*console.log(Game.getRoomIndex(x,y));
+    else {
+        return false;
+    }
+    console.log(Game.getRoomIndex(x,y));
     if (Game.getRoomIndex(x,y)>=0) {
         console.log('Exits:'+Game.rooms[Game.getRoomIndex(x,y)][4]);
-    }*/
-    if (oldKey in Game.map && Game.map[oldKey].entity==this) {
+    }
+    if (oldKey != newKey && oldKey in Game.map && Game.map[oldKey].entity==this) {
         Game.map[oldKey].entity=null;
     }
+    return true;
 }

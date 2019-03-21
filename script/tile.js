@@ -40,6 +40,9 @@ Tile.prototype.passThrough = function() {
     if (this.entity != null) {
         return false;
     }
+    else if (this.door != null) {
+        return this.open;
+    }
     else {
         return this.passable;
     }
