@@ -26,7 +26,7 @@ Mess.prototype.getArt = function() {
 }
 
 Mess.prototype.spread = function(spreader) {
-    if (spreader.spreadCount <= 0 || spreader.spreading == this.spreads) {
+    if (spreader.spreadCount < this.spreadCount || spreader.spreading == this.spreads) {
         spreader.spreading=this.spreads;
         spreader.spreadCount=this.spreadCount;//Math.max(this.spreadCount,spreader.spreadCount+2);
     }

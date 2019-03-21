@@ -62,7 +62,7 @@ var Game = {
         this.corners=[[0,0],[0,0]];
         var roomCenters=[];
         var breaker=0;
-        let minMax=[4,15];
+        let minMax=[4,10];
         let targSize=400;
         while (this.freeCells.length<targSize && breaker<10000) {
             let roomSize = [ Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0], Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0] ];
@@ -358,7 +358,7 @@ var Game = {
             }
 
             let maxLevel = Math.floor(2*ROT.RNG.getUniform())+1;
-            let danger = Math.max(1,Math.floor(roomSize/50));
+            let danger = Math.max(1,Math.ceil(roomSize/40));
             if (this.rooms[i][4]<3) {
                 danger++;
             }
