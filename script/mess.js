@@ -56,11 +56,23 @@ function makeMess(x,y,name) {
         case 'BloodPrints':
         newMess = new Mess(x,y,",",'#f00','#000','"Blood" Footprints',3,"",0,'"Blood" Covered');
         break;
+        case 'MudPrints':
+        newMess = new Mess(x,y,",",'#960','#000','Muddy Footprints',3,"",0,'Mud Covered');
+        break;
         case 'BrokenChest':
         newMess = new Mess(x,y,'/','#fa0','#000',"Smashed Treasure Chest",12,"Splinters",2,"");
         break;
         case 'Splinters':
         newMess = new Mess(x,y,',','#fa0','#000',"Broken Wood",4,null,0,"");
+        break;
+        case 'TippedCauldron':
+        newMess = new Mess(x,y,'C','#ccc','#000',"Tipped Over Cauldron",12,"Water",2,"");
+        break;
+        case 'Water':
+        newMess = new Mess(x,y,'~','#00f','#000',"Water",5,"WetPrints",6,"Soggy");
+        break;
+        case 'WetPrints':
+        newMess = new Mess(x,y,',','#00f','#000',"Wet Footprints",2,"",0,"Soggy");
         break;
     }
 

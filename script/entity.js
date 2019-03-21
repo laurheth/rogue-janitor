@@ -37,6 +37,18 @@ Entity.prototype.adventurerAct = function() {
         if (key in Game.map && Game.map[key].entity==this) {
             Game.map[key].entity=null;
         }
+        if ('mess' in this.tags) {
+            makeMess(this.x,this.y,this.tags.mess);
+        }
+        if ('splashes' in this.tags) {
+            let dx;
+            let dy;
+            do {
+                dx = Math.floor(3*ROT.RNG.getUniform())-1;
+                dy = Math.floor(3*ROT.RNG.getUniform())-1;
+            } while (dx==0 && dy==0);
+            makeMess(this.x+dx,this.y+dy,this.tags.splashes);
+        }
     }
     else if ('monster' in this.tags) {
         this.hp -= Game.adventurer.dmg;
@@ -117,7 +129,7 @@ Entity.prototype.moveTo=function(x,y) {
 };
 
 function AddCollectible(x,y) {
-    var options=['Gold'];
+    var options=['Chest','Cauldron'];
     return GetEntity(ROT.RNG.getItem(options),x,y);
 }
 
@@ -153,6 +165,12 @@ function GetEntity(name,x,y) {
         break;
         case 'Gold':
         newEntity = new Entity(x,y,'$','#ff0',name,1,{loot:true});
+        break;
+        case 'Chest':
+        newEntity = new Entity(x,y,'\u03C0','#fa0','Treasure Chest',1,{loot:true,mess:'BrokenChest'});
+        break;
+        case 'Cauldron':
+        newEntity = new Entity(x,y,'U','#ccc','Cauldron',1,{loot:true,mess:'TippedCauldron',splashes:'Water'});
         break;
     }
     return newEntity;

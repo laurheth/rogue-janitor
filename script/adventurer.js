@@ -17,8 +17,8 @@ function Adventurer(x,y) {
     this.active=true;
     this.path=[];
     this.recalculate=true;
-    this.spreading=null;
-    this.spreadCount=0;
+    this.spreading="MudPrints";
+    this.spreadCount=10;
     this.fov = new ROT.FOV.PreciseShadowcasting(function(x,y){
         return Game.lightPasses(x,y);
     });
@@ -107,6 +107,9 @@ Adventurer.prototype.act = function () {
     if (this.spreadCount>0 && this.spreading != null) {
         let newMess = makeMess(this.x,this.y,this.spreading);
         this.spreadCount--;
+        if (this.spreadCount==0 && newMess.spreads!=null && newMess.spreads!="") {
+            newMess.spread(this);
+        }
     }
     if (this.hp<=0 && this.turns % 5 ==0) {
         console.log("Dropping potion");
