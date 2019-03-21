@@ -3,11 +3,18 @@ var Game = {
     map: {},
     freeCells:[],
     hallCells:[],
+    rooms:[],
     player:null,
     scheduler:null,
     engine:null,
     offset: [],
     corners:[],
+    floorColor:'#ddd',
+    corridorWalls:['#b82','#842'],
+    roomWalls:['#ddd','#777'],
+    doorColor:['#ddd','#842'],
+    staffRoomID:-1,
+    stairs:[[0,0],[0,0]],
     init: function() {
         let screen = document.getElementById("gameContainer");
         this.display = new ROT.Display();
@@ -32,16 +39,16 @@ var Game = {
 
     drawMap: function() {
         this.display.clear();
-        for (let i=-this.offset[0]+this.player.x;i<this.offset[0]+this.player.x;i++) {
-            for (let j=-this.offset[1]+this.player.y;j<this.offset[1]+this.player.y;j++) {
+        for (let i=-this.offset[0]+this.player.x;i<=this.offset[0]+this.player.x;i++) {
+            for (let j=-this.offset[1]+this.player.y;j<=this.offset[1]+this.player.y;j++) {
                 let key=i+','+j;
                 //console.log(key);
                 if (key in this.map) {
-                    this.display.draw(i+this.offset[0]-this.player.x,j+this.offset[1]-this.player.y,this.map[key]);
+                    let art = this.map[key].getArt();
+                    this.display.draw(i+this.offset[0]-this.player.x,j+this.offset[1]-this.player.y,art[0],art[1],art[2]);
                 }
             }
         }
-        this.player.draw();
     },
 
     generateMap: function() {
@@ -76,9 +83,12 @@ var Game = {
             }
             breaker++;
         }
-        this.player.x = roomCenters[roomCenters.length-1][0];
-        this.player.y = roomCenters[roomCenters.length-1][1];
+        this.staffRoomID = this.rooms.length-1;
+        this.player.moveTo(roomCenters[roomCenters.length-1][0],roomCenters[roomCenters.length-1][1]);
+//        this.player.x = roomCenters[roomCenters.length-1][0];
+//        this.player.y = roomCenters[roomCenters.length-1][1];
         this.addDoors();
+        this.addStairs();
     },
 
     addDoors: function() {
@@ -89,14 +99,14 @@ var Game = {
                 let diagCount=0;
                 let count=0;
                 let touchRoom=false;
-                if (key in this.map && this.map[key] == '.') {
+                if (key in this.map && this.map[key].char == '.') {
                     for (let ii=-1;ii<2;ii++) {
                         for (let jj=-1;jj<2;jj++) {
                             let testKey = (i+ii)+','+(j+jj);
                             if (this.freeCells.indexOf(testKey)>=0) {
                                 touchRoom=true;
                             }
-                            if (testKey in this.map && this.map[testKey]=='#') {
+                            if (testKey in this.map && this.map[testKey].char=='#') {
                                 count++;
                                 if (ii==0 || jj==0) {
                                     orthoCount += ii + 2*jj;
@@ -108,7 +118,10 @@ var Game = {
                         }
                     }
                     if (touchRoom && orthoCount==0 && count>2 && this.hallCells.indexOf(key)>=0) {
-                        this.map[key]='+';
+                        this.map[key].char='+';
+                        this.map[key].door='-';
+                        this.map[key].color=this.doorColor[0];
+                        this.map[key].bgColor=this.doorColor[1];
                     }
                 }
             }
@@ -128,17 +141,25 @@ var Game = {
     },
 
     buildRoom: function(roomSize,roomCorner) {
+        if (this.rooms.length<1) {
+            this.rooms=[ [roomCorner[0],roomCorner[1],roomCorner[0]+roomSize[0],roomCorner[1]+roomSize[1] , 0] ]
+        }
+        else {
+            this.rooms.push( [roomCorner[0],roomCorner[1],roomCorner[0]+roomSize[0],roomCorner[1]+roomSize[1],0] );
+        }
         for (let i=-1;i<roomSize[0]+1;i++) {
             for (let j=-1;j<roomSize[1]+1;j++) {
                 let key = (i+roomCorner[0])+','+(j+roomCorner[1]);
                 
                 //console.log(key);
                 if (i>=0 && i<roomSize[0] && j>=0 && j<roomSize[1]) {
-                    this.map[key]='.';
+                    //this.map[key]='.';
+                    this.map[key] = new Tile(i,j,'.',this.floorColor,'#000',true,true);
                     this.freeCells.push(key);
                 }
                 else {
-                    this.map[key]='#';
+                    //this.map[key]='#';
+                    this.map[key] = new Tile(i,j,'#',this.roomWalls[0],this.roomWalls[1],false,false);
                     if (i+roomCorner[0] < this.corners[0][0]) {
                         this.corners[0][0] = i+roomCorner[0];
                     }
@@ -156,8 +177,18 @@ var Game = {
         }
     },
 
+    getRoomIndex: function(x,y) {
+        for (let i=0;i<this.rooms.length;i++) {
+            if (this.rooms[i][0] <= x && this.rooms[i][1] <= y && this.rooms[i][2]>=x && this.rooms[i][3]>=y) {
+                return i;
+            }
+        }
+        return -1;
+    },
+
     connectRoom: function(roomCenters,xy=-1) {
         //console.log(roomCenters);
+
         let lastCenter = [roomCenters[roomCenters.length-1][0], roomCenters[roomCenters.length-1][1]];
         let index = Math.floor((roomCenters.length-1) * ROT.RNG.getUniform());
         let best = 1000;
@@ -191,21 +222,27 @@ var Game = {
                 for (let i=-1;i<2;i++) {
                     for (let j=-1;j<2;j++) {
                         let key = (lastCenter[0]+i)+','+(lastCenter[1]+j);
-                        if (!(key in this.map)) {
+                        if (!(key in this.map) && !startedDigging) {
+                            this.rooms[this.rooms.length-1][4]++;
                             startedDigging=true;
                         }
                         if (i==0 && j==0) {
                             //console.log(key);
-                            if (this.map[key] == '.' && startedDigging) {
+                            if (this.map[key].char == '.' && startedDigging) {
+                                if (this.getRoomIndex(lastCenter[0],lastCenter[1]) >= 0) {
+                                    this.rooms[this.getRoomIndex(lastCenter[0],lastCenter[1])][4]++;
+                                }
                                 return;
                             }
-                            if (key in this.map && this.map[key] != '.') {
+                            if (key in this.map && this.map[key].char != '.') {
                                 this.hallCells.push(key);
                             }
-                            this.map[key]='.';
+                            //this.map[key]='.';
+                            this.map[key] = new Tile(i,j,'.',this.floorColor,'#000',true,true);
                         }
                         else if (!(key in this.map)) {
-                            this.map[key]='#';
+                            //this.map[key]='#';
+                            this.map[key] = new Tile(i,j,'#',this.corridorWalls[0],this.corridorWalls[1],false,false);
                         }
                     }
                 }
@@ -220,70 +257,44 @@ var Game = {
             doFirst++;
             doFirst %= 2;
         }
-    }
+    },
+
+    addStairs: function() {
+        // try to put as far apart as possible. Exclude staff room
+        let best=[-1,-1,-1];
+        for (let i=0;i<this.rooms.length;i++) {
+            if (i==this.staffRoomID) {
+                continue;
+            }
+            for (let j=0;j<this.rooms.length;j++) {
+                if (j==this.staffRoomID) {
+                    continue;
+                }
+                let center1 = [Math.round((this.rooms[i][0]+this.rooms[i][2])/2),Math.round((this.rooms[i][1]+this.rooms[i][3])/2)];
+                let center2 = [Math.round((this.rooms[j][0]+this.rooms[j][2])/2),Math.round((this.rooms[j][1]+this.rooms[j][3])/2)];
+                let dist = Math.abs(center1[0] - center2[0]) + Math.abs(center1[1] - center2[1]);
+                //console.log(dist);
+                if (dist > best[2]) {
+                    best[0]=i;
+                    best[1]=j;
+                    best[2]=dist;
+                    console.log(best[0]+','+best[1]+','+best[2]);
+                }
+            }
+        }
+        if (ROT.RNG.getUniform()>0.5) {
+            let scratch=best[0];
+            best[0]=best[1];
+            best[1]=scratch;
+        }
+        let center1 = [Math.floor((this.rooms[best[0]][0]+this.rooms[best[0]][2])/2),Math.floor((this.rooms[best[0]][1]+this.rooms[best[0]][3])/2)];
+        let center2 = [Math.floor((this.rooms[best[1]][0]+this.rooms[best[1]][2])/2),Math.floor((this.rooms[best[1]][1]+this.rooms[best[1]][3])/2)];
+        let key1=center1[0]+','+center1[1];
+        let key2=center2[0]+','+center2[1];
+        this.map[key1].char='<';
+        this.map[key2].char='>';
+        this.stairs=[ [center1[0],center1[1]] , [center2[0],center2[1]] ];
+        console.log(this.stairs);
+    },
 
 };
-
-function Player(x,y) {
-    this.x=x;
-    this.y=y;
-    this.char='@';
-    this.color='#fff';
-    this.keyMap = {};
-    this.keyMap[38] = 0;
-    this.keyMap[75] =0;
-    this.keyMap[104] = 0;
-    this.keyMap[85] = 1;
-    this.keyMap[33] = 1; //85
-    this.keyMap[105] = 1;
-    this.keyMap[76] = 2;
-    this.keyMap[39] = 2;//76
-    this.keyMap[102] = 2;
-    this.keyMap[78] = 3;
-    this.keyMap[34] = 3;//78
-    this.keyMap[99] = 3;
-    this.keyMap[74] = 4;
-    this.keyMap[40] = 4;//74
-    this.keyMap[98] = 4;
-    this.keyMap[66] = 5;
-    this.keyMap[35] = 5;//66
-    this.keyMap[97] = 5;
-    this.keyMap[72] = 6;
-    this.keyMap[37] = 6;//72
-    this.keyMap[100] = 6;
-    this.keyMap[89] = 7;
-    this.keyMap[36] = 7;//89
-    this.keyMap[103] = 7;
-
-}
-
-Player.prototype.draw = function() {
-    Game.display.draw(Game.offset[0],Game.offset[1],this.char,this.color)
-}
-
-Player.prototype.act = function() {
-    Game.engine.lock();
-    window.addEventListener("keydown", this);
-}
-
-Player.prototype.handleEvent = function(e) {
-    let code = e.keyCode;
-    //console.log(this.keyMap);
-    if (!(code in this.keyMap)) {
-        return;
-    }
-    //console.log(code);
-
-    // movement
-    let diff = ROT.DIRS[8][this.keyMap[code]];
-    let testKey = (this.x+diff[0])+','+(this.y+diff[1]);
-    if (testKey in Game.map && Game.map[testKey]!='#') {
-        let parts = testKey.split(',');
-        this.x = Math.round(parseInt(parts[0]));
-        this.y = Math.round(parseInt(parts[1]));
-    }
-    console.log(this.x+','+this.y);
-    Game.drawMap();
-    window.removeEventListener("keydown",this);
-    Game.engine.unlock();
-}
