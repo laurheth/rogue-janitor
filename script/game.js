@@ -97,9 +97,10 @@ var Game = {
 //        this.player.x = roomCenters[roomCenters.length-1][0];
 //        this.player.y = roomCenters[roomCenters.length-1][1];
         this.addStairs();
+        this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
         this.populateRooms();
         this.addDoors();
-        this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
+
     },
 
     addDoors: function() {
@@ -357,9 +358,7 @@ var Game = {
                     AddCollectible(parseInt(parts[0]), parseInt(parts[1]));
                 }
             }
-            if (i==this.stairs[0][2]) {
-                continue;
-            }
+
             let maxLevel = Math.floor(2*ROT.RNG.getUniform())+1;
             let danger = Math.max(1,Math.floor(roomSize/50));
             if (this.rooms[i][4]<3) {
@@ -372,6 +371,9 @@ var Game = {
             if (i==this.stairs[1][2]) {
                 maxLevel=6;
                 danger=7;
+            }
+            if (i==this.stairs[0][2]) {
+                danger=1;
             }
             while (danger>0) {
                 let level = Math.min(danger,Math.floor(ROT.RNG.getUniform()*maxLevel)+1);
