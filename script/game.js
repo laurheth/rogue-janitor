@@ -28,11 +28,9 @@ var Game = {
         this.scheduler = new ROT.Scheduler.Simple();
         this.player = new Player(-1,-1,-1);
 
-        this.scheduler.add(this.player,true);
-
         this.generateMap();
 
-        this.drawMap();
+        //this.drawMap();
 
         this.engine = new ROT.Engine(this.scheduler);
         this.engine.start();

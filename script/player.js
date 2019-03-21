@@ -38,6 +38,7 @@ Player.prototype.getArt = function() {
 
 Player.prototype.act = function() {
     Game.engine.lock();
+    Game.drawMap();
     window.addEventListener("keydown", this);
 }
 

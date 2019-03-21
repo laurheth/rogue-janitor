@@ -47,6 +47,7 @@ Adventurer.prototype.nextDestination = function() {
             }
             this.x=-10000;this.y=-100000;
             this.active=false;
+            Game.scheduler.add(Game.player,true);
             return;
         }
     }

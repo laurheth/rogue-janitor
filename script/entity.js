@@ -89,9 +89,25 @@ Entity.prototype.act = function() {
         this.moveTo(this.x+dx,this.y+dy);
     }
     else {
-        let dx = Math.sign(Game.adventurer.x - this.x);
-        let dy = Math.sign(Game.adventurer.y - this.y);
-        this.moveTo(this.x+dx,this.y+dy);
+        if ('ranged' in this.tags && ROT.RNG.getUniform()>0.4) {
+            for (let i=0;i<this.tags.ranged;i++) {
+                let dx=0;
+                let dy=0;
+                if (ROT.RNG.getUniform()>0.5) {
+                    dx = Math.floor(3*ROT.RNG.getUniform())-1;
+                    dy = Math.floor(3*ROT.RNG.getUniform())-1;
+                }
+                else {
+                    Game.adventurer.hp--;
+                }
+                makeMess(Game.adventurer.x+dx,Game.adventurer.y+dy,'Scorch');
+            }
+        }
+        else {
+            let dx = Math.sign(Game.adventurer.x - this.x);
+            let dy = Math.sign(Game.adventurer.y - this.y);
+            this.moveTo(this.x + dx, this.y + dy);
+        }
     }
 }
 
@@ -134,9 +150,9 @@ function AddCollectible(x,y) {
 }
 
 function AddMonster(x,y,level) {
-    var options=['Goblin'];
+    var options=['Goblin','Kobold'];
     if (level==2) {
-        options=['Ogre'];
+        options=['Ogre','Imp'];
     }
     else if (level==3) {
         options=['Troll'];
@@ -154,8 +170,14 @@ function GetEntity(name,x,y) {
         case 'Goblin':
         newEntity = new Entity(x,y,'g','#0f0',name,2,{monster:true},1);
         break;
+        case 'Goblin':
+        newEntity = new Entity(x,y,'k','#fa0',name,2,{monster:true},1);
+        break;
         case 'Ogre':
         newEntity = new Entity(x,y,'O','#fa0',name,4,{monster:true},2);
+        break;
+        case 'Imp':
+        newEntity = new Entity(x,y,"i",'#fd1',name,3,{monster:true,ranged:1,rangeMess:'Scorch'});
         break;
         case 'Troll':
         newEntity = new Entity(x,y,'T','#0c0',name,6,{monster:true},3);

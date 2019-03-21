@@ -50,6 +50,7 @@ function makeMess(x,y,name) {
         break;
         case 'EmptyPotion':
         newMess = new Mess(x,y,'!','#0ff','#000',"Empty Potion",11,null);
+        break;
         case 'BloodPool':
         newMess = new Mess(x,y,"~",'#f00','#000','"Blood"',6,"BloodPrints",6,'"Blood" Covered');
         break;
@@ -73,6 +74,9 @@ function makeMess(x,y,name) {
         break;
         case 'WetPrints':
         newMess = new Mess(x,y,',','#00f','#000',"Wet Footprints",2,"",0,"Soggy");
+        break;
+        case 'Scorch':
+        newMess = new Mess(x,y,'*','#999','#000',"Scorch Marks",7,"",0,"Scorched");
         break;
     }
 
