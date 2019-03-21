@@ -32,7 +32,7 @@ Tile.prototype.lightPasses = function() {
         return this.open;
     }
     else {
-        return this.lightPasses;
+        return this.seeThrough;
     }
 }
 

@@ -7,6 +7,7 @@ function Entity(x,y,char,color,hp=1,tags={},level=1) {
     this.level=level;
     this.tags=tags;
     this.active=false;
+    this.alive=true;
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
     }
@@ -27,7 +28,29 @@ function Entity(x,y,char,color,hp=1,tags={},level=1) {
     }
 };
 
+Entity.prototype.adventurerAct = function() {
+    if ('loot' in this.tags) {
+        let key = this.x+','+this.y;
+        if (key in Game.map && Game.map[key].entity==this) {
+            Game.map[key].entity=null;
+        }
+    }
+    else if ('monster' in this.tags) {
+        this.hp -= Game.adventurer.dmg;
+        if (this.hp <= 0) {
+            this.alive=false;
+            let key = this.x+','+this.y;
+            if (key in Game.map && Game.map[key].entity==this) {
+                Game.map[key].entity=null;
+            }
+        }
+    }
+};
+
 Entity.prototype.act = function() {
+    if (!this.alive) {
+        return;
+    }
     if (!this.active) {
         let dx = Math.floor(3*ROT.RNG.getUniform())-1;
         let dy = Math.floor(3*ROT.RNG.getUniform())-1;
@@ -36,7 +59,12 @@ Entity.prototype.act = function() {
 }
 
 Entity.prototype.getArt = function() {
-    return [this.char,this.color,'#000'];
+    if (this.alive) {
+        return [this.char,this.color,'#000'];
+    }
+    else {
+        return ['%','#f00','#000'];
+    }
 }
 
 Entity.prototype.moveTo=function(x,y) {
@@ -96,7 +124,7 @@ function GetEntity(name,x,y) {
         newEntity = new Entity(x,y,'&','#f00',9,{monster:true},4);
         break;
         case 'Gold':
-        newEntity = new Entity(x,y,'$','#ff0',1,{collectible:true});
+        newEntity = new Entity(x,y,'$','#ff0',1,{loot:true});
         break;
     }
     return newEntity;

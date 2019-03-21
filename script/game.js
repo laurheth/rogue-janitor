@@ -15,6 +15,7 @@ var Game = {
     doorColor:['#ddd','#842'],
     staffRoomID:-1,
     stairs:[[0,0,-1],[0,0,-1]],
+    adventurer: null,
     init: function() {
         let screen = document.getElementById("gameContainer");
         this.display = new ROT.Display();
@@ -51,12 +52,20 @@ var Game = {
         }
     },
 
+    lightPasses: function(x,y) {
+        let key=x+','+y;
+        if (key in Game.map && Game.map[key].lightPasses()) {
+            return true;
+        }
+        return false;
+    },
+
     generateMap: function() {
         this.corners=[[0,0],[0,0]];
         var roomCenters=[];
         var breaker=0;
         let minMax=[4,15];
-        let targSize=600;
+        let targSize=400;
         while (this.freeCells.length<targSize && breaker<10000) {
             let roomSize = [ Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0], Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0] ];
             let roomCorner=[0,0];
@@ -87,9 +96,10 @@ var Game = {
         this.player.moveTo(roomCenters[roomCenters.length-1][0],roomCenters[roomCenters.length-1][1]);
 //        this.player.x = roomCenters[roomCenters.length-1][0];
 //        this.player.y = roomCenters[roomCenters.length-1][1];
-        this.addDoors();
         this.addStairs();
         this.populateRooms();
+        this.addDoors();
+        this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
     },
 
     addDoors: function() {
@@ -313,8 +323,10 @@ var Game = {
             }
             let center=this.getCenter(i);
             let validForItems=[];
+            let roomSize=0;
             for (let x = this.rooms[i][0]; x < this.rooms[i][2]; x++) {
                 for (let y = this.rooms[i][1]; y < this.rooms[i][3]; y++) {
+                    roomSize++;
                     let wallCount = 0;
                     let floorCount = 0;
                     for (let ii = -1; ii < 2; ii++) {
@@ -336,13 +348,18 @@ var Game = {
                     }
                 }
             }
-            for(let k=0; k < Math.max(2,5-this.rooms[i][4]);k++) {
-                let index=Math.floor(ROT.RNG.getUniform() * validForItems.length);
-                let parts=validForItems[index].split(',');
-                AddCollectible(parseInt(parts[0]),parseInt(parts[1]));
+            if (validForItems.length > 0) {
+                for (let k = 0; k < Math.max(2, 5 - this.rooms[i][4]); k++) {
+                    let index = Math.floor(ROT.RNG.getUniform() * validForItems.length);
+                    let parts = validForItems[index].split(',');
+                    AddCollectible(parseInt(parts[0]), parseInt(parts[1]));
+                }
+            }
+            if (i==this.stairs[0][2]) {
+                continue;
             }
             let maxLevel = Math.floor(2*ROT.RNG.getUniform())+1;
-            let danger = 1;
+            let danger = Math.max(1,Math.floor(roomSize/50));
             if (this.rooms[i][4]<3) {
                 danger++;
             }

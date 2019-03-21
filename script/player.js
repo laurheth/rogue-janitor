@@ -79,10 +79,10 @@ Player.prototype.moveTo = function(x,y) {
     else {
         return false;
     }
-    console.log(Game.getRoomIndex(x,y));
+    /*console.log(Game.getRoomIndex(x,y));
     if (Game.getRoomIndex(x,y)>=0) {
         console.log('Exits:'+Game.rooms[Game.getRoomIndex(x,y)][4]);
-    }
+    }*/
     if (oldKey != newKey && oldKey in Game.map && Game.map[oldKey].entity==this) {
         Game.map[oldKey].entity=null;
     }
