@@ -100,7 +100,7 @@ Entity.prototype.act = function() {
                 else {
                     Game.adventurer.hp--;
                 }
-                makeMess(Game.adventurer.x+dx,Game.adventurer.y+dy,'Scorch');
+                makeMess(Game.adventurer.x+dx,Game.adventurer.y+dy,this.tags.rangeMess);
             }
         }
         else {
@@ -155,10 +155,10 @@ function AddMonster(x,y,level) {
         options=['Ogre','Imp'];
     }
     else if (level==3) {
-        options=['Troll'];
+        options=['Troll','Naga'];
     }
     else if (level>=4) {
-        options=['Balor']
+        options=['Balor','Hydra','Dragon'];
     }
     return GetEntity(ROT.RNG.getItem(options),x,y);
 }
@@ -182,8 +182,17 @@ function GetEntity(name,x,y) {
         case 'Troll':
         newEntity = new Entity(x,y,'T','#0c0',name,6,{monster:true},3);
         break;
+        case 'Naga':
+        newEntity = new Entity(x,y,'N','#0c2',name,5,{monster:true,ranged:1,rangeMess:'AcidPool'},3);
+        break;
         case 'Balor':
-        newEntity = new Entity(x,y,'&','#f00',name,9,{monster:true},4);
+        newEntity = new Entity(x,y,'&','#f00',name,8,{monster:true,ranged:1,rangeMess:'Scorch'},4);
+        break;
+        case 'Hydra':
+        newEntity = new Entity(x,y,'H','#fa0',name,9,{monster:true},4);
+        break;
+        case 'Dragon':
+        newEntity = new Entity(x,y,'D','#0f0',name,7,{monster:true,ranged:2,rangeMess:'Scorch'},4)
         break;
         case 'Gold':
         newEntity = new Entity(x,y,'$','#ff0',name,1,{loot:true});

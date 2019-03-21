@@ -27,7 +27,7 @@ var Game = {
         screen.appendChild(this.display.getContainer());
         this.scheduler = new ROT.Scheduler.Simple();
         this.player = new Player(-1,-1,-1);
-
+        //this.scheduler.add(this.player);
         this.generateMap();
 
         //this.drawMap();

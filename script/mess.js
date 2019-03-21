@@ -57,6 +57,12 @@ function makeMess(x,y,name) {
         case 'BloodPrints':
         newMess = new Mess(x,y,",",'#f00','#000','"Blood" Footprints',3,"",0,'"Blood" Covered');
         break;
+        case 'AcidPool':
+        newMess = new Mess(x,y,"~",'#0f0','#000','Acid',7,"AcidPrints",6,'Acid Covered');
+        break;
+        case 'AcidPrints':
+        newMess = new Mess(x,y,",",'#0f0','#000','Acid Footprints',4,"",0,'Acid Covered');
+        break;
         case 'MudPrints':
         newMess = new Mess(x,y,",",'#960','#000','Muddy Footprints',3,"",0,'Mud Covered');
         break;
