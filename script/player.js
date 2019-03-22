@@ -89,6 +89,13 @@ Player.prototype.clean = function(verb) {
             if (key in Game.map && Game.map[key].mess != null && Game.map[key].mess.cleanMethod == verb) {
                 if (verb=='fix' && Game.map[key].entity==null) {
                     Game.map[key].entity = Game.map[key].mess.parent;
+                    Game.sendMessage("You fix the "+Game.map[key].entity.name.toLowerCase()+".");
+                }
+                else {
+                    if (verb=='get') {
+                        verb="pick up";
+                    }
+                    Game.sendMessage("You "+verb+" the "+Game.map[key].mess.name.toLowerCase()+".");
                 }
                 Game.map[key].mess=null;
                 Game.messNumbers[0]--;

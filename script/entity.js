@@ -4,13 +4,21 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.char=char;
     this.color=color;
     this.hp=hp;
+    this.maxhp=hp;
     this.level=level;
     this.tags=tags;
     this.active=false;
     this.alive=true;
     this.spreading=null;
     this.spreadCount=0;
-    this.name=RandomName()+" the "+species;
+    this.damagedealt=0;
+    this.friends=[];
+    if ('monster' in tags) {
+        this.name=RandomName()+" the "+species;
+    }
+    else {
+        this.name=species;
+    }
     this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
     this.home=null;
     this.retired=false;
@@ -124,7 +132,7 @@ Entity.prototype.doConvo = function() {
                 let outstring="";
                 let options=Object.getOwnPropertyNames(thisConvo);
                 for (let i=0;i<options.length;i++) {
-                    if (options[i] == 'text' || options[i]=='action') {
+                    if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions') {
                         continue;
                     }
                     if (outstring != "") {
@@ -181,10 +189,27 @@ Entity.prototype.handleEvent = function(e) {
 // talk to
 Entity.prototype.cleanerAct = function() {
     if ('monster' in this.tags) {
+        this.metPlayer=true;
         Game.player.talking=this;
-        if (this.convos.length>0) {
-            this.convoIndex=this.convos.length-1;
-            this.convoInnerDex=0;
+        let choice=this.convos.length-1;
+        if (choice>=0) {
+            let acceptable=true;
+            do {
+                acceptable=true;
+                if ('conditions' in this.convos[choice][0]) {
+                    acceptable = Game.checkConditions(this.convos[choice][0].conditions);
+                }
+                if (!acceptable) {
+                    choice--;
+                }
+                if (choice < 0) {
+                    break;
+                }
+            } while(!acceptable);
+            this.convoIndex=choice;
+            if (choice>=0) {
+                this.convoInnerDex=0;
+            }
         }
         else {
             this.convoIndex=-1;
@@ -246,6 +271,7 @@ Entity.prototype.act = function() {
                 }
                 else {
                     Game.adventurer.hp--;
+                    this.damagedealt++;
                 }
                 makeMess(Game.adventurer.x+dx,Game.adventurer.y+dy,this.tags.rangeMess);
             }
@@ -255,6 +281,15 @@ Entity.prototype.act = function() {
             let dy = Math.sign(Game.adventurer.y - this.y);
             if (this.x+dx == Game.adventurer.x && this.y+dy == Game.adventurer.y) {
                 Game.adventurer.damage();
+                this.damagedealt++;
+            }
+            else {
+                let testKey = (this.x+dx)+','+(this.y+dy);
+                if (testKey in Game.map && Game.map[testKey].entity != null && Game.map[testKey].entity instanceof Entity && 'monster' in Game.map[testKey].entity.tags) {
+                    if (this.friends.indexOf(Game.map[testKey].entity.name)<0) {
+                        this.friends.push(Game.map[testKey].entity.name);
+                    }
+                }
             }
             this.moveTo(this.x + dx, this.y + dy);
         }

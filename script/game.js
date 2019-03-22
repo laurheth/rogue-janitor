@@ -524,5 +524,16 @@ var Game = {
                 }
             }
         }
+    },
+
+    checkConditions: function(conditions)  {
+        let success=true;
+
+        if ('cleanliness' in conditions) {
+            if (this.cleanPercent() < conditions.cleanliness) {
+                success=false;
+            }
+        }
+        return success;
     }
 };
