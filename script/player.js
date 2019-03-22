@@ -97,6 +97,9 @@ Player.prototype.clean = function(verb) {
                     }
                     Game.sendMessage("You "+verb+" the "+Game.map[key].mess.name.toLowerCase()+".");
                 }
+                if (Game.map[key].mess.droppedBy != null) {
+                    ConversationBuilder.cleanConvo(Game.map[key].mess);
+                }
                 Game.map[key].mess=null;
                 Game.messNumbers[0]--;
                 return;

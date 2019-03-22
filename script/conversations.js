@@ -147,5 +147,59 @@ var ConversationBuilder = {
 
     impressed: function() {
         return [{text:"Dang! I'm impressed! You cleaned a lot!",any:-1,conditions:{cleanliness:50}}];
+    },
+
+    cleanConvo: function(mess) {
+        let owner = mess.droppedBy;
+        let item=false;
+        let messname=mess.name.toLowerCase();
+        if (mess.cleanMethod == 'get') {
+            if (owner.dropMessConvo) {
+                return;
+            }
+            else {
+                item=true;
+                owner.dropMessConvo=true;
+            }
+        }
+        if ((mess.cleanMethod == 'mop')) {
+            if (owner.rangeMessConvo) {
+                return;
+            }
+            else {
+                owner.rangeMessConvo=true;
+            }
+        }
+
+        let startMessages;
+        let endMessages;
+        if (item) {
+            startMessages=[
+                "Oh, thanks for picking up my "+messname+"!",
+                "Oops! I knew I forgot something. That "+messname+" was mine...",
+                "Oh dang sorry about the "+messname+".",
+                "Oof, forgot to clean up after myself. Thanks for picking up my "+messname+"!",
+            ];
+            endMessages=[
+                "I know, I know... leaving "+messname+" lying around on the job. I'll do better tomorrow!",
+            ];
+        }
+        else {
+            startMessages=[
+                "Oh yeah the "+messname+" was me. Whoops.",
+                "Yeah my aim was a bit off on that one. Thanks for mopping up the "+messname+".",
+                "Aaahh I got a little carried away! Thanks for cleaning the "+messname+"!",
+                "That "+messname+" was my fault! Sorry about that.",
+            ];
+            endMessages=[
+                "The adventurer sure felt it, though :) Worth it?",
+            ];
+        }
+        endMessages.push("I really appreciate you and the work you do!");
+        endMessages.push("You're really fantastic, you know that?");
+        endMessages.push("I hope you know that everybody here loves you, and loves your work.");
+
+        var newConvo= [{text:ROT.RNG.getItem(startMessages),any:1},{text:ROT.RNG.getItem(endMessages),any:-1}];
+        owner.convos.push(newConvo);
     }
 }

@@ -26,6 +26,8 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.convoInnerDex=-1;
     this.metPlayer=false;
     this.convos=[[{action:"is vaping.",any:-1}]];
+    this.rangeMessConvo=false;
+    this.dropMessConvo=false;
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
         Game.monsterList.push(this);
@@ -250,6 +252,7 @@ Entity.prototype.act = function() {
         this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
         let options=["EmptyBottle","EmptyMug","AppleCore"];
         let newmess=makeMess(this.x,this.y,ROT.RNG.getItem(options));
+        newmess.droppedBy=this;
     }
     if (this.spreadCount>0 && this.spreading != null) {
         let newMess = makeMess(this.x,this.y,this.spreading);
@@ -273,7 +276,8 @@ Entity.prototype.act = function() {
                     Game.adventurer.hp--;
                     this.damagedealt++;
                 }
-                makeMess(Game.adventurer.x+dx,Game.adventurer.y+dy,this.tags.rangeMess);
+                let newmess=makeMess(Game.adventurer.x+dx,Game.adventurer.y+dy,this.tags.rangeMess);
+                newmess.droppedBy=this;
             }
         }
         else {

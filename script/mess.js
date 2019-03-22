@@ -10,6 +10,7 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
     this.importance=importance;
     this.cleanMethod=cleanMethod;
     this.parent=null;
+    this.droppedBy=null;
     let key=x+','+y;
     let increment=true;
     if (Game.map[key].mess != null) {
