@@ -424,6 +424,19 @@ function RandomName() {
         'Betty',
         'Constance',
         'Sam',
+        'Bob',
+        'Robert',
+        'Samson',
+        'Steph',
+        'Chomps',
+        'Bites',
+        'Claws',
+        'Sauce',
+        'Newt',
+        'Tiny',
+        'Stabitha',
+        'Salamander',
+        'Nancy',
     ];
     for (let i=0;i<nameList.length;i++) {
         sg.observe(nameList[i].toLowerCase());
