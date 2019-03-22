@@ -20,15 +20,12 @@ var Game = {
     fov:null,
     monsterList:[],
     messNumbers:[0,0],
+    screen: null,
     init: function() {
-        let screen = document.getElementById("gameContainer");
+        this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
-        var setsize=this.display.computeSize(screen.clientWidth,screen.clientHeight);
-        //console.log(screen.clientWidth+','+screen.clientHeight);
-        this.display.setOptions({width: setsize[0],height: setsize[1]});
-        this.offset[0] = parseInt(setsize[0]/2);
-        this.offset[1] = parseInt(setsize[1]/2);
-        screen.appendChild(this.display.getContainer());
+        this.getSize(false);
+        this.screen.appendChild(this.display.getContainer());
         this.scheduler = new ROT.Scheduler.Simple();
         this.player = new Player(-1,-1,-1);
         //this.scheduler.add(this.player);
@@ -40,6 +37,16 @@ var Game = {
 
         this.engine = new ROT.Engine(this.scheduler);
         this.engine.start();
+    },
+
+    getSize: function(redraw=true) {
+        var setsize=this.display.computeSize(this.screen.clientWidth,this.screen.clientHeight);
+        this.display.setOptions({width: setsize[0],height: setsize[1]});
+        this.offset[0] = parseInt(setsize[0]/2);
+        this.offset[1] = parseInt(setsize[1]/2);
+        if (redraw) {
+            Game.drawMap();
+        }
     },
 
     drawMap: function() {

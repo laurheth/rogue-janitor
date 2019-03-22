@@ -68,9 +68,9 @@ Entity.prototype.adventurerAct = function() {
                 Game.map[key].entity=null;
             }
         }
-        else {
+        /*else {
             Game.adventurer.damage();
-        }
+        }*/
     }
 };
 
@@ -139,6 +139,9 @@ Entity.prototype.act = function() {
         else {
             let dx = Math.sign(Game.adventurer.x - this.x);
             let dy = Math.sign(Game.adventurer.y - this.y);
+            if (this.x+dx == Game.adventurer.x && this.y+dy == Game.adventurer.y) {
+                Game.adventurer.damage();
+            }
             this.moveTo(this.x + dx, this.y + dy);
         }
     }
