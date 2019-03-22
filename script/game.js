@@ -21,6 +21,7 @@ var Game = {
     monsterList:[],
     messNumbers:[0,0],
     screen: null,
+    lastMessage: "",
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -72,6 +73,21 @@ var Game = {
         this.display.drawText(1,1,"Cleanliness: " + this.cleanPercent() + "%");
         if (Game.player.talking) {
             Game.player.talking.doConvo();
+        }
+        else {
+            this.sendMessage();
+        }
+    },
+
+    sendMessage: function(msg=null) {
+        if (msg != null) {
+            this.lastMessage=msg;
+            this.display.drawText(2,2*this.offset[1]-2,"> "+msg);
+        }
+        else {
+            if (this.lastMessage != "") {
+                this.display.drawText(2,2*this.offset[1]-2,"> "+this.lastMessage);
+            }
         }
     },
 

@@ -67,6 +67,12 @@ Player.prototype.openClose=function(openclose) {
             if (key in Game.map && Game.map[key].mess == null && Game.map[key].door != null) {
                 if (Game.map[key].open != openclose) {
                     Game.map[key].open=openclose;
+                    if (openclose) {
+                        Game.sendMessage("You open the door.")
+                    }
+                    else {
+                        Game.sendMessage("You close the door.")
+                    }
                 }
             }
         }
@@ -164,6 +170,7 @@ Player.prototype.moveTo = function(x,y) {
     let newKey = x+','+y;
 
     if (newKey in Game.map && Game.map[newKey].door != null && !Game.map[newKey].open) {
+        Game.sendMessage("You open the door.");
         Game.map[newKey].open=true;
         return true;
     }
@@ -179,6 +186,7 @@ Player.prototype.moveTo = function(x,y) {
     else {
         return false;
     }
+    Game.lastMessage="";
     /*console.log(Game.getRoomIndex(x,y));
     if (Game.getRoomIndex(x,y)>=0) {
         console.log('Exits:'+Game.rooms[Game.getRoomIndex(x,y)][4]);

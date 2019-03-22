@@ -14,7 +14,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
     this.home=null;
     this.retired=false;
-    this.convos=[[{text:"Testing!",any:-1}]];
+    this.convos=[[{action:"is vaping.",any:-1}]];
     this.convoIndex=-1;
     this.convoInnerDex=-1;
     if ('monster' in tags) {
@@ -83,11 +83,14 @@ Entity.prototype.cancelConvo = function() {
     this.convoIndex=-1;
     this.convoInnerDex=-1;
     Game.player.talking=null;
+    if (this.convos.length<=0) {
+        this.convos.unshift([{action:"is vaping.",any:-1}]);
+    }
     Game.drawMap();
 }
 
 Entity.prototype.doConvo = function() {
-    console.log(this.convoIndex + ',' + this.convoInnerDex);
+    //console.log(this.convoIndex + ',' + this.convoInnerDex);
     if (this.convoIndex>=0) {
         if (this.convoInnerDex<0) {
             // don't repeat
@@ -95,11 +98,41 @@ Entity.prototype.doConvo = function() {
             this.cancelConvo();
         }
         else {
-            Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+'%c{} : "' + this.convos[this.convoIndex][this.convoInnerDex].text+'"'); 
+            // text or action line
+            let thisConvo=this.convos[this.convoIndex][this.convoInnerDex];
+            if ('text' in thisConvo) {
+                Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+'%c{} : "' + thisConvo.text+'"'); 
+            }
+            else if ('action' in thisConvo) {
+                Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+" "+thisConvo.action+'%c{}'); 
+            }
+            else {
+                Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+" is vaping.%c{}"); 
+            }
+
+            // how to continue line
+            if ('any' in thisConvo) {
+                Game.display.drawText(2,2*Game.offset[1]-2,"Press [enter] to continue.");
+            }
+            else if ('y' in thisConvo && 'n' in thisConvo) {
+                Game.display.drawText(2,2*Game.offset[1]-2,"Say [y]es or [n]o?");
+            }
+            else {
+                let outstring="";
+                let options=Object.getOwnPropertyNames(thisConvo);
+                for (let i=0;i<options.length;i++) {
+                    if (options[i] == 'text' || options[i]=='action') {
+                        continue;
+                    }
+                    if (outstring != "") {
+                        outstring+=" / ";
+                    }
+                    outstring+=options[i];
+                }
+                outstring = "Options: "+outstring;
+                Game.display.drawText(2,2*Game.offset[1]-2,outstring);
+            }
         }
-    }
-    else {
-        Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+'%c{} : "Wow that was a good day in the dungeon :^)"',2*Game.offset[0]-4);
     }
 }
 
@@ -109,17 +142,18 @@ Entity.prototype.handleEvent = function(e) {
     var ch = String.fromCharCode(charCode);
     let success=false;
     console.log(keyCode+','+charCode);
+    let thisConvo = this.convos[this.convoIndex];
     if (this.convoIndex >= 0 && this.convoIndex < this.convos.length) {
-        console.log('1');
-        let thisConvo = this.convos[this.convoIndex];
+        //console.log('1');
+        //let thisConvo = this.convos[this.convoIndex];
         if (this.convoInnerDex >= 0 && this.convoInnerDex < thisConvo.length) {
-            console.log('2');
+            //console.log('2');
 
             if ('any' in thisConvo[this.convoInnerDex]) {
-                console.log('3');
+                //console.log('3');
 
-                if ((keyCode == 27 || keyCode == 8 || keyCode == 88) && (charCode == 0)) {
-                    console.log('4');
+                if ((keyCode == 27 || keyCode == 8 || keyCode == 88 || keyCode==13) && (charCode == 0)) {
+                    //console.log('4');
 
                     this.convoInnerDex = thisConvo[this.convoInnerDex].any;
                     success = true;
@@ -127,7 +161,16 @@ Entity.prototype.handleEvent = function(e) {
             }
         }
     }
+    if (!success) {
+        //let thisConvo = this.convos[this.convoIndex];
+        ch = ch.toLowerCase();
+        if (ch in thisConvo[this.convoInnerDex]) {
+            this.convoInnerDex = thisConvo[this.convoInnerDex][ch];
+            success=true;
+        }
+    }
     if (success) {
+        Game.drawMap();
         this.doConvo();
     }
 }
