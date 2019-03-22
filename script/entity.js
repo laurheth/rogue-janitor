@@ -10,9 +10,13 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.alive=true;
     this.spreading=null;
     this.spreadCount=0;
+    this.name=RandomName()+" the "+species;
     this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
+    this.home=null;
+    this.retired=false;
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
+        Game.monsterList.push(this);
     }
     let dx=0;
     let dy=0;
@@ -70,8 +74,36 @@ Entity.prototype.adventurerAct = function() {
     }
 };
 
+// talk to
+Entity.prototype.cleanerAct = function() {
+    if ('monster' in this.tags) {
+        Game.drawMap();
+        Game.display.drawText(2,2*Game.offset[1]-3,this.name+' : "Wow that was a good day in the dungeon :^)"');
+    }
+}
+
+Entity.prototype.retiredAct = function() {
+    if (this.home == null) {
+        this.home = [this.x,this.y];
+    }
+    if (ROT.RNG.getUniform()>0.95) {
+        if (this.x != this.home[0] || this.y != this.home[1]) {
+            this.moveTo(this.home[0],this.home[1]);
+        }
+        else {
+            let dx = Math.floor(3*ROT.RNG.getUniform())-1;
+            let dy = Math.floor(3*ROT.RNG.getUniform())-1;
+            this.moveTo(this.x+dx,this.y+dy);
+        }
+    }
+};
+
 Entity.prototype.act = function() {
     if (!this.alive) {
+        return;
+    }
+    else if (this.retired) {
+        this.retiredAct();
         return;
     }
     this.drinking--;
@@ -171,7 +203,7 @@ function GetEntity(name,x,y) {
         case 'Goblin':
         newEntity = new Entity(x,y,'g','#0f0',name,2,{monster:true},1);
         break;
-        case 'Goblin':
+        case 'Kobold':
         newEntity = new Entity(x,y,'k','#fa0',name,2,{monster:true},1);
         break;
         case 'Ogre':
@@ -201,6 +233,9 @@ function GetEntity(name,x,y) {
         case 'Chest':
         newEntity = new Entity(x,y,'\u03C0','#fa0','Treasure Chest',1,{loot:true,mess:'BrokenChest'});
         break;
+        case 'Table':
+        newEntity = new Entity(x,y,'\u2564','#fa0',"Table",1,{loot:true,mess:'BrokenTable'});
+        break;
         case 'Cauldron':
         newEntity = new Entity(x,y,'U','#ccc','Cauldron',1,{loot:true,mess:'TippedCauldron',splashes:'Water'});
         break;
@@ -212,4 +247,36 @@ function GetEntity(name,x,y) {
         break;
     }
     return newEntity;
+}
+
+function RandomName() {
+    var sg=new ROT.StringGenerator({order:2});
+    var nameList=[
+        'Ralph',
+        'Franklin',
+        'Susan',
+        'Jim',
+        'Todd',
+        'Billy',
+        'Jack',
+        'Helen',
+        'Timmy',
+        'Greg',
+        'Meghan',
+        'Scritches',
+        'Rose',
+        'Betty',
+        'Constance',
+        'Sam',
+    ];
+    for (let i=0;i<nameList.length;i++) {
+        sg.observe(nameList[i].toLowerCase());
+    }
+    let name;
+    do {
+        name=sg.generate();
+        name = name.charAt(0).toUpperCase()+name.slice(1)
+    } while (name.length < 3 || name.length > 10 || Game.nameRegistry.indexOf(name)>=0);
+    Game.nameRegistry.push(name);
+    return name;
 }

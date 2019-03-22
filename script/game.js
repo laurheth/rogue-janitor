@@ -15,8 +15,11 @@ var Game = {
     doorColor:['#ddd','#842'],
     staffRoomID:-1,
     stairs:[[0,0,-1],[0,0,-1]],
+    nameRegistry:[],
     adventurer: null,
     fov:null,
+    monsterList:[],
+    messNumbers:[0,0],
     init: function() {
         let screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -58,6 +61,14 @@ var Game = {
                 Game.display.draw(x+Game.offset[0]-Game.player.x,y+Game.offset[1]-Game.player.y,art[0],art[1],art[2]);
             }
         });
+
+        this.display.drawText(1,1,"Cleanliness: " + this.cleanPercent() + "%");
+    },
+
+    cleanPercent: function() {
+        let cleaned = Game.messNumbers[1] - Game.messNumbers[0];
+        let toReturn = 100 * cleaned / Game.messNumbers[1];
+        return Math.floor(toReturn);
     },
 
     lightPasses: function(x,y) {
@@ -82,6 +93,10 @@ var Game = {
                 roomCorner[0] += (Math.floor(3*ROT.RNG.getUniform())-1);
                 roomCorner[1] += (Math.floor(3*ROT.RNG.getUniform())-1);
                 roomSize = [ Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0], Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0] ];
+                if (this.freeCells.length + roomSize[0] * roomSize[1] >= targSize) {
+                    roomSize[0]=minMax[1];
+                    roomSize[1] = minMax[1];
+                }
                 breaker2++;
             }
             if (roomCenters.length>0) {
@@ -356,6 +371,7 @@ var Game = {
                     if (wallCount==3 && floorCount==6) {
                         let key=x+','+y;
                         validForItems.push(key);
+                        //continue;
                     }
                 }
             }
@@ -391,4 +407,95 @@ var Game = {
         }
     },
 
+    moveMonstersToLounge: function() {
+        let validSpots=[];
+
+        for (let x = this.rooms[this.staffRoomID][0]; x < this.rooms[this.staffRoomID][2]; x++) {
+            for (let y = this.rooms[this.staffRoomID][1]; y < this.rooms[this.staffRoomID][3]; y++) {
+                let wallCount = 0;
+                let floorCount = 0;
+                for (let ii = -1; ii < 2; ii++) {
+                    for (let jj = -1; jj < 2; jj++) {
+                        let key = (x + ii) + ',' + (y + jj);
+                        if (key in this.map) {
+                            if (this.map[key].passable) {
+                                floorCount++;
+                            }
+                            else {
+                                wallCount++;
+                            }
+                        }
+                    }
+                }
+                if ((wallCount == 3 && floorCount == 6)) {//} || (wallCount == 5 && floorCount == 4)) {
+                    let key = x + ',' + y;
+                    if (Game.map[key].entity == null) {
+                        validSpots.push(key);
+                        continue;
+                    }
+                }
+
+                if (x%2==0 || y%2==0) {
+                    continue;
+                }
+
+                let suitableForTable = true;
+                for (let ii = -1; ii < 2; ii++) {
+                    for (let jj = -1; jj < 2; jj++) {
+                        let key = (x + ii) + ',' + (y + jj);
+                        if (validSpots.indexOf(key)>=0) {
+                            suitableForTable = false;
+                            break;
+                        }
+                        if (!(key in this.map && this.map[key].passThrough())) {
+                            suitableForTable = false;
+                            break;
+                        }
+                    }
+                    if (!suitableForTable) {
+                        break;
+                    }
+                }
+                if (suitableForTable) {
+                    //let key=x+','+y;
+                    console.log("??");
+                    GetEntity('Table', x, y);
+                }
+            }
+        }
+        let level=4;
+        let maxPlace=Math.floor(validSpots.length/2);
+        while (level>0 && validSpots.length > maxPlace) {
+            for (let i=0;i<this.monsterList.length;i++) {
+                if (this.monsterList[i].level != level) {
+                    continue;
+                }
+                this.monsterList[i].alive=true;
+                this.monsterList[i].retired=true;
+                let index = Math.floor(ROT.RNG.getUniform() * validSpots.length);
+                Game.map[validSpots[index]].entity=this.monsterList[i];
+                let parts = validSpots[index].split(',');
+                this.monsterList[i].x=parseInt(parts[0]);
+                this.monsterList[i].y=parseInt(parts[1]);
+                validSpots.splice(index,1);
+                if (validSpots.length<=maxPlace || validSpots==null) {
+                    break;
+                }
+            }
+            if (validSpots.length<=maxPlace || validSpots==null) {
+                break;
+            }
+            level--;
+        }
+
+        for (let i=0;i<this.monsterList.length;i++) {
+            if (!(this.monsterList[i].retired)) {
+                this.monsterList[i].alive=false;
+                let key = this.monsterList[i].x + ',' + this.monsterList[i].y;
+                if (key in Game.map && Game.map[key].entity == this.monsterList[i]) {
+                    Game.map[key].entity = null;
+                }
+            }
+        }
+    }
 };

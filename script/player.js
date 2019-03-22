@@ -84,6 +84,7 @@ Player.prototype.clean = function(verb) {
                     Game.map[key].entity = Game.map[key].mess.parent;
                 }
                 Game.map[key].mess=null;
+                Game.messNumbers[0]--;
                 return;
             }
         }
@@ -138,6 +139,12 @@ Player.prototype.handleEvent = function(e) {
         Game.drawMap();
         window.removeEventListener("keydown", this);
         Game.engine.unlock();
+    }
+    else {
+        let testKey = Math.round(parseInt(parts[0]))+','+Math.round(parseInt(parts[1]));
+        if (testKey in Game.map && Game.map[testKey].entity != null && Game.map[testKey].entity != this) {
+            Game.map[testKey].entity.cleanerAct();
+        }
     }
 }
 

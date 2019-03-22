@@ -11,8 +11,16 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
     this.cleanMethod=cleanMethod;
     this.parent=null;
     let key=x+','+y;
+    let increment=true;
+    if (Game.map[key].mess != null) {
+        increment=false;
+    }
     if (key in Game.map && Game.map[key].passable && !Game.map[key].important && (Game.map[key].mess == null || (this.importance >= Game.map[key].mess.importance))) {
         Game.map[key].mess=this;
+        if (increment) {
+            Game.messNumbers[0]++;
+            Game.messNumbers[1]++;
+        }
     }
     else if (spreads != null && key in Game.map && (!Game.map[key].passable || Game.map[key].important)) {
         Game.map[key].mess=this;
@@ -20,6 +28,10 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
         let newbgColor = ROT.Color.fromString(this.color);
         newbgColor=ROT.Color.multiply(newbgColor,[100,100,100]);
         this.bgColor = ROT.Color.toHex(newbgColor);
+        if (increment) {
+            Game.messNumbers[0]++;
+            Game.messNumbers[1]++;
+        }
     }
 }
 
@@ -67,6 +79,9 @@ function makeMess(x,y,name) {
         break;
         case 'MudPrints':
         newMess = new Mess(x,y,",",'#960','#000','Muddy Footprints',3,"",0,'Mud Covered');
+        break;
+        case 'BrokenTable':
+        newMess = new Mess(x,y,'/','#fa0','#000',"Smashed Table",12,"Splinters",2,"","fix");
         break;
         case 'BrokenChest':
         newMess = new Mess(x,y,'/','#fa0','#000',"Smashed Treasure Chest",12,"Splinters",2,"","fix");
