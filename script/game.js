@@ -70,6 +70,9 @@ var Game = {
         });
 
         this.display.drawText(1,1,"Cleanliness: " + this.cleanPercent() + "%");
+        if (Game.player.talking) {
+            Game.player.talking.doConvo();
+        }
     },
 
     cleanPercent: function() {

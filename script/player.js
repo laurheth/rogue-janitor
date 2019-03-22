@@ -31,6 +31,7 @@ function Player(x,y) {
     this.keyMap[103] = 7;
     this.spreading=null;
     this.spreadCount=0;
+    this.talking=null;
 }
 
 Player.prototype.getArt = function() {
@@ -93,6 +94,16 @@ Player.prototype.clean = function(verb) {
 
 Player.prototype.handleEvent = function(e) {
     let code = e.keyCode;
+    if (this.talking != null) {
+        // cancel conversation
+        /*if (code == 27 || code == 8 || code == 88) {
+            this.talking.cancelConvo();
+//            this.talking.convoIndex=-1;
+            this.talking=null;
+            Game.drawMap();
+        }*/
+        return;
+    }
     //console.log(this.keyMap);
     if (!(code in this.keyMap)) {
         switch (code) {

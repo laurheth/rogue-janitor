@@ -14,6 +14,9 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
     this.home=null;
     this.retired=false;
+    this.convos=[[{text:"Testing!",any:-1}]];
+    this.convoIndex=-1;
+    this.convoInnerDex=-1;
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
         Game.monsterList.push(this);
@@ -74,11 +77,76 @@ Entity.prototype.adventurerAct = function() {
     }
 };
 
+Entity.prototype.cancelConvo = function() {
+    window.removeEventListener("keydown",this);
+    window.removeEventListener("keypress",this);
+    this.convoIndex=-1;
+    this.convoInnerDex=-1;
+    Game.player.talking=null;
+    Game.drawMap();
+}
+
+Entity.prototype.doConvo = function() {
+    console.log(this.convoIndex + ',' + this.convoInnerDex);
+    if (this.convoIndex>=0) {
+        if (this.convoInnerDex<0) {
+            // don't repeat
+            this.convos.splice(this.convoIndex,1);
+            this.cancelConvo();
+        }
+        else {
+            Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+'%c{} : "' + this.convos[this.convoIndex][this.convoInnerDex].text+'"'); 
+        }
+    }
+    else {
+        Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+'%c{} : "Wow that was a good day in the dungeon :^)"',2*Game.offset[0]-4);
+    }
+}
+
+Entity.prototype.handleEvent = function(e) {
+    var keyCode = e.keyCode;
+    var charCode = e.charCode;
+    var ch = String.fromCharCode(charCode);
+    let success=false;
+    console.log(keyCode+','+charCode);
+    if (this.convoIndex >= 0 && this.convoIndex < this.convos.length) {
+        console.log('1');
+        let thisConvo = this.convos[this.convoIndex];
+        if (this.convoInnerDex >= 0 && this.convoInnerDex < thisConvo.length) {
+            console.log('2');
+
+            if ('any' in thisConvo[this.convoInnerDex]) {
+                console.log('3');
+
+                if ((keyCode == 27 || keyCode == 8 || keyCode == 88) && (charCode == 0)) {
+                    console.log('4');
+
+                    this.convoInnerDex = thisConvo[this.convoInnerDex].any;
+                    success = true;
+                }
+            }
+        }
+    }
+    if (success) {
+        this.doConvo();
+    }
+}
+
 // talk to
 Entity.prototype.cleanerAct = function() {
     if ('monster' in this.tags) {
+        Game.player.talking=this;
+        if (this.convos.length>0) {
+            this.convoIndex=this.convos.length-1;
+            this.convoInnerDex=0;
+        }
+        else {
+            this.convoIndex=-1;
+        }
+        window.addEventListener("keydown",this);
+        window.addEventListener("keypress",this);
         Game.drawMap();
-        Game.display.drawText(2,2*Game.offset[1]-3,this.name+' : "Wow that was a good day in the dungeon :^)"');
+//        Game.display.drawText(2,2*Game.offset[1]-3,this.name+' : "Wow that was a good day in the dungeon :^)"');
     }
 }
 
