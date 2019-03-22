@@ -14,9 +14,10 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
     this.home=null;
     this.retired=false;
-    this.convos=[[{action:"is vaping.",any:-1}]];
     this.convoIndex=-1;
     this.convoInnerDex=-1;
+    this.metPlayer=false;
+    this.convos=[[{action:"is vaping.",any:-1}]];
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
         Game.monsterList.push(this);
@@ -93,8 +94,10 @@ Entity.prototype.doConvo = function() {
     //console.log(this.convoIndex + ',' + this.convoInnerDex);
     if (this.convoIndex>=0) {
         if (this.convoInnerDex<0) {
-            // don't repeat
-            this.convos.splice(this.convoIndex,1);
+            // don't repeat, unless it's the last one
+            if (this.convoIndex > 0) {
+                this.convos.splice(this.convoIndex,1);
+            }
             this.cancelConvo();
         }
         else {

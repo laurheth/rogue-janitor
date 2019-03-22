@@ -498,6 +498,7 @@ var Game = {
                 }
                 this.monsterList[i].alive=true;
                 this.monsterList[i].retired=true;
+                ConversationBuilder.buildConvos(this.monsterList[i]);
                 let index = Math.floor(ROT.RNG.getUniform() * validSpots.length);
                 Game.map[validSpots[index]].entity=this.monsterList[i];
                 let parts = validSpots[index].split(',');
