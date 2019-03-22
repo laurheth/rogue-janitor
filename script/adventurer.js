@@ -160,7 +160,7 @@ Adventurer.prototype.act = function () {
             else {
                 return false;
             }
-        });
+        });//,{topology:4});
         //console.log("Recalculating...");
         //if (t)
         astar.compute(this.x,this.y,function(x,y){

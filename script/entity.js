@@ -38,7 +38,8 @@ Entity.prototype.adventurerAct = function() {
             Game.map[key].entity=null;
         }
         if ('mess' in this.tags) {
-            makeMess(this.x,this.y,this.tags.mess);
+            let newmess=makeMess(this.x,this.y,this.tags.mess);
+            newmess.parent=this;
         }
         if ('splashes' in this.tags) {
             let dx;
@@ -145,7 +146,7 @@ Entity.prototype.moveTo=function(x,y) {
 };
 
 function AddCollectible(x,y) {
-    var options=['Chest','Cauldron'];
+    var options=['Chest','Cauldron','Candleabra','Statue'];
     return GetEntity(ROT.RNG.getItem(options),x,y);
 }
 
@@ -202,6 +203,12 @@ function GetEntity(name,x,y) {
         break;
         case 'Cauldron':
         newEntity = new Entity(x,y,'U','#ccc','Cauldron',1,{loot:true,mess:'TippedCauldron',splashes:'Water'});
+        break;
+        case 'Statue':
+        newEntity = new Entity(x,y,'\u03A9','#ccc','Statue',1,{loot:true,mess:'SmashedStatue'});
+        break;
+        case 'Candleabra':
+        newEntity = new Entity(x,y,'\u03A8','#ff0','Candleabrum',1,{loot:true,mess:'SmashedCandle',splashes:'Scorch'});
         break;
     }
     return newEntity;

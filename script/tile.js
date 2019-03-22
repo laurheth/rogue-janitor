@@ -12,21 +12,29 @@ function Tile(x,y,char,color,bgColor,seeThrough,passable,door=null,name="") {
     this.open=false;
     this.important=false;
     this.name=name;
+    this.lastSeen=" ";
 }
 
 Tile.prototype.getArt = function() {
+    var art;
     if (this.entity != null) {
-        return this.entity.getArt();
+        art=this.entity.getArt();
     }
     else if (this.mess != null) {
-        return this.mess.getArt();
+        art=this.mess.getArt();
     }
     else if (this.door != null && this.open) {
-        return [this.door,this.bgColor,'#000'];
+        art=[this.door,this.bgColor,'#000'];
     }
     else {
-        return [this.char,this.color,this.bgColor];
+        art=[this.char,this.color,this.bgColor];
     }
+    this.lastSeen=art[0];
+    return art;
+}
+
+Tile.prototype.getMemoryArt = function() {
+    return [this.lastSeen,'#555','#000'];
 }
 
 Tile.prototype.lightPasses = function() {

@@ -50,11 +50,81 @@ Player.prototype.act = function() {
     window.addEventListener("keydown", this);
 }
 
+Player.prototype.endTurn = function() {
+    Game.drawMap();
+    window.removeEventListener("keydown", this);
+    Game.engine.unlock();
+}
+
+Player.prototype.openClose=function(openclose) {
+    for (let i=-1;i<2;i++) {
+        for (let j=-1;j<2;j++) {
+            if (i==0 && j==0) {
+                continue;
+            }
+            let key = (this.x+i)+','+(this.y+j);
+            if (key in Game.map && Game.map[key].mess == null && Game.map[key].door != null) {
+                if (Game.map[key].open != openclose) {
+                    Game.map[key].open=openclose;
+                }
+            }
+        }
+    }
+}
+
+Player.prototype.clean = function(verb) {
+    for (let i=-1;i<2;i++) {
+        for (let j=-1;j<2;j++) {
+            if (i==0 && j==0) {
+                continue;
+            }
+            let key = (this.x+i)+','+(this.y+j);
+            if (key in Game.map && Game.map[key].mess != null && Game.map[key].mess.cleanMethod == verb) {
+                if (verb=='fix' && Game.map[key].entity==null) {
+                    Game.map[key].entity = Game.map[key].mess.parent;
+                }
+                Game.map[key].mess=null;
+                return;
+            }
+        }
+    }
+}
+
 Player.prototype.handleEvent = function(e) {
     let code = e.keyCode;
     //console.log(this.keyMap);
     if (!(code in this.keyMap)) {
-        return;
+        switch (code) {
+            default:
+            return;
+            // m for mop
+            case 77:
+            this.clean('mop');
+            this.endTurn();
+            return;
+            // c for close
+            case 67:
+            this.openClose(false);
+            this.endTurn();
+            return;
+            // o for open
+            case 79:
+            this.openClose(true);
+            this.endTurn();
+            return;
+            // g or p for get or pick up
+            case 80:
+            case 71:
+            this.clean('get');
+            this.endTurn();
+            return;
+            // r or f for repair or fix
+            case 82:
+            case 70:
+            this.clean('fix');
+            this.endTurn();
+            return;
+        }
     }
     //console.log(code);
 

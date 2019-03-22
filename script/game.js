@@ -16,9 +16,10 @@ var Game = {
     staffRoomID:-1,
     stairs:[[0,0,-1],[0,0,-1]],
     adventurer: null,
+    fov:null,
     init: function() {
         let screen = document.getElementById("gameContainer");
-        this.display = new ROT.Display();
+        this.display = new ROT.Display({fontSize:16});
         var setsize=this.display.computeSize(screen.clientWidth,screen.clientHeight);
         //console.log(screen.clientWidth+','+screen.clientHeight);
         this.display.setOptions({width: setsize[0],height: setsize[1]});
@@ -29,7 +30,9 @@ var Game = {
         this.player = new Player(-1,-1,-1);
         //this.scheduler.add(this.player);
         this.generateMap();
-
+        this.fov = new ROT.FOV.PreciseShadowcasting(function(x,y){
+            return Game.lightPasses(x,y);
+        });
         //this.drawMap();
 
         this.engine = new ROT.Engine(this.scheduler);
@@ -43,11 +46,18 @@ var Game = {
                 let key=i+','+j;
                 //console.log(key);
                 if (key in this.map) {
-                    let art = this.map[key].getArt();
+                    let art = this.map[key].getMemoryArt();
                     this.display.draw(i+this.offset[0]-this.player.x,j+this.offset[1]-this.player.y,art[0],art[1],art[2]);
                 }
             }
         }
+        this.fov.compute(Game.player.x,Game.player.y,50,function(x,y,r,visibility) {
+            let key=x+','+y;
+            if (key in Game.map) {
+                let art = Game.map[key].getArt();
+                Game.display.draw(x+Game.offset[0]-Game.player.x,y+Game.offset[1]-Game.player.y,art[0],art[1],art[2]);
+            }
+        });
     },
 
     lightPasses: function(x,y) {
