@@ -13,8 +13,13 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.spreadCount=0;
     this.damagedealt=0;
     this.friends=[];
+    let firstName=RandomName();
+    this.unionStarter=false;
+    if (firstName == 'Marx') {
+        this.unionStarter=true;
+    }
     if ('monster' in tags) {
-        this.name=RandomName()+" the "+species;
+        this.name=firstName+" the "+species;
     }
     else {
         this.name=species;
@@ -28,6 +33,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.convos=[[{action:"is vaping.",any:-1}]];
     this.rangeMessConvo=false;
     this.dropMessConvo=false;
+    this.quests=[];
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
         Game.monsterList.push(this);
@@ -333,6 +339,22 @@ Entity.prototype.moveTo=function(x,y) {
     return true;
 };
 
+Entity.prototype.invitationQuest=function() {
+    var invitationConvo = ConversationBuilder.invitationConvo();
+    this.addQuest(invitationConvo);
+};
+
+Entity.prototype.coffeeQuest=function() {
+    var wantCoffeeConvo = ConversationBuilder.coffeeConvo();
+    this.addQuest(wantCoffeeConvo);
+};
+
+Entity.prototype.addQuest=function(questConvo) {
+    this.quests.push(null);
+    this.quests.push(questConvo)
+    this.quests.push(null);
+};
+
 function AddCollectible(x,y) {
     var options=['Chest','Cauldron','Candleabra','Statue'];
     return GetEntity(ROT.RNG.getItem(options),x,y);
@@ -437,6 +459,8 @@ function RandomName() {
         'Stabitha',
         'Salamander',
         'Nancy',
+        'Rasputin',
+        'Marx',
     ];
     for (let i=0;i<nameList.length;i++) {
         sg.observe(nameList[i].toLowerCase());

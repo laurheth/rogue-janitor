@@ -201,5 +201,30 @@ var ConversationBuilder = {
 
         var newConvo= [{text:ROT.RNG.getItem(startMessages),any:1},{text:ROT.RNG.getItem(endMessages),any:-1}];
         owner.convos.push(newConvo);
-    }
+    },
+
+    coffeeConvo: function() {
+        var newConvo;
+        newConvo = [
+            {text:"Hey! I'm running to the cafe. Want anything? They've got Coffee, Tea, and Donuts. No is okay too!",c:1,t:2,d:3,n:4},
+            {text:"Wicked! I'll bring you some coffee when I've got it!",any:-1},
+            {text:"Sweet! I'll bring you some tea when I've got it!",any:-1},
+            {text:"Awesome! I'll bring you back a donut when I've got it!",any:-1},
+            {text:"Okie doke!",any:-1},
+        ];
+        return newConvo;
+    },
+
+    invitationConvo: function() {
+        var newConvo;
+        newConvo = [
+            {text:"Hey! You've done so much cleaning, holy cow!",any:1},
+            {text:"Listen, a bunch of us like to get together for dinner after work. Wanna come tonight?",y:2,n:4},
+            {text:"Radical! We'll leave together when you're ready to call it a day!",any:3},
+            {text:"Remember, it doesn't need to be spotless! Boss makes a dollar and you make a dime; call it a day on your own terms!",any:-1},
+            {text:"That's alright :) We go out every day, so you're welcome during any of them!",any:3},
+        ];
+        return newConvo;
+    },
+
 }

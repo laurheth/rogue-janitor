@@ -22,6 +22,8 @@ var Game = {
     messNumbers:[0,0],
     screen: null,
     lastMessage: "",
+    coffeeThreshold:Math.floor(33*ROT.RNG.getUniform())+33,
+    inviteOutThreshold:Math.floor(10*ROT.RNG.getUniform())+85,
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -94,6 +96,20 @@ var Game = {
     cleanPercent: function() {
         let cleaned = Game.messNumbers[1] - Game.messNumbers[0];
         let toReturn = 100 * cleaned / Game.messNumbers[1];
+        if (toReturn > this.coffeeThreshold || toReturn > this.inviteOutThreshold) {
+            this.coffeeThreshold+=200;
+            let sendIndex;
+            do {
+                sendIndex = Math.floor(this.monsterList.length * ROT.RNG.getUniform());
+            } while (this.monsterList[sendIndex].retired == false);
+
+            if (toReturn > this.inviteOutThreshold) {
+                this.monsterList[sendIndex].invitationQuest();
+            }
+            else {
+                this.monsterList[sendIndex].coffeeQuest();
+            }
+        }
         return Math.floor(toReturn);
     },
 
