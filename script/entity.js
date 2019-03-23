@@ -34,6 +34,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.rangeMessConvo=false;
     this.dropMessConvo=false;
     this.quests=[];
+    this.convoOptions={};
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
         Game.monsterList.push(this);
@@ -119,38 +120,51 @@ Entity.prototype.doConvo = function() {
         else {
             // text or action line
             let thisConvo=this.convos[this.convoIndex][this.convoInnerDex];
-            if ('text' in thisConvo) {
-                Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+'%c{} : "' + thisConvo.text+'"'); 
-            }
-            else if ('action' in thisConvo) {
-                Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+" "+thisConvo.action+'%c{}'); 
-            }
-            else {
-                Game.display.drawText(2,2*Game.offset[1]-4,"%c{#ff0}"+this.name+" is vaping.%c{}"); 
-            }
 
+            this.convoOptions={};
+            let linesNeeded;
             // how to continue line
             if ('any' in thisConvo) {
                 Game.display.drawText(2,2*Game.offset[1]-2,"Press [enter] to continue.");
+                linesNeeded=1;
             }
             else if ('y' in thisConvo && 'n' in thisConvo) {
                 Game.display.drawText(2,2*Game.offset[1]-2,"Say [y]es or [n]o?");
+                this.convoOptions.y = thisConvo.y;
+                this.convoOptions.n = thisConvo.n;
+                linesNeeded=1;
             }
             else {
                 let outstring="";
                 let options=Object.getOwnPropertyNames(thisConvo);
+                let choiceNum=0;
+                linesNeeded=1;
                 for (let i=0;i<options.length;i++) {
                     if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions') {
                         continue;
                     }
-                    if (outstring != "") {
-                        outstring+=" / ";
-                    }
-                    outstring+=options[i];
+                    linesNeeded++;
+                    choiceNum++;
+
+                    outstring+=choiceNum.toString()+') "'+options[i]+'"\n';
+
+                    this.convoOptions[choiceNum.toString()]=thisConvo[options[i]];
                 }
-                outstring = "Options: "+outstring;
-                Game.display.drawText(2,2*Game.offset[1]-2,outstring);
+                console.log(this.convoOptions);
+                outstring = "Options:\n"+outstring;
+                Game.display.drawText(2,2*Game.offset[1]-1-linesNeeded,outstring);
             }
+
+            if ('text' in thisConvo) {
+                Game.display.drawText(2,2*Game.offset[1]-3-linesNeeded,"%c{#ff0}"+this.name+'%c{} : "' + thisConvo.text+'"'); 
+            }
+            else if ('action' in thisConvo) {
+                Game.display.drawText(2,2*Game.offset[1]-3-linesNeeded,"%c{#ff0}"+this.name+" "+thisConvo.action+'%c{}'); 
+            }
+            else {
+                Game.display.drawText(2,2*Game.offset[1]-3-linesNeeded,"%c{#ff0}"+this.name+" is vaping.%c{}"); 
+            }
+            
         }
     }
 }
@@ -185,6 +199,10 @@ Entity.prototype.handleEvent = function(e) {
         ch = ch.toLowerCase();
         if (ch in thisConvo[this.convoInnerDex]) {
             this.convoInnerDex = thisConvo[this.convoInnerDex][ch];
+            success=true;
+        }
+        else if (ch in this.convoOptions) {
+            this.convoInnerDex = this.convoOptions[ch];
             success=true;
         }
     }

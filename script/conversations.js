@@ -44,7 +44,15 @@ var ConversationBuilder = {
             return [{text:"Psst, don't tell adventurers, but all that 'blood' is just watered down ketchup.",any:1},
                     {text:"Real violence is a strict violation of workplace safety regulations!",any:-1}];
             case 5:
-            return [{text:"Gee whiz I love dogs. And cats. Humans have good taste in critters.",any:-1}];
+            return [{text:"Gee whiz I love dogs. And cats. Humans have good taste in critters.",any:1},
+                    {text:"What's your favourite type of critter?","I love cats!":2,"Dog's are good and I like to pet them!":3,"Rabbits are great!":4,"Rats are my favourite!":5,"I love horses. Neigh!":6,"I'm not really an animal person...":7},
+                    {text:"Wow! Cats! Me too!",any:-1},
+                    {text:"Wow! Dogs! Me too!",any:-1},
+                    {text:"Wow! Rabbits! Me too!",any:-1},
+                    {text:"Wow! Rats! Me too!",any:-1},
+                    {text:"Wow! Horses! Me too!",any:-1},
+                    {text:"That's legit! More for me to cuddle myself, then!",any:-1},
+                    ];
             case 6:
             return [{text:"I really appreciate the work you do! This place literally wouldn't run without you.",any:-1}];
             case 7:
@@ -206,7 +214,7 @@ var ConversationBuilder = {
     coffeeConvo: function() {
         var newConvo;
         newConvo = [
-            {text:"Hey! I'm running to the cafe. Want anything? They've got Coffee, Tea, and Donuts. No is okay too!",c:1,t:2,d:3,n:4},
+            {text:"Hey! I'm running to the cafe. Want anything?",Coffee:1,Tea:2,Donut:3,"No thanks":4},
             {text:"Wicked! I'll bring you some coffee when I've got it!",any:-1},
             {text:"Sweet! I'll bring you some tea when I've got it!",any:-1},
             {text:"Awesome! I'll bring you back a donut when I've got it!",any:-1},
