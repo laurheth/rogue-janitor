@@ -211,19 +211,41 @@ var ConversationBuilder = {
         owner.convos.push(newConvo);
     },
 
-    coffeeConvo: function() {
+    coffeeConvo: function(tags) {
         var newConvo;
         newConvo = [
-            {text:"Hey! I'm running to the cafe. Want anything?",Coffee:1,Tea:2,Donut:3,"No thanks":4},
-            {text:"Wicked! I'll bring you some coffee when I've got it!",any:-1},
-            {text:"Sweet! I'll bring you some tea when I've got it!",any:-1},
-            {text:"Awesome! I'll bring you back a donut when I've got it!",any:-1},
-            {text:"Okie doke!",any:-1},
+            {text:"Hey! I'm running to the cafe. Want anything?","I'd love a coffee!":1,"How about some tea?":2,"Can I have a donut?":3,"No thanks":4},
+            {text:"Wicked! I'll bring you some coffee when I've got it!",any:-1,tags:['coffee']},
+            {text:"Sweet! I'll bring you some tea when I've got it!",any:-1,tags:['tea']},
+            {text:"Awesome! I'll bring you back a donut when I've got it!",any:-1,tags:['donut']},
+            {text:"Okie doke!",any:-1,tags:['wantsNothing']},
         ];
         return newConvo;
     },
 
-    invitationConvo: function() {
+    deliverConvo: function(tags) {
+        let food;
+        if ('coffee' in tags) {
+            food='coffee';
+        }
+        else if ('tea' in tags) {
+            food='tea';
+        }
+        else if ('donut' in tags) {
+            food='donut';
+        }
+        else {
+            return null;
+        }
+        var newConvo;
+        newConvo = [
+            {text:"Here's the "+food+" you asked for!",any:1},
+            {text:"I really hope you enjoy it :)",any:-1},
+        ];
+        return newConvo;
+    },
+
+    invitationConvo: function(tags) {
         var newConvo;
         newConvo = [
             {text:"Hey! You've done so much cleaning, holy cow!",any:1},

@@ -35,6 +35,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.dropMessConvo=false;
     this.quests=[];
     this.convoOptions={};
+    this.convoTags={};
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
         Game.monsterList.push(this);
@@ -121,6 +122,12 @@ Entity.prototype.doConvo = function() {
             // text or action line
             let thisConvo=this.convos[this.convoIndex][this.convoInnerDex];
 
+            if ('tags' in thisConvo) {
+                for (let i=0;i<thisConvo.tags.length;i++) {
+                    this.convoTags[thisConvo.tags[i]]=true;
+                }
+            }
+
             this.convoOptions={};
             let linesNeeded;
             // how to continue line
@@ -140,7 +147,7 @@ Entity.prototype.doConvo = function() {
                 let choiceNum=0;
                 linesNeeded=1;
                 for (let i=0;i<options.length;i++) {
-                    if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions') {
+                    if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions' || options[i]=='tags' || options[i]=='globalTags') {
                         continue;
                     }
                     linesNeeded++;
@@ -358,13 +365,14 @@ Entity.prototype.moveTo=function(x,y) {
 };
 
 Entity.prototype.invitationQuest=function() {
-    var invitationConvo = ConversationBuilder.invitationConvo();
-    this.addQuest(invitationConvo);
+    //var invitationConvo = ConversationBuilder.invitationConvo();
+    this.addQuest('invitationConvo');
 };
 
 Entity.prototype.coffeeQuest=function() {
-    var wantCoffeeConvo = ConversationBuilder.coffeeConvo();
-    this.addQuest(wantCoffeeConvo);
+    //var wantCoffeeConvo = ConversationBuilder.coffeeConvo();
+    this.addQuest('coffeeConvo');
+    this.addQuest('deliverConvo');
 };
 
 Entity.prototype.addQuest=function(questConvo) {
