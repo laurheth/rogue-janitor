@@ -258,6 +258,10 @@ Entity.prototype.retiredAct = function() {
     if (this.home == null) {
         this.home = [this.x,this.y];
     }
+    if (this.quests.length>0) {
+        this.questAct();
+        return;
+    }
     if (ROT.RNG.getUniform()>0.95) {
         if (this.x != this.home[0] || this.y != this.home[1]) {
             this.moveTo(this.home[0],this.home[1]);
@@ -362,6 +366,25 @@ Entity.prototype.moveTo=function(x,y) {
         Game.map[oldKey].entity=null;
     }
     return true;
+};
+
+Entity.prototype.questAct = function() {
+    // determine target
+    let targetPos = this.home;
+    if (this.quests[0] != null) {
+        if (typeof this.quests[0] == "string") {
+            if (this.quests[0] in ConversationBuilder) {
+                this.quests[0] = ConversationBuilder[this.quests[0]](this.convoTags);
+            }
+        }
+        if (typeof this.quests[0] == 'object' && 'text' in this.quests[0]) {
+            targetPos = [Game.player.x,Game.player.y];
+        }
+    }
+    if (this.x == targetPos[0] && this.y == targetPos[1]) {
+        this.quests.shift();
+        return;
+    }
 };
 
 Entity.prototype.invitationQuest=function() {
