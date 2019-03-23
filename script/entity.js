@@ -372,18 +372,42 @@ Entity.prototype.questAct = function() {
     // determine target
     let targetPos = this.home;
     if (this.quests[0] != null) {
-        if (typeof this.quests[0] == "string") {
+        if (typeof this.quests[0] === "string") {
             if (this.quests[0] in ConversationBuilder) {
                 this.quests[0] = ConversationBuilder[this.quests[0]](this.convoTags);
             }
         }
-        if (typeof this.quests[0] == 'object' && 'text' in this.quests[0]) {
-            targetPos = [Game.player.x,Game.player.y];
+        if (typeof this.quests[0] === 'object') {
+            if ('text' in this.quests[0]) {
+                targetPos = [Game.player.x,Game.player.y];
+            }
         }
     }
     if (this.x == targetPos[0] && this.y == targetPos[1]) {
         this.quests.shift();
         return;
+    }
+    var path = [];
+    var astar = new ROT.Path.AStar(targetPos[0], targetPos[1], function (x, y) {
+        let key = x + ',' + y;
+        if (key in Game.map && Game.map[key].passable && Game.map[key].entity == null) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+    astar.compute(this.x,this.y,function(x,y){
+        path.push([x,y]);
+    });
+    this.moveTo(path[1][0],path[1][1]);
+
+    let dist = Math.abs(path[1][0] - Game.player.x) + Math.abs(path[1][1] - Game.player.y);
+    
+    if (dist <=3 && this.quests[0] != null) {
+        this.convos.push(this.quests[0]);
+        this.cleanerAct();
+        this.quests.shift();
     }
 };
 

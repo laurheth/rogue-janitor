@@ -22,7 +22,7 @@ var Game = {
     messNumbers:[0,0],
     screen: null,
     lastMessage: "",
-    coffeeThreshold:Math.floor(33*ROT.RNG.getUniform())+33,
+    coffeeThreshold:5,//Math.floor(33*ROT.RNG.getUniform())+33,
     inviteOutThreshold:Math.floor(10*ROT.RNG.getUniform())+85,
     init: function() {
         this.screen = document.getElementById("gameContainer");
