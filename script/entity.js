@@ -16,6 +16,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     let firstName=RandomName();
     this.bgColor=bgColor;
     this.unionStarter=false;
+    this.species=species;
     if (firstName == 'Marx') {
         this.unionStarter=true;
     }
@@ -565,6 +566,13 @@ function AddMonster(x,y,level) {
     }
     else if (level>=4) {
         options=['Balor','Hydra','Dragon'];
+    }
+    if (Game.monsterList.length>0) {
+        for (let i=0;i<Game.monsterList.length;i++) {
+            if (Game.monsterList[i].alive!=alive || Game.monsterList[i].retired) {
+                // do stuff here
+            }
+        }
     }
     return GetEntity(ROT.RNG.getItem(options),x,y);
 }
