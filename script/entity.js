@@ -1,4 +1,4 @@
-function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
+function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attachToWall=false) {
     this.x=x;
     this.y=y;
     this.char=char;
@@ -14,6 +14,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
     this.damagedealt=0;
     this.friends=[];
     let firstName=RandomName();
+    this.bgColor=bgColor;
     this.unionStarter=false;
     if (firstName == 'Marx') {
         this.unionStarter=true;
@@ -53,6 +54,32 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1) {
                     dy=j;
                 }
             }
+        }
+    }
+    if (attachToWall) {
+        var best = [0,0,100];
+        for (let i=-3;i<4;i++) {
+            for (let j=-3;j<4;j++) {
+                let testKey = (this.x+i)+','+(this.y+j);
+                if (testKey in Game.map && !Game.map[testKey].passable && Game.map[testKey].entity==null && Game.map[testKey].mess==null) {
+                    let dist = Math.abs(i)+Math.abs(j);
+                    if (dist < best[2]) {
+                        best[0]=i;
+                        best[1]=j;
+                        best[2]=dist;
+                    }
+                }
+            }
+        }
+        if (best[2]<100) {
+            let oldKey=this.x+','+this.y;
+            let newKey=(this.x+best[0])+','+(this.y+best[1]);
+            if (oldKey in Game.map && Game.map[oldKey].entity==this) {
+                Game.map[oldKey].entity=null;
+            }
+            this.x+=best[0];
+            this.y+=best[1];
+            Game.map[newKey].entity=this;
         }
     }
 };
@@ -105,7 +132,8 @@ Entity.prototype.cancelConvo = function() {
     if (this.convos.length<=0) {
         this.convos.unshift([{action:"is vaping.",any:-1}]);
     }
-    Game.drawMap();
+    Game.player.endTurn();
+    //Game.drawMap();
 }
 
 Entity.prototype.doConvo = function() {
@@ -293,6 +321,19 @@ Entity.prototype.cleanerAct = function() {
         Game.drawMap();
 //        Game.display.drawText(2,2*Game.offset[1]-3,this.name+' : "Wow that was a good day in the dungeon :^)"');
     }
+    else if ('loot' in this.tags) {
+        // push stuff around?
+    } 
+    else if ('exit' in this.tags) {
+        Game.player.talking=this;
+        this.convoIndex=0;
+        this.convoInnerDex=0;
+        this.convos=[];
+        this.convos.push(ConversationBuilder.exitPrompt());
+        window.addEventListener("keydown",this);
+        window.addEventListener("keypress",this);
+        Game.drawMap();
+    }
 }
 
 Entity.prototype.retiredAct = function() {
@@ -378,7 +419,7 @@ Entity.prototype.act = function() {
 
 Entity.prototype.getArt = function() {
     if (this.alive) {
-        return [this.char,this.color,'#000'];
+        return [this.char,this.color,this.bgColor];
     }
     else {
         return ['%','#f00','#000'];
@@ -577,6 +618,8 @@ function GetEntity(name,x,y) {
         case 'Candleabra':
         newEntity = new Entity(x,y,'\u03A8','#ff0','Candleabrum',1,{loot:true,mess:'SmashedCandle',splashes:'Scorch'});
         break;
+        case 'ExitDoor':
+        newEntity = new Entity(x,y,'+','#fff','Exit Door',1,{exit:true},1,'#f00',true);
     }
     return newEntity;
 }

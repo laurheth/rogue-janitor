@@ -533,6 +533,19 @@ var Game = {
             level--;
         }
 
+                // Add exit door
+                {
+                    let index = Math.floor(ROT.RNG.getUniform() * validSpots.length);
+                    let parts = validSpots[index].split(',');
+                    let px=parseInt(parts[0]);
+                    let py=parseInt(parts[1]);
+                    //console.log(px+','+py);
+                    let exitDoor = GetEntity('ExitDoor',px,py);
+                    let ughKey=exitDoor.x+','+exitDoor.y;
+                    Game.map[ughKey].lastSeen='?';
+                    console.log('exit:'+exitDoor.x+","+exitDoor.y);
+                }
+
         for (let i=0;i<this.monsterList.length;i++) {
             if (!(this.monsterList[i].retired)) {
                 this.monsterList[i].alive=false;

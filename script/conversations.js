@@ -253,4 +253,45 @@ var ConversationBuilder = {
         return newConvo;
     },
 
+    exitPrompt: function() {
+        var nextConvo=[];
+        let messages;
+        if ('invitationAccepted' in Game.convoTags) {
+            messages=[
+                "Leave for the day and head out with everyone to dinner?",
+                "You and your comrades leave together for dinner.",
+                "It's really delightful!",
+                "Eventually, the night comes to and end though.",
+                "You go home, and get a nice, full 8 hours of sleep"
+                ];
+        }
+        else {
+            messages=[
+                "You leave for the day, and head home.",
+                "You have a really relaxing evening at home! You read a book and play some video games.",
+                "Eventually, it's time to sleep. You go to bed and have a nice, full 8 hours of sleep."
+            ];
+        }
+        if ('animal' in Game.convoTags && Game.convoTags.animal != 'none') {
+            messages.push("You have a really happy dream about "+Game.convoTags.animal+"s!");
+        }
+        messages.push("In the morning, you wake up, and have a delicious breakfast.");
+        messages.push("Time for another day of work!");
+        for (let i=0;i<messages.length;i++) {
+            var nextMsg = {message:messages[i]};
+            if (i==0) {
+                nextMsg.y=1;
+                nextMsg.n=-1;
+            }
+            else {
+                nextMsg.any=(i+1);
+            }
+            if (i==(messages.length-1)) {
+                nextMsg.any=-1;
+            }
+            nextConvo.push(nextMsg);
+        }
+        return nextConvo;
+    },
+
 }

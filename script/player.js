@@ -40,6 +40,7 @@ Player.prototype.getArt = function() {
 
 Player.prototype.act = function() {
     Game.engine.lock();
+    console.log(this.x+','+this.y);
     if (this.spreadCount>0 && this.spreading != null) {
         let newMess = makeMess(this.x,this.y,this.spreading);
         this.spreadCount--;
