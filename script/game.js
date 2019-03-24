@@ -544,18 +544,46 @@ var Game = {
             level--;
         }
 
-                // Add exit door
-                {
-                    let index = Math.floor(ROT.RNG.getUniform() * validSpots.length);
-                    let parts = validSpots[index].split(',');
-                    let px=parseInt(parts[0]);
-                    let py=parseInt(parts[1]);
-                    //console.log(px+','+py);
-                    let exitDoor = GetEntity('ExitDoor',px,py);
-                    let ughKey=exitDoor.x+','+exitDoor.y;
-                    Game.map[ughKey].lastSeen='?';
-                    console.log('exit:'+exitDoor.x+","+exitDoor.y);
+        // Add exit door
+        {
+            let index = Math.floor(ROT.RNG.getUniform() * validSpots.length);
+            let parts = validSpots[index].split(',');
+            let px = parseInt(parts[0]);
+            let py = parseInt(parts[1]);
+            //console.log(px+','+py);
+            let exitDoor = GetEntity('ExitDoor', px, py);
+            //let ughKey=exitDoor.x+','+exitDoor.y;
+            //Game.map[ughKey].lastSeen='?';
+            //console.log('exit:'+exitDoor.x+","+exitDoor.y);
+            let best=[0,0,100];
+            for (let i =-3;i<4;i++) {
+                for (let j=-3;j<4;j++) {
+                    let fits=true;
+                    for (let ii=-3;ii<3;ii++) {
+                        let testKey=(exitDoor.x+i+ii)+','+(exitDoor.y+j);
+                        if (testKey in Game.map) {
+                            fits=false;
+                        }
+                    }
+                    if (fits) {
+                        let dist=Math.abs(i)+Math.abs(j);
+                        if (dist < best[2]) {
+                            best[0]=i;
+                            best[1]=j;
+                            best[2]=dist;
+                        }
+                    }
                 }
+            }
+            if (best[2] < 100) {
+                let letters = ['*', 'E', 'X', 'I', 'T', '*'];
+                for (let ii = -3; ii < 3; ii++) {
+                    let testKey = (exitDoor.x + best[0] + ii) + ',' + (exitDoor.y + best[1]);
+                    Game.map[testKey] = new Tile(best[0], best[1], letters[ii + 3], this.roomWalls[0], this.roomWalls[1], false, false);
+                    Game.map[testKey].lastSeen = letters[ii + 3];
+                }
+            }
+        }
 
         for (let i=0;i<this.monsterList.length;i++) {
             if (!(this.monsterList[i].retired)) {

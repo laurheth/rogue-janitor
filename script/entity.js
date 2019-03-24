@@ -729,7 +729,7 @@ function RandomName() {
     do {
         name=sg.generate();
         name = name.charAt(0).toUpperCase()+name.slice(1)
-    } while (name.length < 3 || name.length > 10 || Game.nameRegistry.indexOf(name)>=0);
+    } while (name.length < 3 || name.length > 11 || Game.nameRegistry.indexOf(name)>=0);
     Game.nameRegistry.push(name);
     return name;
 }
