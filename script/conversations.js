@@ -162,7 +162,7 @@ var ConversationBuilder = {
         let owner = mess.droppedBy;
         let item=false;
         let messname=mess.name.toLowerCase();
-        let messnamePlural=mess.plural();
+        let messnamePlural=mess.plural().toLowerCase();
         if (mess.cleanMethod == 'get') {
             if (owner.dropMessConvo) {
                 return;
