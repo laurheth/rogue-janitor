@@ -344,7 +344,7 @@ Entity.prototype.getArt = function() {
     }
 }
 
-Entity.prototype.moveTo=function(x,y) {
+Entity.prototype.moveTo=function(x,y,questing) {
     let oldKey = this.x+','+this.y;
     let newKey = x+','+y;
     if (newKey in Game.map && Game.map[newKey].passThrough()) {
@@ -356,6 +356,30 @@ Entity.prototype.moveTo=function(x,y) {
         }
     }
     else {
+        if (questing) {
+            if (newKey in Game.map && Game.map[newKey].passable) {
+                if (Game.map[newKey].door != null && Game.map[newKey].open == false) {
+                    Game.map[newKey].open=true;
+                    return true;
+                }
+                if (Game.map[newKey].entity != null && Game.map[newKey].entity instanceof Entity && oldKey in Game.map && Game.map[oldKey]==this) {
+                    Game.map[oldKey].entity=null;
+                    if (Game.map[newKey].entity.moveTo(this.x,this.y)) {
+                        Game.map[newKey].entity=this;
+                        this.x=x;
+                        this.y=y;
+                        if (Game.map[newKey].mess != null) {
+                            Game.map[newKey].mess.spread(this);
+                        }
+                        return true;
+                    }
+                    else {
+                        Game.map[oldKey].entity=this;
+                        return false;
+                    }
+                }
+            }
+        }
         return false;
     }
     /*console.log(Game.getRoomIndex(x,y));
@@ -371,15 +395,19 @@ Entity.prototype.moveTo=function(x,y) {
 Entity.prototype.questAct = function() {
     // determine target
     let targetPos = this.home;
+    //console.log(this.quests);
     if (this.quests[0] != null) {
+        //console.log("not null");
         if (typeof this.quests[0] === "string") {
+            //console.log ("is a string");
             if (this.quests[0] in ConversationBuilder) {
                 this.quests[0] = ConversationBuilder[this.quests[0]](this.convoTags);
+                //console.log(this.quests[0]);
             }
         }
-        if (typeof this.quests[0] === 'object') {
-            if ('text' in this.quests[0]) {
-                targetPos = [Game.player.x,Game.player.y];
+        if (this.quests[0] != null) {
+            if (typeof this.quests[0] === 'object') {
+                targetPos = [Game.player.x, Game.player.y];
             }
         }
     }
@@ -388,9 +416,13 @@ Entity.prototype.questAct = function() {
         return;
     }
     var path = [];
+    var startPos = [this.x,this.y];
     var astar = new ROT.Path.AStar(targetPos[0], targetPos[1], function (x, y) {
+        if ((x==startPos[0] && y==startPos[1]) || (x==targetPos[0] && y==targetPos[1])) {
+            return true;
+        }
         let key = x + ',' + y;
-        if (key in Game.map && Game.map[key].passable && Game.map[key].entity == null) {
+        if (key in Game.map && Game.map[key].passable && Game.map[key].entity==null) {
             return true;
         }
         else {
@@ -400,11 +432,19 @@ Entity.prototype.questAct = function() {
     astar.compute(this.x,this.y,function(x,y){
         path.push([x,y]);
     });
-    this.moveTo(path[1][0],path[1][1]);
+    let dist = Math.max(Math.abs(path[1][0] - Game.player.x),Math.abs(path[1][1] - Game.player.y));
+    if (path.length<2 && dist <2) {
+        if (dist<2) {
+            dist=0;
+        }
+        else {
+            return;
+        }
+    }
+    this.moveTo(path[1][0],path[1][1],true);
 
-    let dist = Math.abs(path[1][0] - Game.player.x) + Math.abs(path[1][1] - Game.player.y);
     
-    if (dist <=3 && this.quests[0] != null) {
+    if (dist <2 && this.quests[0] != null) {
         this.convos.push(this.quests[0]);
         this.cleanerAct();
         this.quests.shift();
@@ -534,6 +574,9 @@ function RandomName() {
         'Nancy',
         'Rasputin',
         'Marx',
+        'Carol',
+        'Red',
+        'Green',
     ];
     for (let i=0;i<nameList.length;i++) {
         sg.observe(nameList[i].toLowerCase());

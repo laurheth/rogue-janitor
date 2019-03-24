@@ -22,8 +22,8 @@ var Game = {
     messNumbers:[0,0],
     screen: null,
     lastMessage: "",
-    coffeeThreshold:5,//Math.floor(33*ROT.RNG.getUniform())+33,
-    inviteOutThreshold:Math.floor(10*ROT.RNG.getUniform())+85,
+    coffeeThreshold:Math.floor(40*ROT.RNG.getUniform())+20,
+    inviteOutThreshold:Math.floor(15*ROT.RNG.getUniform())+80,
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -104,6 +104,7 @@ var Game = {
             } while (this.monsterList[sendIndex].retired == false);
 
             if (toReturn > this.inviteOutThreshold) {
+                this.inviteOutThreshold+=200;
                 this.monsterList[sendIndex].invitationQuest();
             }
             else {

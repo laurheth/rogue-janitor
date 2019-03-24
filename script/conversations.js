@@ -251,7 +251,7 @@ var ConversationBuilder = {
             {text:"Hey! You've done so much cleaning, holy cow!",any:1},
             {text:"Listen, a bunch of us like to get together for dinner after work. Wanna come tonight?",y:2,n:4},
             {text:"Radical! We'll leave together when you're ready to call it a day!",any:3},
-            {text:"Remember, it doesn't need to be spotless! Boss makes a dollar and you make a dime; call it a day on your own terms!",any:-1},
+            {text:"Remember, it doesn't need to be spotless! Your health and happiness are way more important than work; call it a day on your own terms!",any:-1},
             {text:"That's alright :) We go out every day, so you're welcome during any of them!",any:3},
         ];
         return newConvo;
