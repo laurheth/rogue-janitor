@@ -24,6 +24,7 @@ var ConversationBuilder = {
     
     randomGeneric: function() {
         let option = Math.floor(ROT.RNG.getUniform() * 10);
+//        option=5;
         switch(option) {
             default:
             case 0:
@@ -44,14 +45,14 @@ var ConversationBuilder = {
             return [{text:"Psst, don't tell adventurers, but all that 'blood' is just watered down ketchup.",any:1},
                     {text:"Real violence is a strict violation of workplace safety regulations!",any:-1}];
             case 5:
-            return [{text:"Gee whiz I love dogs. And cats. Humans have good taste in critters.",any:1},
+            return [{text:"Gee whiz I love dogs. And cats. Humans have good taste in critters.",any:1,conditions:{animal:false}},
                     {text:"What's your favourite type of critter?","I love cats!":2,"Dog's are good and I like to pet them!":3,"Rabbits are great!":4,"Rats are my favourite!":5,"I love horses. Neigh!":6,"I'm not really an animal person...":7},
-                    {text:"Wow! Cats! Me too!",any:-1},
-                    {text:"Wow! Dogs! Me too!",any:-1},
-                    {text:"Wow! Rabbits! Me too!",any:-1},
-                    {text:"Wow! Rats! Me too!",any:-1},
-                    {text:"Wow! Horses! Me too!",any:-1},
-                    {text:"That's legit! More for me to cuddle myself, then!",any:-1},
+                    {text:"Wow! Cats! Me too!",any:-1,globalTags:{animal:'cat'}},
+                    {text:"Wow! Dogs! Me too!",any:-1,globalTags:{animal:'dog'}},
+                    {text:"Wow! Rabbits! Me too!",any:-1,globalTags:{animal:'rabbit'}},
+                    {text:"Wow! Rats! Me too!",any:-1,globalTags:{animal:'rat'}},
+                    {text:"Wow! Horses! Me too!",any:-1,globalTags:{animal:'horse'}},
+                    {text:"That's legit! More for me to cuddle myself, then!",any:-1,globalTags:{animal:'none'}},
                     ];
             case 6:
             return [{text:"I really appreciate the work you do! This place literally wouldn't run without you.",any:-1}];
@@ -215,24 +216,18 @@ var ConversationBuilder = {
         var newConvo;
         newConvo = [
             {text:"Hey! I'm running to the cafe. Want anything?","I'd love a coffee!":1,"How about some tea?":2,"Can I have a donut?":3,"No thanks":4},
-            {text:"Wicked! I'll bring you some coffee when I've got it!",any:-1,tags:['coffee']},
-            {text:"Sweet! I'll bring you some tea when I've got it!",any:-1,tags:['tea']},
-            {text:"Awesome! I'll bring you back a donut when I've got it!",any:-1,tags:['donut']},
-            {text:"Okie doke!",any:-1,tags:['wantsNothing']},
+            {text:"Wicked! I'll bring you some coffee when I've got it!",any:-1,tags:{food:'coffee'}},
+            {text:"Sweet! I'll bring you some tea when I've got it!",any:-1,tags:{food:'tea'}},
+            {text:"Awesome! I'll bring you back a donut when I've got it!",any:-1,tags:{food:'donut'}},
+            {text:"Okie doke!",any:-1},
         ];
         return newConvo;
     },
 
     deliverConvo: function(tags) {
         let food;
-        if ('coffee' in tags) {
-            food='coffee';
-        }
-        else if ('tea' in tags) {
-            food='tea';
-        }
-        else if ('donut' in tags) {
-            food='donut';
+        if ('food' in tags) {
+            food = tags.food;
         }
         else {
             return null;

@@ -24,6 +24,7 @@ var Game = {
     lastMessage: "",
     coffeeThreshold:Math.floor(40*ROT.RNG.getUniform())+20,
     inviteOutThreshold:Math.floor(15*ROT.RNG.getUniform())+80,
+    convoTags:{},
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -549,6 +550,24 @@ var Game = {
         if ('cleanliness' in conditions) {
             if (this.cleanPercent() < conditions.cleanliness) {
                 success=false;
+            }
+        }
+
+        let keys = Object.getOwnPropertyNames(conditions);
+        for (let i=0;i<keys.length;i++) {
+            if (keys[i]=='cleanliness') {
+                continue;
+            }
+            if (keys[i] in Game.convoTags) {
+                if (typeof Game.convoTags[keys[i]] == typeof conditions[keys[i]]) {
+                    success &= (Game.convoTags[keys[i]] == conditions[keys[i]]); // do they match?
+                }
+                else {
+                    success &= conditions[keys[i]]; // condition is "does it exist?"
+                }
+            }
+            else {
+                success &= !(conditions[keys[i]]); // condition is "does it not exist?"
             }
         }
         return success;

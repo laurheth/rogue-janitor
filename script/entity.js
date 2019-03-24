@@ -123,8 +123,46 @@ Entity.prototype.doConvo = function() {
             let thisConvo=this.convos[this.convoIndex][this.convoInnerDex];
 
             if ('tags' in thisConvo) {
-                for (let i=0;i<thisConvo.tags.length;i++) {
-                    this.convoTags[thisConvo.tags[i]]=true;
+                let newTags=Object.getOwnPropertyNames(thisConvo.tags);
+                for (let i=0;i<newTags.length;i++) {
+                    if (newTags[i] in this.convoTags) {
+                        if (typeof this.convoTags[newTags[i]] == 'number') {
+                            if (typeof thisConvo.tags[newTags[i]] == 'number') {
+                                this.convoTags[newTags[i]] += thisConvo.tags[newTags[i]];
+                            }
+                            else {
+                                this.convoTags[newTags[i]]++;
+                            }
+                        }
+                        else {
+                            this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
+                        }
+                    }
+                    else {
+                        this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
+                    }
+                }
+            }
+
+            if ('globalTags' in thisConvo) {
+                let newTags=Object.getOwnPropertyNames(thisConvo.globalTags);
+                for (let i=0;i<newTags.length;i++) {
+                    if (newTags[i] in Game.convoTags) {
+                        if (typeof Game.convoTags[newTags[i]] == 'number') {
+                            if (typeof thisConvo.tags[newTags[i]] == 'number') {
+                                Game.convoTags[newTags[i]] += thisConvo.globalTags[newTags[i]];
+                            }
+                            else {
+                                Game.convoTags[newTags[i]]++;
+                            }
+                        }
+                        else {
+                            Game.convoTags[newTags[i]]=thisConvo.globalTags[newTags[i]];
+                        }
+                    }
+                    else {
+                        Game.convoTags[newTags[i]]=thisConvo.globalTags[newTags[i]];
+                    }
                 }
             }
 
