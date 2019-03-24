@@ -227,7 +227,7 @@ var ConversationBuilder = {
 
     deliverConvo: function(tags) {
         let food;
-        if ('food' in tags) {
+        if ('food' in tags && tags.food != false) {
             food = tags.food;
         }
         else {
@@ -238,6 +238,7 @@ var ConversationBuilder = {
             {text:"Here's the "+food+" you asked for!",any:1},
             {text:"I really hope you enjoy it :)",any:-1},
         ];
+        tags.food=false;
         return newConvo;
     },
 

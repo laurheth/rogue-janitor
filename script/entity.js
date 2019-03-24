@@ -85,6 +85,46 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     }
 };
 
+Entity.prototype.reset = function(x,y) {
+    this.x=x;
+    this.y=y;
+    this.hp=this.maxhp;
+    this.active=false;
+    this.alive=true;
+    this.spreading=null;
+    this.spreadCount=0;
+    this.damagedealt=0;
+    this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
+    this.home=null;
+    this.retired=false;
+    this.convoIndex=-1;
+    this.convoInnerDex=-1;
+    this.convos=[[{action:"is vaping.",any:-1}]];
+    this.rangeMessConvo=false;
+    this.dropMessConvo=false;
+    this.quests=[];
+    this.convoOptions={};
+    if ('monster' in tags) {
+        Game.scheduler.add(this,true);
+    }
+    let dx=0;
+    let dy=0;
+    while (!this.moveTo(x+dx,y+dy)) {
+        let r=0;
+        r++;
+        for (let i=-r;i<=r;i++) {
+            for (let j=-r;j<=r;j++) {
+                let testKey=(i+x)+','+(j+y);
+                if (testKey in Game.map && Game.map[testKey].passThrough()) {
+                    dx=i;
+                    dy=j;
+                }
+            }
+        }
+    }
+    return this;
+};
+
 Entity.prototype.adventurerAct = function() {
     if ('loot' in this.tags) {
         let key = this.x+','+this.y;
@@ -567,14 +607,17 @@ function AddMonster(x,y,level) {
     else if (level>=4) {
         options=['Balor','Hydra','Dragon'];
     }
+    let chosen=ROT.RNG.getItem(options);
     if (Game.monsterList.length>0) {
         for (let i=0;i<Game.monsterList.length;i++) {
             if (Game.monsterList[i].alive!=alive || Game.monsterList[i].retired) {
-                // do stuff here
+                if (Game.monsterList[i].species == chosen) {
+                    return Game.monsterList[i].reset(x,y);
+                }
             }
         }
     }
-    return GetEntity(ROT.RNG.getItem(options),x,y);
+    return GetEntity(chosen,x,y);
 }
 
 function GetEntity(name,x,y) {
