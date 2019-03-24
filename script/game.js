@@ -25,6 +25,7 @@ var Game = {
     coffeeThreshold:Math.floor(40*ROT.RNG.getUniform())+20,
     inviteOutThreshold:Math.floor(15*ROT.RNG.getUniform())+80,
     convoTags:{},
+    day: 1,
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -74,6 +75,8 @@ var Game = {
         });
 
         this.display.drawText(1,1,"Cleanliness: " + this.cleanPercent() + "%");
+        var dayCounter="Day: "+this.day;
+        this.display.drawText(2*this.offset[0]-dayCounter.length-2,1,dayCounter);
         if (Game.player.talking) {
             Game.player.talking.doConvo();
         }
@@ -129,6 +132,12 @@ var Game = {
         var breaker=0;
         let minMax=[4,10];
         let targSize=400;
+        this.map={};
+        this.freeCells=[];
+        this.hallCells=[];
+        this.scheduler.clear();
+        this.rooms=[];
+        this.staffRoomID=-1;
         while (this.freeCells.length<targSize && breaker<10000) {
             let roomSize = [ Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0], Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0] ];
             let roomCorner=[0,0];
@@ -167,7 +176,6 @@ var Game = {
         this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
         this.populateRooms();
         this.addDoors();
-
     },
 
     addDoors: function() {
@@ -514,6 +522,9 @@ var Game = {
                 if (this.monsterList[i].level != level) {
                     continue;
                 }
+                if (this.monsterList[i].retired) {
+                    continue; // retired never got reset. They were not in the dungeon today!
+                }
                 this.monsterList[i].alive=true;
                 this.monsterList[i].retired=true;
                 ConversationBuilder.buildConvos(this.monsterList[i]);
@@ -584,5 +595,10 @@ var Game = {
             }
         }
         return success;
-    }
+    },
+
+    nextDay() {
+        this.day++;
+        this.generateMap();
+    },
 };

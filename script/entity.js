@@ -104,7 +104,7 @@ Entity.prototype.reset = function(x,y) {
     this.dropMessConvo=false;
     this.quests=[];
     this.convoOptions={};
-    if ('monster' in tags) {
+    if ('monster' in this.tags) {
         Game.scheduler.add(this,true);
     }
     let dx=0;
@@ -216,6 +216,11 @@ Entity.prototype.doConvo = function() {
             if ('globalTags' in thisConvo) {
                 let newTags=Object.getOwnPropertyNames(thisConvo.globalTags);
                 for (let i=0;i<newTags.length;i++) {
+                    if (newTags[i]=='nextDay') {
+                        delete thisConvo.globalTags.nextDay;
+                        Game.nextDay();
+                        continue;
+                    }
                     if (newTags[i] in Game.convoTags) {
                         if (typeof Game.convoTags[newTags[i]] == 'number') {
                             if (typeof thisConvo.tags[newTags[i]] == 'number') {
@@ -237,6 +242,9 @@ Entity.prototype.doConvo = function() {
 
             this.convoOptions={};
             let linesNeeded;
+            if ('blackScreenMessage' in thisConvo) {
+                Game.display.clear();
+            }
             // how to continue line
             if ('any' in thisConvo) {
                 Game.display.drawText(2,2*Game.offset[1]-2,"Press [enter] to continue.");
@@ -254,7 +262,7 @@ Entity.prototype.doConvo = function() {
                 let choiceNum=0;
                 linesNeeded=1;
                 for (let i=0;i<options.length;i++) {
-                    if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions' || options[i]=='tags' || options[i]=='globalTags' || options[i] == 'message') {
+                    if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions' || options[i]=='tags' || options[i]=='globalTags' || options[i] == 'message' || options[i] == 'blackScreenMessage') {
                         continue;
                     }
                     linesNeeded++;
@@ -610,8 +618,9 @@ function AddMonster(x,y,level) {
     let chosen=ROT.RNG.getItem(options);
     if (Game.monsterList.length>0) {
         for (let i=0;i<Game.monsterList.length;i++) {
-            if (Game.monsterList[i].alive!=alive || Game.monsterList[i].retired) {
+            if (!Game.monsterList[i].alive || Game.monsterList[i].retired) {
                 if (Game.monsterList[i].species == chosen) {
+                    console.log(chosen +' - '+Game.monsterList[i].species);
                     return Game.monsterList[i].reset(x,y);
                 }
             }

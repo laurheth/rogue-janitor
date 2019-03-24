@@ -268,6 +268,7 @@ var ConversationBuilder = {
         }
         else {
             messages=[
+                "Leave for the day and home home?",
                 "You leave for the day, and head home.",
                 "You have a really relaxing evening at home! You read a book and play some video games.",
                 "Eventually, it's time to sleep. You go to bed and have a nice, full 8 hours of sleep."
@@ -286,8 +287,12 @@ var ConversationBuilder = {
             }
             else {
                 nextMsg.any=(i+1);
+                if (i>1) {
+                    nextMsg.blackScreenMessage=true;
+                }
             }
             if (i==(messages.length-1)) {
+                nextMsg.globalTags={nextDay:true};
                 nextMsg.any=-1;
             }
             nextConvo.push(nextMsg);

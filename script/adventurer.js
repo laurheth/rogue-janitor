@@ -102,6 +102,7 @@ Adventurer.prototype.damage = function() {
 
 // How does the brave and noble adventurer proceed?
 Adventurer.prototype.act = function () {
+    //console.log(this.turns);
     //console.log(this.hp);
     if (!this.active) {
         return;
