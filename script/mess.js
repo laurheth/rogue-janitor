@@ -47,6 +47,15 @@ Mess.prototype.spread = function(spreader) {
     }
 }
 
+Mess.prototype.plural = function() {
+    if ('pluralName' in this) {
+        return this.pluralName;
+    }
+    else {
+        return this.name+'s';
+    }
+}
+
 function makeMess(x,y,name) {
     var newMess;
     switch(name) {
@@ -73,7 +82,8 @@ function makeMess(x,y,name) {
         newMess = new Mess(x,y,",",'#f00','#000','"Blood" Footprints',3,"",0,'"Blood" Covered');
         break;
         case 'AcidPool':
-        newMess = new Mess(x,y,"~",'#0f0','#000','Acid',6,"AcidPrints",6,'Acid Covered');
+        newMess = new Mess(x,y,"~",'#0f0','#000','Acid Pool',6,"AcidPrints",6,'Acid Covered');
+        newMess.pluralName='Pools of Acid';
         break;
         case 'AcidPrints':
         newMess = new Mess(x,y,",",'#0f0','#000','Acid Footprints',3,"",0,'Acid Covered');
@@ -100,7 +110,7 @@ function makeMess(x,y,name) {
         newMess = new Mess(x,y,',','#00f','#000',"Wet Footprints",3,"",0,"Soggy");
         break;
         case 'Scorch':
-        newMess = new Mess(x,y,'*','#999','#000',"Scorch Marks",7,"",0,"Scorched");
+        newMess = new Mess(x,y,'*','#999','#000',"Scorch Mark",7,"",0,"Scorched");
         break;
         case 'SmashedStatue':
         newMess = new Mess(x,y,';','#ccc',"#000","Smashed Statue",12,null,0,"","fix");

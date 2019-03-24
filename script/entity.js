@@ -185,7 +185,7 @@ Entity.prototype.doConvo = function() {
                 let choiceNum=0;
                 linesNeeded=1;
                 for (let i=0;i<options.length;i++) {
-                    if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions' || options[i]=='tags' || options[i]=='globalTags') {
+                    if (options[i] == 'text' || options[i]=='action' || options[i]=='conditions' || options[i]=='tags' || options[i]=='globalTags' || options[i] == 'message') {
                         continue;
                     }
                     linesNeeded++;
@@ -205,6 +205,9 @@ Entity.prototype.doConvo = function() {
             }
             else if ('action' in thisConvo) {
                 Game.display.drawText(2,2*Game.offset[1]-3-linesNeeded,"%c{#ff0}"+this.name+" "+thisConvo.action+'%c{}'); 
+            }
+            else if ('message' in thisConvo) {
+                Game.display.drawText(2,2*Game.offset[1]-3-linesNeeded,thisConvo.message);
             }
             else {
                 Game.display.drawText(2,2*Game.offset[1]-3-linesNeeded,"%c{#ff0}"+this.name+" is vaping.%c{}"); 

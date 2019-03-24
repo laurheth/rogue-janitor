@@ -162,6 +162,7 @@ var ConversationBuilder = {
         let owner = mess.droppedBy;
         let item=false;
         let messname=mess.name.toLowerCase();
+        let messnamePlural=mess.plural();
         if (mess.cleanMethod == 'get') {
             if (owner.dropMessConvo) {
                 return;
@@ -190,15 +191,15 @@ var ConversationBuilder = {
                 "Oof, forgot to clean up after myself. Thanks for picking up my "+messname+"!",
             ];
             endMessages=[
-                "I know, I know... leaving "+messname+" lying around on the job. I'll do better tomorrow!",
+                "I know, I know... leaving "+messnamePlural+" lying around on the job. I'll do better tomorrow!",
             ];
         }
         else {
             startMessages=[
-                "Oh yeah the "+messname+" was me. Whoops.",
-                "Yeah my aim was a bit off on that one. Thanks for mopping up the "+messname+".",
-                "Aaahh I got a little carried away! Thanks for cleaning the "+messname+"!",
-                "That "+messname+" was my fault! Sorry about that.",
+                "Oh yeah those "+messnamePlural+" was me. Whoops.",
+                "Yeah my aim was a bit off on that one. Thanks for mopping up the "+messnamePlural+".",
+                "Aaahh I got a little carried away! Thanks for cleaning the "+messnamePlural+"!",
+                "Those "+messnamePlural+" were my fault! Sorry about that.",
             ];
             endMessages=[
                 "The adventurer sure felt it, though :) Worth it?",
