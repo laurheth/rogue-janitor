@@ -247,7 +247,7 @@ var ConversationBuilder = {
         newConvo = [
             {text:"Hey! You've done so much cleaning, holy cow!",any:1},
             {text:"Listen, a bunch of us like to get together for dinner after work. Wanna come tonight?",y:2,n:4},
-            {text:"Radical! We'll leave together when you're ready to call it a day!",any:3},
+            {text:"Radical! We'll leave together when you're ready to call it a day!",any:3,globalTags:{invitationAccepted:true}},
             {text:"Remember, it doesn't need to be spotless! Your health and happiness are way more important than work; call it a day on your own terms!",any:-1},
             {text:"That's alright :) We go out every day, so you're welcome during any of them!",any:3},
         ];
@@ -268,7 +268,7 @@ var ConversationBuilder = {
         }
         else {
             messages=[
-                "Leave for the day and home home?",
+                "Leave for the day and go home?",
                 "You leave for the day, and head home.",
                 "You have a really relaxing evening at home! You read a book and play some video games.",
                 "Eventually, it's time to sleep. You go to bed and have a nice, full 8 hours of sleep."

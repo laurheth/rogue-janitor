@@ -128,6 +128,7 @@ var Game = {
 
     generateMap: function() {
         this.corners=[[0,0],[0,0]];
+        this.messNumbers=[0,0];
         var roomCenters=[];
         var breaker=0;
         let minMax=[4,10];
@@ -432,10 +433,14 @@ var Game = {
                     let index = Math.floor(ROT.RNG.getUniform() * validForItems.length);
                     let parts = validForItems[index].split(',');
                     AddCollectible(parseInt(parts[0]), parseInt(parts[1]));
+                    validForItems.splice(index,1);
+                    if (validForItems.length<=0) {
+                        break;
+                    }
                 }
             }
 
-            let maxLevel = Math.floor(2*ROT.RNG.getUniform())+1;
+            let maxLevel = Math.floor(4*ROT.RNG.getUniform())+1;
             let danger = Math.max(1,Math.ceil(roomSize/40));
             if (this.rooms[i][4]<3) {
                 danger++;
@@ -556,8 +561,8 @@ var Game = {
             //Game.map[ughKey].lastSeen='?';
             //console.log('exit:'+exitDoor.x+","+exitDoor.y);
             let best=[0,0,100];
-            for (let i =-3;i<4;i++) {
-                for (let j=-3;j<4;j++) {
+            for (let i =-5;i<6;i++) {
+                for (let j=-2;j<3;j++) {
                     let fits=true;
                     for (let ii=-3;ii<3;ii++) {
                         let testKey=(exitDoor.x+i+ii)+','+(exitDoor.y+j);

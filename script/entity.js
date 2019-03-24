@@ -679,7 +679,7 @@ function GetEntity(name,x,y) {
         newEntity = new Entity(x,y,'\u03A8','#ff0','Candleabrum',1,{loot:true,mess:'SmashedCandle',splashes:'Scorch'});
         break;
         case 'ExitDoor':
-        newEntity = new Entity(x,y,'+','#fff','Exit Door',1,{exit:true},1,'#f00',true);
+        newEntity = new Entity(x,y,'X','#fff','Exit Door',1,{exit:true},1,'#c33',true);
     }
     return newEntity;
 }
