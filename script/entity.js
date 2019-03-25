@@ -17,15 +17,17 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.bgColor=bgColor;
     this.unionStarter=false;
     this.species=species;
-    if (firstName == 'Marx') {
-        this.unionStarter=true;
-    }
     if ('monster' in tags) {
         this.name=firstName+" the "+species;
+        if (firstName == 'Marx') {
+            this.unionStarter=true;
+            Game.unionist=this.name;
+        }
     }
     else {
         this.name=species;
     }
+
     this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
     this.home=null;
     this.retired=false;
@@ -647,7 +649,7 @@ function GetEntity(name,x,y) {
         newEntity = new Entity(x,y,"i",'#fd1',name,3,{monster:true,ranged:1,rangeMess:'Scorch',small:true});
         break;
         case 'Troll':
-        newEntity = new Entity(x,y,'T','#0c0',name,6,{monster:true},3);
+        newEntity = new Entity(x,y,'T','#0c0',name,6,{monster:true,big:true},3);
         break;
         case 'Naga':
         newEntity = new Entity(x,y,'N','#0c2',name,5,{monster:true,ranged:1,rangeMess:'AcidPool'},3);

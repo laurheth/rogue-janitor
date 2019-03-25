@@ -28,6 +28,7 @@ var Game = {
     inviteOutThreshold:Math.floor(15*ROT.RNG.getUniform())+80,
     convoTags:{},
     day: 1,
+    unionist: null,
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});

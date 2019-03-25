@@ -30,28 +30,114 @@ var ConversationBuilder = {
     },
     
     randomGeneric: function(speaker) {
-        let option = Math.floor(ROT.RNG.getUniform() * 10);
-//        option=5;
+        //let option = Math.floor(ROT.RNG.getUniform() * 10);
+        let possibilities=[
+            [
+                "It's nice to relax after a long day in the dungeon!"
+            ],
+            [
+                "Sometimes you're in a really remote room in the dungeon...",
+                "It takes forever for the adventurer to show up!",
+                "It's alright though. It's relaxing to hang out for a bit."
+            ],
+            [
+                "Adventuring is the biggest industry in dungeons. It's like tourism, but more fun."
+            ],
+            [
+                "Psst, don't tell adventurers, but all that 'blood' is just watered down ketchup.",
+                "Real violence is a strict violation of workplace safety regulations!"
+            ],
+            [
+                "Golly I could go for a hot cup of coffee right about now."
+            ],
+            [
+                "Dang I love fighting adventurers!"
+            ],
+        ];
+        if (Game.unionist != null) {
+            possibilities.push([
+                "This dungeon used to have a really bad boss. They were a mean wizard who hoarded wealth and kept docking our pay.",
+                "At some point, it got to be too much.",
+                Game.unionist+" set up a meeting, we started working together as comrades, and we overthrew the boss!",
+                "After all, there were many more of us, and money can't save you from the teeth and claws of organized monsters!",
+                "These days, we run the dungeon as a workers co-op. Everyone who is a part of the dungeon has a say, and everyone reaps the rewards!"
+            ]);
+        }
+        if ('big' in speaker.tags) {
+            possibilities.push([
+                "When you're a big monster like me, it's sometimes hard to move around.",
+                "When you think about it, dungeons are pretty cramped, underground spaces!",
+                "Luckily, for a "+speaker.species.toLowerCase()+", I'm pretty good at squeezing through hallways."
+            ]);
+            possibilities.push([
+                "With long limbs like mine, it's pretty easy to reach things that are really high up.",
+                "Smaller monsters sometimes can't reach things. And, you know what? That's okay!",
+                "I'm always happy to help my friends out!"
+            ]);
+            possibilities.push([
+                "I'm huge, which means I have huge guts, and a huge appetite!",
+                "Luckily, we have very generous and flexible lunch breaks here.",
+                "Always take your lunch break! Your health is more important than your job!"
+            ]);
+        }
+        if ('small' in speaker.tags) {
+            possibilities.push([
+                "When I first started working here, it was intimidating to work with some pretty huge monsters.",
+                "I'm really small, and they're really big! Honestly I was afraid they crush me by accident.",
+                "But in my time here I've learned...",
+                "They're all a bunch of softies!",
+                "You know what they say: The biggest monsters also have the biggest hearts!"
+            ]);
+            possibilities.push([
+                "This dungeon is full of little nooks and crannies. I love trying to fit into them."
+            ]);
+        }
+        if (speaker.species=='Hydra') {
+            possibilities.push([
+                "Hey, pull my head ;)",
+                "OH NO OH FRIG YOU PULLED ONE OF MY HEADS OFF",
+                "Hahaha just kidding, I've got like a dozen.",
+                "When you're a hydra you get to have some fun party tricks."
+            ]);
+        }
+        if ('rangeMess' in speaker.tags && speaker.tags.rangeMess=='Scorch') {
+            possibilities.push([
+                "Do I like fire? Yes of course.",
+                "But does that mean I like to just burn things, willy nilly?",
+                "...also yes."
+            ]);
+        }
+
+        if (speaker.species=='Imp' || speaker.species=='Balor') {
+            possibilities.push([
+                "The best thing about being a demonic being of eternally burning flame?",
+                "I always host the BEST barbeques.",
+                "Next time I have one, I'll invite you!"
+            ]);
+        }
+
+        if (speaker.species=='Naga') {
+            possibilities.push([
+                "Being a cold blooded snake monster is tough sometimes.",
+                "It gets so cold! Folks never seem to have the heat turned up enough.",
+                "Make sure you close doors behind you. It gets so drafty in here sometimes."
+            ]);
+            possibilities.push([
+                "Spitting acid is fun. It is pretty messy though.",
+                "On the bright side, it kills just about any bacteria that might be growing on a surface!",
+                "I havn't been sick in at least a few decades."
+            ]);
+        }
+
+        let fancyOptions=3;
+        let option=Math.floor(ROT.RNG.getUniform() * (possibilities.length+fancyOptions));
         switch(option) {
-            default:
             case 0:
-            return [{text:"It's nice to relax after a long day in the dungeon!",any:-1}];
-            case 1:
-            return [{text:"Sometimes you're in a really remote room in the dungeon...",any:1},
-                    {text:"It takes forever for the adventurer to show up!",any:2},
-                    {text:"It's alright though. It's relaxing to hang out for a bit.",any:-1},
-                    ];
-            case 2:
             return [{text:"Hey friend, want to vape with me?",y:1,n:2},
                     {action:"passes you their vape. It's nice!",any:-1},
                     {text:"Legit! Nobody should make you feel bad for saying no :)",any:-1},
                     ];
-            case 3:
-            return [{text:"Adventuring is the biggest industry in dungeons. It's like tourism, but more fun.",any:-1}];
-            case 4:
-            return [{text:"Psst, don't tell adventurers, but all that 'blood' is just watered down ketchup.",any:1},
-                    {text:"Real violence is a strict violation of workplace safety regulations!",any:-1}];
-            case 5:
+            case 1:
             return [{text:"Gee whiz I love dogs. And cats. Humans have good taste in critters.",any:1,conditions:{animal:false}},
                     {text:"What's your favourite type of critter?","I love cats!":2,"Dog's are good and I like to pet them!":3,"Rabbits are great!":4,"Rats are my favourite!":5,"I love horses. Neigh!":6,"I'm not really an animal person...":7},
                     {text:"Wow! Cats! Me too!",any:-1,globalTags:{animal:'cat'}},
@@ -61,11 +147,7 @@ var ConversationBuilder = {
                     {text:"Wow! Horses! Me too!",any:-1,globalTags:{animal:'horse'}},
                     {text:"That's legit! More for me to cuddle myself, then!",any:-1,globalTags:{animal:'none'}},
                     ];
-            case 6:
-            return [{text:"I really appreciate the work you do! This place literally wouldn't run without you.",any:-1}];
-            case 7:
-            return [{text:"Golly I could go for a hot cup of coffee right about now.",any:-1}];
-            case 8:
+            case 2:
             let other;
             if ('wantsCareer' in speaker.convoTags) {
                 other=speaker.convoTags.wantsCareer;
@@ -75,8 +157,18 @@ var ConversationBuilder = {
                 other=ROT.RNG.getItem(otheropts);
             }
             return [{text:"Being a dungeon monster is fun but I'd love to be a "+other+" someday.",any:-1,tags:{wantsCareer:other}}];
-            case 9:
-            return [{text:"Dang I love fighting adventurers!",any:-1}];
+            default:
+            option-=fancyOptions;
+            var newConvo=[];
+            for (let i=0;i<possibilities[option].length;i++) {
+                var next = {text:possibilities[option][i]};
+                if (i<(possibilities[option].length-1)) {
+                    next.any=(i+1);
+                }
+                else {
+                    next.any=-1;
+                }
+            }
         }
     },
 
