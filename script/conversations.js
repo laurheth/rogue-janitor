@@ -1,6 +1,7 @@
 var ConversationBuilder = {
     idleOptions: ["is vaping.","is enjoying a relaxing drink.","is reading a book.","is having a coffee.","is eating an apple."],
     buildConvos: function(speaker) {
+        speaker.playerTalkedToday=false;
         var newConversation = [[{action: ROT.RNG.getItem(this.idleOptions),any:-1}]];
         newConversation.push(this.randomGeneric(speaker));
 
@@ -30,6 +31,87 @@ var ConversationBuilder = {
     },
     
     specificConvo: function(speaker) {
+        if (speaker.playerInteractions > 2) {
+            if ('wantsCareer' in speaker.convoTags) {
+                if (speaker.convoTags.wantsCareer == 'painter' || speaker.convoTags.wantsCareer == 'artist') {
+                    if (ROT.RNG.getUniform() > 0.5) {
+                        speaker.convoTags.wantsToPaint = true;
+                    }
+                    if ('wantsToPaint' in speaker.convoTags && speaker.convoTags.wantsToPaint) {
+                        return [
+                            { text: "Hmm... I've been thinking, the colors on these walls are getting kind of old!", any: 1 },
+                            { text: "Do you think I should repaint the dungeon?", y: 2, n: 9 },
+                            {
+                                text: "Heck yeah! What colour do you think I should go with?",
+                                "How about a nice dark purple?": 3,
+                                "Lets make everything red!": 4,
+                                "Hmm... Lets make it green!": 5,
+                                "Blue, like the sky!": 6,
+                                "Lets make it a nice golden yellow!": 7,
+                                "Honestly, it's rustic, but I like the classic colours!": 8,
+                            },
+                            { text: "Heck yeah! I'll have the dungeon purple by tomorrow :D", any: -1, globalTags: { paint: 'purple' } },
+                            { text: "Bold! I like it. The dungeon will be red by tomorrow!", any: -1, globalTags: { paint: 'red' } },
+                            { text: "How vibrant! I'll paint it green overnight tonight :D", any: -1, globalTags: { paint: 'green' } },
+                            { text: "Nice! Good way to make the inside feel outdoorsy. Blue, coming up!", any: -1, globalTags: { paint: 'blue' } },
+                            { text: "I like it! The dungeon will be yellow by tomorrow :D", any: -1, globalTags: { paint: 'yellow' } },
+                            { text: "Fair! Sometimes, classic really is the best! I'll have it painted tomorrow :)", any: -1, globalTags: { paint: 'default' } },
+                            { text: "Fair! I just wanna practice on something... let me know if you change your mind!", any: -1 }
+                        ];
+                    }
+                }
+            }
+        }
+        if (speaker.playerInteractions > 1) {
+            if ('wantsCareer' in speaker.convoTags && !('appliedToSchool' in speaker.convoTags)) {
+                var newConvo= [
+                    {text: "So, I've been thinking of applying to Monster School to become a "+speaker.convoTags.wantsCareer+"!",any:1},
+                    {text: "This application is huge though, holy frig.",
+                        "Dang, that sucks. Thoughts and prayers, friend.":2,
+                        "You can do it! Maybe other folks in the dungeon could help out?":3,
+                        "Hey, I bet I could help out!":4,
+                    },
+                    {text:"Thanks! With the power of thoughts and prayers I'm certain this will work out!",any:-1,tags:{appliedToSchool:false}},
+                    {},
+                    {text:"Hey, thanks so much! Here's my cover letter, let me know what you think!",any:5},
+                    {message:"You read the paper...",any:6},
+                    {message:"Dear Monster School,",any:7},
+                    {message:"All my life, I have lived here, deep in a dungeon.",any:8},
+                    {message:"All that time, I have yearned to be a "+speaker.convoTags.wantsCareer+".",any:9},
+                    {message:"Please accept me to Monster School.",any:10},
+                    {message:"Sincerely, "+speaker.name,any:11},
+                    {text:"So, what do you think??","It's good!":12,"It's bad.":12},
+                    {text:"Thanks for your opinion!! I'll keep at it and let you know when I hear back :)",any:-1,tags:{appliedToSchool:true}},
+                ];
+                if (speaker.friends.length>0) {
+                    newConvo[3] = {text:"Yeah! My good friend "+ROT.RNG.getItem(speaker.friends)+" will help for sure!",any:-1,tags:{appliedToSchool:true}};
+                }
+                else {
+                    newConvo[3] = {text:"Hmm... yeah? Maybe I can ask around. Thanks!",any:-1,tags:{appliedToSchool:false}};
+                }
+                return newConvo;
+            }
+        }
+        if (speaker.playerInteractions>2) {
+            if ('wantsCareer' in speaker.convoTags && 'appliedToSchool' in speaker.convoTags && !('careerConcluded' in speaker.convoTags)) {
+                if (speaker.convoTags.appliedToSchool) {
+                    return [
+                        {text:"Hey! Guess what??",any:1},
+                        {text:"I got accepted to Monster School!!",any:2},
+                        {text:"I'm gonna take some classes and then become a professional "+speaker.convoTags.wantsCareer+"!",any:3},
+                        {text:"I'm so excited! Thank you so much for your help!",any:-1,tags:{careerConcluded:true}},
+                    ];
+                }
+                else {
+                    return [
+                        {action:"wipes away tears.",any:1},
+                        {text:"I didn't get into Monster School :(",any:2},
+                        {text:"I'm disappointed, but I've got a good gig here. Life goes on and all that.",any:-1},
+                        //{text:"I can still do "+speaker.convoTags.wantsCareer+" stuff as a hobby! I think that will be enough.",any:-1,tags:{careerConcluded:false}},
+                    ];
+                }
+            }
+        }
         return null;
     },
 
@@ -87,7 +169,7 @@ var ConversationBuilder = {
         if ('small' in speaker.tags) {
             possibilities.push([
                 "When I first started working here, it was intimidating to work with some pretty huge monsters.",
-                "I'm really small, and they're really big! Honestly I was afraid they crush me by accident.",
+                "I'm really small, and they're really big! Honestly I was afraid they would crush me by accident.",
                 "But in my time here I've learned...",
                 "They're all a bunch of softies!",
                 "You know what they say: The biggest monsters also have the biggest hearts!"
@@ -135,6 +217,19 @@ var ConversationBuilder = {
 
         let fancyOptions=3;
         let option=Math.floor(ROT.RNG.getUniform() * (possibilities.length+fancyOptions));
+
+        if (!('careerChange' in speaker.tags)) {
+            if (option==2) {
+                option+=Math.floor(ROT.RNG.getUniform() * (possibilities.length))+1;
+            }
+        }
+        else {
+            if (!('wantsCareer' in speaker.convoTags)) {
+                //if (ROT.RNG.getUniform())
+                option=2;
+            }
+        }
+
         switch(option) {
             case 0:
             return [{text:"Hey friend, want to vape with me?",y:1,n:2},

@@ -29,6 +29,7 @@ var Game = {
     convoTags:{},
     day: 1,
     unionist: null,
+    yendorPoints:0,
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -130,8 +131,51 @@ var Game = {
         return false;
     },
 
+    makeTheme: function(hueint) {
+        hue=parseFloat(hueint)/360.0;
+        //offsethue=parseFloat(hueint+60 % 360)/360.0;
+        var colors=[
+            ROT.Color.hsl2rgb([hue,0,0.6]),
+            ROT.Color.hsl2rgb([hue,0.5,0.4]),
+            ROT.Color.hsl2rgb([hue,0.5,0.2]),
+            ROT.Color.hsl2rgb([hue,0.5,0.6]),
+            ROT.Color.hsl2rgb([hue,0.5,0.3]),
+            ROT.Color.hsl2rgb([hue,0,0.6]),
+            ROT.Color.hsl2rgb([hue,0.2,0.2]),
+        ];
+        return {
+            floorColor:ROT.Color.toHex(colors[0]),
+            corridorWalls:[ROT.Color.toHex(colors[1]),ROT.Color.toHex(colors[2])],
+            roomWalls:[ROT.Color.toHex(colors[3]),ROT.Color.toHex(colors[4])],
+            doorColor:[ROT.Color.toHex(colors[5]),ROT.Color.toHex(colors[6])],
+        }
+    },
+
     generateDungeon: function() {
         var thetheme=this.dungeonTheme;
+        //thetheme=this.makeTheme(300.0/360);
+        if ('paint' in this.convoTags) {
+            switch(this.convoTags.paint) {
+                default:
+                thetheme=this.dungeonTheme;
+                break;
+                case 'purple':
+                thetheme=this.makeTheme(300);
+                break;
+                case 'red':
+                thetheme=this.makeTheme(0);
+                break;
+                case 'blue':
+                thetheme=this.makeTheme(240);
+                break;
+                case 'green':
+                thetheme=this.makeTheme(120);
+                break;
+                case 'yellow':
+                thetheme=this.makeTheme(60);
+                break;
+            }
+        }
         this.generateMap(Math.min(400+30*this.day,800),[4,10],5,thetheme);
         this.addStairs();
         this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);

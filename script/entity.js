@@ -23,11 +23,15 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
             this.unionStarter=true;
             Game.unionist=this.name;
         }
+        if (ROT.RNG.getUniform()>0.9) {
+            this.tags.careerChange=true;
+        }
     }
     else {
         this.name=species;
     }
-
+    this.playerTalkedToday=false;
+    this.playerInteractions=0;
     this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
     this.home=null;
     this.retired=false;
@@ -239,6 +243,7 @@ Entity.prototype.doConvo = function() {
                     }
                     else {
                         Game.convoTags[newTags[i]]=thisConvo.globalTags[newTags[i]];
+                        console.log(newTags[i]+':'+thisConvo.globalTags[newTags[i]])
                     }
                 }
             }
@@ -343,6 +348,10 @@ Entity.prototype.handleEvent = function(e) {
 // talk to
 Entity.prototype.cleanerAct = function() {
     if ('monster' in this.tags) {
+        if (!this.playerTalkedToday) {
+            this.playerInteractions++;
+            this.playerTalkedToday=true;
+        }
         this.metPlayer=true;
         Game.player.talking=this;
         let choice=this.convos.length-1;
