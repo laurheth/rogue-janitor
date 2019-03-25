@@ -2,7 +2,7 @@ var ConversationBuilder = {
     idleOptions: ["is vaping.","is enjoying a relaxing drink.","is reading a book.","is having a coffee.","is eating an apple."],
     buildConvos: function(speaker) {
         var newConversation = [[{action: ROT.RNG.getItem(this.idleOptions),any:-1}]];
-        newConversation.push(this.randomGeneric());
+        newConversation.push(this.randomGeneric(speaker));
 
         if (speaker.friends.length>0) {
             let friend=ROT.RNG.getItem(speaker.friends);
@@ -23,7 +23,7 @@ var ConversationBuilder = {
         speaker.lastDay = Game.day;
     },
     
-    randomGeneric: function() {
+    randomGeneric: function(speaker) {
         let option = Math.floor(ROT.RNG.getUniform() * 10);
 //        option=5;
         switch(option) {
@@ -60,8 +60,15 @@ var ConversationBuilder = {
             case 7:
             return [{text:"Golly I could go for a hot cup of coffee right about now.",any:-1}];
             case 8:
-            let other=["chef","web developer","game developer","actor","dancer","musician","doctor","vet","nurse","lawyer","paralegal"];
-            return [{text:"Being a dungeon monster is fun but I'd love to be a "+ROT.RNG.getItem(other)+" someday.",any:-1}];
+            let other;
+            if ('wantsCareer' in speaker.convoTags) {
+                other=speaker.convoTags.wantsCareer;
+            }
+            else {
+                let otheropts=["chef","web developer","game developer","actor","dancer","musician","doctor","vet","nurse","lawyer","paralegal"];
+                other=ROT.RNG.getItem(otheropts);
+            }
+            return [{text:"Being a dungeon monster is fun but I'd love to be a "+other+" someday.",any:-1,tags:{wantsCareer:other}}];
             case 9:
             return [{text:"Dang I love fighting adventurers!",any:-1}];
         }
