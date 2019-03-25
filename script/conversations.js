@@ -418,7 +418,7 @@ var ConversationBuilder = {
         endMessages.push("You're really fantastic, you know that?");
         endMessages.push("I hope you know that everybody here loves you, and loves your work.");
 
-        var newConvo= [{text:ROT.RNG.getItem(startMessages),any:1},{text:ROT.RNG.getItem(endMessages),any:-1}];
+        var newConvo= [{text:ROT.RNG.getItem(startMessages),any:1},{text:ROT.RNG.getItem(endMessages),any:-1,globalTags:{yendorPoints:2}}];
         owner.convos.push(newConvo);
     },
 
