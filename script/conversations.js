@@ -20,6 +20,7 @@ var ConversationBuilder = {
             newConversation.push(this.meetingPlayer(speaker));
         }
         speaker.convos=newConversation;
+        speaker.lastDay = Game.day;
     },
     
     randomGeneric: function() {

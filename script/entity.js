@@ -38,6 +38,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.quests=[];
     this.convoOptions={};
     this.convoTags={};
+    this.lastDay=1;
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
         Game.monsterList.push(this);
@@ -637,13 +638,13 @@ function GetEntity(name,x,y) {
         newEntity = new Entity(x,y,'g','#0f0',name,2,{monster:true},1);
         break;
         case 'Kobold':
-        newEntity = new Entity(x,y,'k','#fa0',name,2,{monster:true},1);
+        newEntity = new Entity(x,y,'k','#fa0',name,2,{monster:true,small:true},1);
         break;
         case 'Ogre':
-        newEntity = new Entity(x,y,'O','#fa0',name,4,{monster:true},2);
+        newEntity = new Entity(x,y,'O','#fa0',name,4,{monster:true,big:true},2);
         break;
         case 'Imp':
-        newEntity = new Entity(x,y,"i",'#fd1',name,3,{monster:true,ranged:1,rangeMess:'Scorch'});
+        newEntity = new Entity(x,y,"i",'#fd1',name,3,{monster:true,ranged:1,rangeMess:'Scorch',small:true});
         break;
         case 'Troll':
         newEntity = new Entity(x,y,'T','#0c0',name,6,{monster:true},3);
@@ -652,13 +653,13 @@ function GetEntity(name,x,y) {
         newEntity = new Entity(x,y,'N','#0c2',name,5,{monster:true,ranged:1,rangeMess:'AcidPool'},3);
         break;
         case 'Balor':
-        newEntity = new Entity(x,y,'&','#f00',name,8,{monster:true,ranged:1,rangeMess:'Scorch'},4);
+        newEntity = new Entity(x,y,'&','#f00',name,8,{monster:true,ranged:1,rangeMess:'Scorch',big:true},4);
         break;
         case 'Hydra':
-        newEntity = new Entity(x,y,'H','#fa0',name,9,{monster:true},4);
+        newEntity = new Entity(x,y,'H','#fa0',name,9,{monster:true,big:true},4);
         break;
         case 'Dragon':
-        newEntity = new Entity(x,y,'D','#0f0',name,7,{monster:true,ranged:2,rangeMess:'Scorch'},4)
+        newEntity = new Entity(x,y,'D','#0f0',name,7,{monster:true,ranged:2,rangeMess:'Scorch',big:true},4)
         break;
         case 'Gold':
         newEntity = new Entity(x,y,'$','#ff0',name,1,{loot:true});

@@ -36,8 +36,8 @@ var Game = {
         this.scheduler = new ROT.Scheduler.Simple();
         this.player = new Player(-1,-1,-1);
         //this.scheduler.add(this.player);
-        //this.generateDungeon();
-        this.generateDiner();
+        this.generateDungeon();
+        //this.generateDiner();
         this.fov = new ROT.FOV.PreciseShadowcasting(function(x,y){
             return Game.lightPasses(x,y);
         });
