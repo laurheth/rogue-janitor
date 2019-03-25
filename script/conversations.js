@@ -15,7 +15,13 @@ var ConversationBuilder = {
         else if (speaker.damagedealt<=1 && ROT.RNG.getUniform()>0.8) {
             newConversation.push(this.noDamage(speaker));
         }
-        newConversation.push(this.impressed());
+        //newConversation.push(this.impressed());
+        let specificConvo = this.specificConvo(speaker);
+
+        if (specificConvo != null) {
+            newConversation.push(specificConvo);
+        }
+
         if (!speaker.metPlayer) {
             newConversation.push(this.meetingPlayer(speaker));
         }
@@ -65,7 +71,7 @@ var ConversationBuilder = {
                 other=speaker.convoTags.wantsCareer;
             }
             else {
-                let otheropts=["chef","web developer","game developer","actor","dancer","musician","doctor","vet","nurse","lawyer","paralegal"];
+                let otheropts=["chef","web developer","game developer","painter","artist","dancer","musician","doctor","vet","nurse","lawyer","paralegal"];
                 other=ROT.RNG.getItem(otheropts);
             }
             return [{text:"Being a dungeon monster is fun but I'd love to be a "+other+" someday.",any:-1,tags:{wantsCareer:other}}];
@@ -265,7 +271,7 @@ var ConversationBuilder = {
     exitPrompt: function() {
         var nextConvo=[];
         let messages;
-        if ('invitationAccepted' in Game.convoTags) {
+        if ('invitationAccepted' in Game.convoTags && Game.convoTags.invitationAccepted) {
             messages=[
                 "Leave for the day and head out with everyone to dinner?",
                 "You and your comrades leave together for dinner.",
@@ -300,7 +306,7 @@ var ConversationBuilder = {
                 }
             }
             if (i==(messages.length-1)) {
-                nextMsg.globalTags={nextDay:true};
+                nextMsg.globalTags={nextDay:true,invitationAccepted:false};
                 nextMsg.any=-1;
             }
             nextConvo.push(nextMsg);
