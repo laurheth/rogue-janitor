@@ -228,6 +228,15 @@ Entity.prototype.doConvo = function() {
                         Game.nextDay();
                         continue;
                     }
+                    if (newTags[i]=='yendorPoints') {
+                        Game.yendorPoints += thisConvo.globalTags.yendorPoints;
+                        delete thisConvo.globalTags.yendorPoints;
+                        continue;
+                    }
+                    if (newTags[i]=='victory') {
+                        Game.victory=true;
+                        Game.player.reach=2;
+                    }
                     if (newTags[i] in Game.convoTags) {
                         if (typeof Game.convoTags[newTags[i]] == 'number') {
                             if (typeof thisConvo.tags[newTags[i]] == 'number') {

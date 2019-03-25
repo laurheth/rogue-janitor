@@ -29,7 +29,9 @@ var Game = {
     convoTags:{},
     day: 1,
     unionist: null,
+    targetPoints:1500,
     yendorPoints:0,
+    victory:false,
     init: function() {
         this.screen = document.getElementById("gameContainer");
         this.display = new ROT.Display({fontSize:16});
@@ -698,6 +700,12 @@ var Game = {
 
     nextDay() {
         this.day++;
+        this.yendorPoints += this.cleanPercent();
+        if (this.yendorPoints>=this.targetPoints && !this.victory) {
+            this.player.cutscene=ConversationBuilder.victoryPrompt();
+            this.victory=true;
+        }
+        //this.engine.unlock();
         this.generateDungeon();
     },
 };

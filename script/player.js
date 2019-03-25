@@ -32,6 +32,8 @@ function Player(x,y) {
     this.spreading=null;
     this.spreadCount=0;
     this.talking=null;
+    this.reach=1;
+    this.cutscene=null;
 }
 
 Player.prototype.getArt = function() {
@@ -48,6 +50,17 @@ Player.prototype.act = function() {
             newMess.spread(this);
         }
     }
+    if (this.cutscene != null) {
+        Game.player.talking=Game.monsterList[0];
+        Game.monsterList[0].convoIndex=Game.monsterList[0].convos.length;
+        Game.monsterList[0].convoInnerDex=0;
+        //Game.monsterList[0].convos=[];
+        Game.monsterList[0].convos.push(this.cutscene);
+        this.cutscene=null;
+        window.addEventListener("keydown",Game.monsterList[0]);
+        window.addEventListener("keypress",Game.monsterList[0]);
+    }
+    
     Game.drawMap();
     window.addEventListener("keydown", this);
 }
@@ -81,8 +94,8 @@ Player.prototype.openClose=function(openclose) {
 }
 
 Player.prototype.clean = function(verb) {
-    for (let i=-1;i<2;i++) {
-        for (let j=-1;j<2;j++) {
+    for (let i=-this.reach;i<=this.reach;i++) {
+        for (let j=-this.reach;j<=this.reach;j++) {
             if (i==0 && j==0) {
                 continue;
             }

@@ -53,7 +53,7 @@ Adventurer.prototype.nextDestination = function() {
         }
     }
     
-    let best=[-1,1000];
+    let best=[-1,10000];
     for (let i=0;i<this.destinations.length;i++) {
         let dist = Math.abs(this.x - this.destinations[i][0]) + Math.abs(this.y - this.destinations[i][1]);
         if (dist < best[1]) {
@@ -102,7 +102,7 @@ Adventurer.prototype.damage = function() {
 
 // How does the brave and noble adventurer proceed?
 Adventurer.prototype.act = function () {
-    //console.log(this.turns);
+    console.log(this.turns);
     //console.log(this.hp);
     if (!this.active) {
         return;

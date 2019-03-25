@@ -31,7 +31,7 @@ var ConversationBuilder = {
     },
     
     specificConvo: function(speaker) {
-        if (speaker.playerInteractions > 2) {
+        if (speaker.playerInteractions > 0) {
             if ('wantsCareer' in speaker.convoTags) {
                 if (speaker.convoTags.wantsCareer == 'painter' || speaker.convoTags.wantsCareer == 'artist') {
                     if (ROT.RNG.getUniform() > 0.5) {
@@ -49,6 +49,7 @@ var ConversationBuilder = {
                                 "Blue, like the sky!": 6,
                                 "Lets make it a nice golden yellow!": 7,
                                 "Honestly, it's rustic, but I like the classic colours!": 8,
+                                globalTags:{yendorPoints:20}
                             },
                             { text: "Heck yeah! I'll have the dungeon purple by tomorrow :D", any: -1, globalTags: { paint: 'purple' } },
                             { text: "Bold! I like it. The dungeon will be red by tomorrow!", any: -1, globalTags: { paint: 'red' } },
@@ -62,7 +63,7 @@ var ConversationBuilder = {
                 }
             }
         }
-        if (speaker.playerInteractions > 1) {
+        if (speaker.playerInteractions > 2) {
             if ('wantsCareer' in speaker.convoTags && !('appliedToSchool' in speaker.convoTags)) {
                 var newConvo= [
                     {text: "So, I've been thinking of applying to Monster School to become a "+speaker.convoTags.wantsCareer+"!",any:1},
@@ -81,7 +82,7 @@ var ConversationBuilder = {
                     {message:"Please accept me to Monster School.",any:10},
                     {message:"Sincerely, "+speaker.name,any:11},
                     {text:"So, what do you think??","It's good!":12,"It's bad.":12},
-                    {text:"Thanks for your opinion!! I'll keep at it and let you know when I hear back :)",any:-1,tags:{appliedToSchool:true}},
+                    {text:"Thanks for your opinion!! I'll keep at it and let you know when I hear back :)",any:-1,tags:{appliedToSchool:true},globalTags:{yendorPoints:50}},
                 ];
                 if (speaker.friends.length>0) {
                     newConvo[3] = {text:"Yeah! My good friend "+ROT.RNG.getItem(speaker.friends)+" will help for sure!",any:-1,tags:{appliedToSchool:true}};
@@ -92,14 +93,14 @@ var ConversationBuilder = {
                 return newConvo;
             }
         }
-        if (speaker.playerInteractions>2) {
+        if (speaker.playerInteractions>4) {
             if ('wantsCareer' in speaker.convoTags && 'appliedToSchool' in speaker.convoTags && !('careerConcluded' in speaker.convoTags)) {
                 if (speaker.convoTags.appliedToSchool) {
                     return [
                         {text:"Hey! Guess what??",any:1},
                         {text:"I got accepted to Monster School!!",any:2},
                         {text:"I'm gonna take some classes and then become a professional "+speaker.convoTags.wantsCareer+"!",any:3},
-                        {text:"I'm so excited! Thank you so much for your help!",any:-1,tags:{careerConcluded:true}},
+                        {text:"I'm so excited! Thank you so much for your help!",any:-1,tags:{careerConcluded:true},globalTags:{yendorPoints:50}},
                     ];
                 }
                 else {
@@ -462,6 +463,27 @@ var ConversationBuilder = {
         return newConvo;
     },
 
+    victoryPrompt: function() {
+        var nextConvo=[];
+        var victoryScene = [
+            "When you arrive at work, everyone greets you enthusiastically!",
+            "You've been here for a couple of weeks, and have already made a fantastic impression!",
+            "Everyone has banded together, and given you the best gift a dungeon janitor can ask for:",
+            "You have been gifted the legendary %c{#ff0}Mop of Yendor%c{}!",
+            "It's mystic energies flow through your hands. You feel like your cleaning abilities have become supercharged. No mess will stand in your way again!",
+            "%c{#ff0}You have won the hearts of your comrades and, by extension, this game. Thank you for playing!%c{}"
+        ];
+        for (let i = 0; i < victoryScene.length; i++) {
+            var nextMsg = { message: victoryScene[i], any: (nextConvo.length + 1) };
+            if (i == (victoryScene.length - 1)) {
+                nextMsg.globalTags = { victory: true };
+                nextMsg.any = -1;
+            }
+            nextConvo.push(nextMsg);
+        }
+        return nextConvo;
+    },
+
     exitPrompt: function() {
         var nextConvo=[];
         let messages;
@@ -502,9 +524,14 @@ var ConversationBuilder = {
             if (i==(messages.length-1)) {
                 nextMsg.globalTags={nextDay:true,invitationAccepted:false};
                 nextMsg.any=-1;
+                //if (Game.yendorPoints+Game.cleanPercent() > Game.targetPoints && !Game.victory) {
+                //    nextMsg.any=(i+1);
+                //}
             }
+
             nextConvo.push(nextMsg);
         }
+        
         return nextConvo;
     },
 
