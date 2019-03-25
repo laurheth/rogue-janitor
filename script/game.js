@@ -9,10 +9,12 @@ var Game = {
     engine:null,
     offset: [],
     corners:[],
-    floorColor:'#ddd',
-    corridorWalls:['#b82','#842'],
-    roomWalls:['#ddd','#777'],
-    doorColor:['#ddd','#842'],
+    dungeonTheme:{
+        floorColor:'#ddd',
+        corridorWalls:['#b82','#842'],
+        roomWalls:['#ddd','#777'],
+        doorColor:['#ddd','#842'],
+    },
     staffRoomID:-1,
     stairs:[[0,0,-1],[0,0,-1]],
     nameRegistry:[],
@@ -34,7 +36,8 @@ var Game = {
         this.scheduler = new ROT.Scheduler.Simple();
         this.player = new Player(-1,-1,-1);
         //this.scheduler.add(this.player);
-        this.generateMap();
+        //this.generateDungeon();
+        this.generateDiner();
         this.fov = new ROT.FOV.PreciseShadowcasting(function(x,y){
             return Game.lightPasses(x,y);
         });
@@ -126,13 +129,37 @@ var Game = {
         return false;
     },
 
-    generateMap: function() {
+    generateDungeon: function() {
+        var thetheme=this.dungeonTheme;
+        this.generateMap(Math.min(400+30*this.day,800),[4,10],5,thetheme);
+        this.addStairs();
+        this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
+        this.populateRooms();
+        this.addDoors(thetheme);
+    },
+
+    generateDiner: function() {
+        var thetheme = {
+            floorColor:'#ddd',
+            corridorWalls:['#a0a','#505'],
+            roomWalls:['#f0f','#808'],
+            doorColor:['#ddd','#842'],
+        };
+        this.generateMap(300,[6,8],0,thetheme);
+        //this.addStairs();
+        //this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
+        //this.populateRooms();
+        this.addDoors(thetheme);
+        this.scheduler.add(Game.player,true);
+    },
+
+    generateMap: function(targSize = Math.min(400+30*this.day,800) , minMax=[4,10], spacing=5,theme=this.dungeonTheme) {
         this.corners=[[0,0],[0,0]];
         this.messNumbers=[0,0];
         var roomCenters=[];
         var breaker=0;
-        let minMax=[4,10];
-        let targSize=Math.min(400+30*this.day,800);
+        //let minMax=[4,10];
+        //let targSize=Math.min(400+30*this.day,800);
         this.map={};
         this.freeCells=[];
         this.hallCells=[];
@@ -143,7 +170,7 @@ var Game = {
             let roomSize = [ Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0], Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0] ];
             let roomCorner=[0,0];
             var breaker2=0;
-            while (!this.checkFits(roomSize,roomCorner)) {
+            while (!this.checkFits(roomSize,roomCorner,spacing)) {
                 roomCorner[0] += (Math.floor(3*ROT.RNG.getUniform())-1);
                 roomCorner[1] += (Math.floor(3*ROT.RNG.getUniform())-1);
                 roomSize = [ Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0], Math.floor((minMax[1]-minMax[0])*ROT.RNG.getUniform())+minMax[0] ];
@@ -159,27 +186,21 @@ var Game = {
             else {
                 roomCenters = [[roomCorner[0]+Math.floor(roomSize[0]/2) , roomCorner[1]+Math.floor(roomSize[1]/2)]];
             }
-            this.buildRoom(roomSize,roomCorner);
+            this.buildRoom(roomSize,roomCorner,theme);
             if (ROT.RNG.getUniform()>0.5 && this.freeCells.length<targSize) {
-                this.connectRoom(roomCenters,1);
-                this.connectRoom(roomCenters,0);
+                this.connectRoom(roomCenters,1,theme);
+                this.connectRoom(roomCenters,0,theme);
             }
             else {
-                this.connectRoom(roomCenters,-1);
+                this.connectRoom(roomCenters,-1,theme);
             }
             breaker++;
         }
         this.staffRoomID = this.rooms.length-1;
         this.player.moveTo(roomCenters[roomCenters.length-1][0],roomCenters[roomCenters.length-1][1]);
-//        this.player.x = roomCenters[roomCenters.length-1][0];
-//        this.player.y = roomCenters[roomCenters.length-1][1];
-        this.addStairs();
-        this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
-        this.populateRooms();
-        this.addDoors();
     },
 
-    addDoors: function() {
+    addDoors: function(theme=this.dungeonTheme) {
         for (let i=this.corners[0][0];i <= this.corners[1][0];i++) {
             for (let j=this.corners[0][1]; j<= this.corners[1][1];j++) {
                 let key = i+','+j;
@@ -208,17 +229,17 @@ var Game = {
                     if (touchRoom && (orthoCount==2 || orthoCount==6) && count>2 && this.hallCells.indexOf(key)>=0) {
                         this.map[key].char='+';
                         this.map[key].door='-';
-                        this.map[key].color=this.doorColor[0];
-                        this.map[key].bgColor=this.doorColor[1];
+                        this.map[key].color=theme.doorColor[0];
+                        this.map[key].bgColor=theme.doorColor[1];
                     }
                 }
             }
         }
     },
 
-    checkFits: function(roomSize,roomCorner) {
-        for (let i=-5;i<roomSize[0]+5;i++) {
-            for (let j=-5;j<roomSize[1]+5;j++) {
+    checkFits: function(roomSize,roomCorner,spacing=5) {
+        for (let i=-spacing;i<roomSize[0]+spacing;i++) {
+            for (let j=-spacing;j<roomSize[1]+spacing;j++) {
                 let key = (i+roomCorner[0])+','+(j+roomCorner[1]);
                 if (key in this.map) {
                     return false;
@@ -228,7 +249,7 @@ var Game = {
         return true;
     },
 
-    buildRoom: function(roomSize,roomCorner) {
+    buildRoom: function(roomSize,roomCorner,theme=this.dungeonTheme) {
         if (this.rooms.length<1) {
             this.rooms=[ [roomCorner[0],roomCorner[1],roomCorner[0]+roomSize[0],roomCorner[1]+roomSize[1] , 0] ]
         }
@@ -242,12 +263,12 @@ var Game = {
                 //console.log(key);
                 if (i>=0 && i<roomSize[0] && j>=0 && j<roomSize[1]) {
                     //this.map[key]='.';
-                    this.map[key] = new Tile(i,j,'.',this.floorColor,'#000',true,true);
+                    this.map[key] = new Tile(i,j,'.',theme.floorColor,'#000',true,true);
                     this.freeCells.push(key);
                 }
                 else {
                     //this.map[key]='#';
-                    this.map[key] = new Tile(i,j,'#',this.roomWalls[0],this.roomWalls[1],false,false);
+                    this.map[key] = new Tile(i,j,'#',theme.roomWalls[0],theme.roomWalls[1],false,false);
                     if (i+roomCorner[0] < this.corners[0][0]) {
                         this.corners[0][0] = i+roomCorner[0];
                     }
@@ -274,7 +295,7 @@ var Game = {
         return -1;
     },
 
-    connectRoom: function(roomCenters,xy=-1) {
+    connectRoom: function(roomCenters,xy=-1,theme=this.dungeonTheme) {
         //console.log(roomCenters);
 
         let lastCenter = [roomCenters[roomCenters.length-1][0], roomCenters[roomCenters.length-1][1]];
@@ -326,11 +347,11 @@ var Game = {
                                 this.hallCells.push(key);
                             }
                             //this.map[key]='.';
-                            this.map[key] = new Tile(i,j,'.',this.floorColor,'#000',true,true);
+                            this.map[key] = new Tile(i,j,'.',theme.floorColor,'#000',true,true);
                         }
                         else if (!(key in this.map)) {
                             //this.map[key]='#';
-                            this.map[key] = new Tile(i,j,'#',this.corridorWalls[0],this.corridorWalls[1],false,false);
+                            this.map[key] = new Tile(i,j,'#',theme.corridorWalls[0],theme.corridorWalls[1],false,false);
                         }
                     }
                 }
@@ -584,7 +605,7 @@ var Game = {
                 let letters = ['*', 'E', 'X', 'I', 'T', '*'];
                 for (let ii = -3; ii < 3; ii++) {
                     let testKey = (exitDoor.x + best[0] + ii) + ',' + (exitDoor.y + best[1]);
-                    Game.map[testKey] = new Tile(best[0], best[1], letters[ii + 3], this.roomWalls[0], this.roomWalls[1], false, false);
+                    Game.map[testKey] = new Tile(best[0], best[1], letters[ii + 3], '#fff', '#000', false, false);
                     Game.map[testKey].lastSeen = letters[ii + 3];
                 }
             }
@@ -632,6 +653,6 @@ var Game = {
 
     nextDay() {
         this.day++;
-        this.generateMap();
+        this.generateDungeon();
     },
 };
