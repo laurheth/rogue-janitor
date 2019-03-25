@@ -133,17 +133,17 @@ var Game = {
         return false;
     },
 
-    makeTheme: function(hueint) {
+    makeTheme: function(hueint,sat=0.5) {
         hue=parseFloat(hueint)/360.0;
         //offsethue=parseFloat(hueint+60 % 360)/360.0;
         var colors=[
+            ROT.Color.hsl2rgb([hue,0.1*sat,0.6]),
+            ROT.Color.hsl2rgb([hue,sat,0.4]),
+            ROT.Color.hsl2rgb([hue,sat,0.2]),
+            ROT.Color.hsl2rgb([hue,sat,0.6]),
+            ROT.Color.hsl2rgb([hue,sat,0.3]),
             ROT.Color.hsl2rgb([hue,0,0.6]),
-            ROT.Color.hsl2rgb([hue,0.5,0.4]),
-            ROT.Color.hsl2rgb([hue,0.5,0.2]),
-            ROT.Color.hsl2rgb([hue,0.5,0.6]),
-            ROT.Color.hsl2rgb([hue,0.5,0.3]),
-            ROT.Color.hsl2rgb([hue,0,0.6]),
-            ROT.Color.hsl2rgb([hue,0.2,0.2]),
+            ROT.Color.hsl2rgb([hue,0.5*sat,0.2]),
         ];
         return {
             floorColor:ROT.Color.toHex(colors[0]),

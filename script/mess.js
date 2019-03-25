@@ -78,6 +78,9 @@ function makeMess(x,y,name) {
         case 'BloodPool':
         newMess = new Mess(x,y,"~",'#f00','#000','"Blood"',6,"BloodPrints",6,'"Blood" Covered');
         break;
+        case 'HydraHead':
+        newMess = new Mess(x,y,'\u2082','#e00','#000','Hydra Head',11,'BloodPool',1,null,"get");
+        break;
         case 'BloodPrints':
         newMess = new Mess(x,y,",",'#f00','#000','"Blood" Footprints',3,"",0,'"Blood" Covered');
         break;

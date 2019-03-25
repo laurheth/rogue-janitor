@@ -405,7 +405,7 @@ var ConversationBuilder = {
         }
         else {
             startMessages=[
-                "Oh yeah those "+messnamePlural+" was me. Whoops.",
+                "Oh yeah those "+messnamePlural+" were me. Whoops.",
                 "Yeah my aim was a bit off on that one. Thanks for mopping up the "+messnamePlural+".",
                 "Aaahh I got a little carried away! Thanks for cleaning the "+messnamePlural+"!",
                 "Those "+messnamePlural+" were my fault! Sorry about that.",

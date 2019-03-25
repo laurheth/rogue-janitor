@@ -17,6 +17,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.bgColor=bgColor;
     this.unionStarter=false;
     this.species=species;
+    this.bonusMess=null;
     if ('monster' in tags) {
         this.name=firstName+" the "+species;
         if (firstName == 'Marx') {
@@ -158,6 +159,13 @@ Entity.prototype.adventurerAct = function() {
         let dy = Math.floor(3*ROT.RNG.getUniform())-1;
         let newMess1=makeMess(this.x,this.y,"BloodPool");
         let newMess2=makeMess(this.x+dx,this.y+dy,"BloodPool");
+        if (this.bonusMess != null) {
+            let testKey=(this.x+dy)+','+(this.y+dx);
+            if (testKey in Game.map && Game.map[testKey].passable && !(Game.map[testKey].important)) {
+                let newMess3=makeMess(this.x+dy,this.y+dx,this.bonusMess);
+                newMess3.droppedBy=this;    
+            }
+        }
         if (this.hp <= 0) {
             this.alive=false;
             let key = this.x+','+this.y;
@@ -359,6 +367,7 @@ Entity.prototype.cleanerAct = function() {
     if ('monster' in this.tags) {
         if (!this.playerTalkedToday) {
             this.playerInteractions++;
+            Game.yendorPoints+=5;
             this.playerTalkedToday=true;
         }
         this.metPlayer=true;
@@ -677,6 +686,7 @@ function GetEntity(name,x,y) {
         break;
         case 'Hydra':
         newEntity = new Entity(x,y,'H','#fa0',name,9,{monster:true,big:true},4);
+        newEntity.bonusMess="HydraHead";
         break;
         case 'Dragon':
         newEntity = new Entity(x,y,'D','#0f0',name,7,{monster:true,ranged:2,rangeMess:'Scorch',big:true},4)
