@@ -29,6 +29,10 @@ var ConversationBuilder = {
         speaker.lastDay = Game.day;
     },
     
+    specificConvo: function(speaker) {
+        return null;
+    },
+
     randomGeneric: function(speaker) {
         //let option = Math.floor(ROT.RNG.getUniform() * 10);
         let possibilities=[
@@ -168,7 +172,10 @@ var ConversationBuilder = {
                 else {
                     next.any=-1;
                 }
+                newConvo.push(next);
             }
+            console.log(newConvo);
+            return newConvo;
         }
     },
 
