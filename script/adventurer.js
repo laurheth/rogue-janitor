@@ -102,7 +102,7 @@ Adventurer.prototype.damage = function() {
 
 // How does the brave and noble adventurer proceed?
 Adventurer.prototype.act = function () {
-    console.log(this.turns);
+    //console.log(this.turns);
     if (this.turns>10000) {
         this.active=false;
         Game.generateDungeon();
@@ -119,7 +119,7 @@ Adventurer.prototype.act = function () {
         }
     }
     if (this.hp<=0 && this.turns % 5 ==0) {
-        console.log("Dropping potion");
+        //console.log("Dropping potion");
         let newMess1 = makeMess(this.x, this.y, "EmptyPotion");
         this.hp+=6;
     }

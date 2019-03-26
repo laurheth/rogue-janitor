@@ -537,7 +537,7 @@ var Game = {
 
     moveMonstersToLounge: function() {
         let validSpots=[];
-
+        ConversationBuilder.usedGenericOptions=[];
         for (let x = this.rooms[this.staffRoomID][0]; x < this.rooms[this.staffRoomID][2]; x++) {
             for (let y = this.rooms[this.staffRoomID][1]; y < this.rooms[this.staffRoomID][3]; y++) {
                 let wallCount = 0;

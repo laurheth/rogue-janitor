@@ -1,4 +1,5 @@
 var ConversationBuilder = {
+    usedGenericOptions:[],
     idleOptions: ["is vaping.","is enjoying a relaxing drink.","is reading a book.","is having a coffee.","is eating an apple."],
     buildConvos: function(speaker) {
         speaker.playerTalkedToday=false;
@@ -57,7 +58,7 @@ var ConversationBuilder = {
     specificConvo: function(speaker) {
         if (speaker.playerInteractions > 0) {
             if ('wantsCareer' in speaker.convoTags) {
-                if (speaker.convoTags.wantsCareer == 'painter' || speaker.convoTags.wantsCareer == 'artist') {
+                if (speaker.convoTags.wantsCareer == 'painter' || speaker.convoTags.wantsCareer == 'artist' || speaker.convoTags.wantsCareer == 'interior designer') {
                     if (ROT.RNG.getUniform() > 0.5) {
                         speaker.convoTags.wantsToPaint = true;
                     }
@@ -270,62 +271,74 @@ var ConversationBuilder = {
         }
 
         let fancyOptions=3;
-        let option=Math.floor(ROT.RNG.getUniform() * (possibilities.length+fancyOptions));
+        var toReturn;
+        var option;
+        let breaker=0;
+        do {
+            option = Math.floor(ROT.RNG.getUniform() * (possibilities.length + fancyOptions));
 
-        if (!('careerChange' in speaker.tags)) {
-            if (option==2) {
-                option+=Math.floor(ROT.RNG.getUniform() * (possibilities.length))+1;
-            }
-        }
-        else {
-            if (!('wantsCareer' in speaker.convoTags)) {
-                //if (ROT.RNG.getUniform())
-                option=2;
-            }
-        }
-
-        switch(option) {
-            case 0:
-            return [{text:"Hey friend, want to vape with me?",y:1,n:2},
-                    {action:"passes you their vape. It's nice!",any:-1},
-                    {text:"Legit! Nobody should make you feel bad for saying no :)",any:-1},
-                    ];
-            case 1:
-            return [{text:"Gee whiz I love dogs. And cats. Humans have good taste in critters.",any:1,conditions:{animal:false}},
-                    {text:"What's your favourite type of critter?","I love cats!":2,"Dog's are good and I like to pet them!":3,"Rabbits are great!":4,"Rats are my favourite!":5,"I love horses. Neigh!":6,"I'm not really an animal person...":7},
-                    {text:"Wow! Cats! Me too!",any:-1,globalTags:{animal:'cat'}},
-                    {text:"Wow! Dogs! Me too!",any:-1,globalTags:{animal:'dog'}},
-                    {text:"Wow! Rabbits! Me too!",any:-1,globalTags:{animal:'rabbit'}},
-                    {text:"Wow! Rats! Me too!",any:-1,globalTags:{animal:'rat'}},
-                    {text:"Wow! Horses! Me too!",any:-1,globalTags:{animal:'horse'}},
-                    {text:"That's legit! More for me to cuddle myself, then!",any:-1,globalTags:{animal:'none'}},
-                    ];
-            case 2:
-            let other;
-            if ('wantsCareer' in speaker.convoTags) {
-                other=speaker.convoTags.wantsCareer;
+            if (!('careerChange' in speaker.tags)) {
+                if (option == 2) {
+                    option += Math.floor(ROT.RNG.getUniform() * (possibilities.length)) + 1;
+                }
             }
             else {
-                let otheropts=["chef","web developer","game developer","painter","artist","dancer","musician","doctor","vet","nurse","lawyer","paralegal"];
-                other=ROT.RNG.getItem(otheropts);
-            }
-            return [{text:"Being a dungeon monster is fun but I'd love to be a "+other+" someday.",any:-1,tags:{wantsCareer:other}}];
-            default:
-            option-=fancyOptions;
-            var newConvo=[];
-            for (let i=0;i<possibilities[option].length;i++) {
-                var next = {text:possibilities[option][i]};
-                if (i<(possibilities[option].length-1)) {
-                    next.any=(i+1);
+                if (!('wantsCareer' in speaker.convoTags)) {
+                    //if (ROT.RNG.getUniform())
+                    option = 2;
                 }
-                else {
-                    next.any=-1;
-                }
-                newConvo.push(next);
             }
-            //console.log(newConvo);
-            return newConvo;
-        }
+            switch (option) {
+                case 0:
+                    toReturn = [{ text: "Hey friend, want to vape with me?", y: 1, n: 2 },
+                    { action: "passes you their vape. It's nice!", any: -1 },
+                    { text: "Legit! Nobody should make you feel bad for saying no :)", any: -1 },
+                    ];
+                    break;
+                case 1:
+                    toReturn = [{ text: "Gee whiz I love dogs. And cats. Humans have good taste in critters.", any: 1, conditions: { animal: false } },
+                    { text: "What's your favourite type of critter?", "I love cats!": 2, "Dog's are good and I like to pet them!": 3, "Rabbits are great!": 4, "Rats are my favourite!": 5, "I love horses. Neigh!": 6, "I'm not really an animal person...": 7 },
+                    { text: "Wow! Cats! Me too!", any: -1, globalTags: { animal: 'cat' } },
+                    { text: "Wow! Dogs! Me too!", any: -1, globalTags: { animal: 'dog' } },
+                    { text: "Wow! Rabbits! Me too!", any: -1, globalTags: { animal: 'rabbit' } },
+                    { text: "Wow! Rats! Me too!", any: -1, globalTags: { animal: 'rat' } },
+                    { text: "Wow! Horses! Me too!", any: -1, globalTags: { animal: 'horse' } },
+                    { text: "That's legit! More for me to cuddle myself, then!", any: -1, globalTags: { animal: 'none' } },
+                    ];
+                    break;
+                case 2:
+                    let other;
+                    if ('wantsCareer' in speaker.convoTags) {
+                        other = speaker.convoTags.wantsCareer;
+                    }
+                    else {
+                        let otheropts = ["chef", "web developer", "game developer", "painter", "artist", "dancer", "musician", "doctor", "vet", "nurse", "interior designer"];
+                        other = ROT.RNG.getItem(otheropts);
+                    }
+                    toReturn = [{ text: "Being a dungeon monster is fun but I'd love to be a " + other + " someday.", any: -1, tags: { wantsCareer: other } }];
+                    break;
+                default:
+                    option -= fancyOptions;
+                    var newConvo = [];
+                    for (let i = 0; i < possibilities[option].length; i++) {
+                        var next = { text: possibilities[option][i] };
+                        if (i < (possibilities[option].length - 1)) {
+                            next.any = (i + 1);
+                        }
+                        else {
+                            next.any = -1;
+                        }
+                        newConvo.push(next);
+                    }
+                    //console.log(newConvo);
+                    toReturn = newConvo;
+            }
+            breaker++;
+        } while (breaker < 20 && this.usedGenericOptions.indexOf(toReturn[0].text)>=0);
+        console.log("convobreaker:"+breaker);
+        this.usedGenericOptions.push(toReturn[0].text);
+
+        return toReturn;
     },
 
     meetingPlayer: function(speaker) {

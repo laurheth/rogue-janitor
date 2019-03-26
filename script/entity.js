@@ -648,14 +648,14 @@ function GetEntity(name,x,y) {
         newEntity.hatChar='\u011D';
         break;
         case 'Kobold':
-        newEntity = new Entity(x,y,'k','#fa0',name,2,{monster:true,small:true},1);
+        newEntity = new Entity(x,y,'k','#e90',name,2,{monster:true,small:true},1);
         break;
         case 'Ogre':
-        newEntity = new Entity(x,y,'O','#fa0',name,4,{monster:true,big:true},2);
+        newEntity = new Entity(x,y,'O','#e90',name,4,{monster:true,big:true},2);
         newEntity.hatChar='\u00D4';
         break;
         case 'Imp':
-        newEntity = new Entity(x,y,"i",'#fd1',name,3,{monster:true,ranged:1,rangeMess:'Scorch',small:true});
+        newEntity = new Entity(x,y,"i",'#ff0',name,3,{monster:true,ranged:1,rangeMess:'Scorch',small:true});
         newEntity.hatChar='\u00EE';
         break;
         case 'Troll':
@@ -668,7 +668,7 @@ function GetEntity(name,x,y) {
         newEntity = new Entity(x,y,'&','#f00',name,8,{monster:true,ranged:1,rangeMess:'Scorch',big:true},4);
         break;
         case 'Hydra':
-        newEntity = new Entity(x,y,'H','#fa0',name,9,{monster:true,big:true},4);
+        newEntity = new Entity(x,y,'H','#e90',name,9,{monster:true,big:true},4);
         newEntity.bonusMess="HydraHead";
         newEntity.hatChar='\u0124';
         break;
