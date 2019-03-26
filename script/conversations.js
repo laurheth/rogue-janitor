@@ -23,6 +23,10 @@ var ConversationBuilder = {
             newConversation.push(specificConvo);
         }
 
+        if (speaker.questItem != null && !('questItemSuccess' in speaker.convoTags)) {
+            this.searchQuestConvo(newConversation,speaker);
+        }
+
         if (!speaker.metPlayer) {
             newConversation.push(this.meetingPlayer(speaker));
         }
@@ -30,6 +34,17 @@ var ConversationBuilder = {
         speaker.lastDay = Game.day;
     },
     
+    searchQuestConvo: function(newConversation, speaker) {
+        var findConvo=[
+            {text:"Oh dang I lost my "+speaker.questItemName+"! Can you help me find it?",any:-1,conditions:{questItemGot:false}}
+        ];
+        var gotConvo = [
+            {text:"You found my "+speaker.questItemName+"! Thank you so much ^.^",any:-1,conditions:{questItemGot:true},tags:{questItemSuccess:true}}
+        ];
+        newConversation.push(findConvo);
+        newConversation.push(gotConvo);
+    },
+
     specificConvo: function(speaker) {
         if (speaker.playerInteractions > 0) {
             if ('wantsCareer' in speaker.convoTags) {

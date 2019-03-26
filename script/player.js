@@ -109,7 +109,12 @@ Player.prototype.clean = function(verb) {
                     if (verb=='get') {
                         verb="pick up";
                     }
-                    Game.sendMessage("You "+verb+" the "+Game.map[key].mess.name.toLowerCase()+".");
+                    if (Game.map[key].mess.unique) {
+                        Game.sendMessage("You "+verb+Game.map[key].mess.name+"!");
+                    }
+                    else {
+                        Game.sendMessage("You "+verb+" the "+Game.map[key].mess.name.toLowerCase()+".");
+                    }
                 }
                 if (Game.map[key].mess.droppedBy != null) {
                     ConversationBuilder.cleanConvo(Game.map[key].mess);

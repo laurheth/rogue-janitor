@@ -19,6 +19,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.species=species;
     this.bonusMess=null;
     this.questItem=null;
+    this.questItemName="";
     if ('monster' in tags) {
         this.name=firstName+" the "+species;
         if (firstName == 'Marx') {
@@ -210,22 +211,7 @@ Entity.prototype.doConvo = function() {
             if ('tags' in thisConvo) {
                 let newTags=Object.getOwnPropertyNames(thisConvo.tags);
                 for (let i=0;i<newTags.length;i++) {
-                    if (newTags[i] in this.convoTags) {
-                        if (typeof this.convoTags[newTags[i]] == 'number') {
-                            if (typeof thisConvo.tags[newTags[i]] == 'number') {
-                                this.convoTags[newTags[i]] += thisConvo.tags[newTags[i]];
-                            }
-                            else {
-                                this.convoTags[newTags[i]]++;
-                            }
-                        }
-                        else {
-                            this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
-                        }
-                    }
-                    else {
-                        this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
-                    }
+                    this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
                 }
             }
 
@@ -246,23 +232,8 @@ Entity.prototype.doConvo = function() {
                         Game.victory=true;
                         Game.player.reach=2;
                     }
-                    if (newTags[i] in Game.convoTags) {
-                        if (typeof Game.convoTags[newTags[i]] == 'number') {
-                            if (typeof thisConvo.tags[newTags[i]] == 'number') {
-                                Game.convoTags[newTags[i]] += thisConvo.globalTags[newTags[i]];
-                            }
-                            else {
-                                Game.convoTags[newTags[i]]++;
-                            }
-                        }
-                        else {
-                            Game.convoTags[newTags[i]]=thisConvo.globalTags[newTags[i]];
-                        }
-                    }
-                    else {
-                        Game.convoTags[newTags[i]]=thisConvo.globalTags[newTags[i]];
-                        console.log(newTags[i]+':'+thisConvo.globalTags[newTags[i]])
-                    }
+                    Game.convoTags[newTags[i]] = thisConvo.globalTags[newTags[i]];
+                    console.log(newTags[i] + ':' + thisConvo.globalTags[newTags[i]])
                 }
             }
 
@@ -379,7 +350,7 @@ Entity.prototype.cleanerAct = function() {
             do {
                 acceptable=true;
                 if ('conditions' in this.convos[choice][0]) {
-                    acceptable = Game.checkConditions(this.convos[choice][0].conditions);
+                    acceptable = Game.checkConditions(this.convos[choice][0].conditions,this);
                 }
                 if (!acceptable) {
                     choice--;

@@ -14,6 +14,7 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
     let key=x+','+y;
     let increment=true;
     this.pickedUp=false;
+    this.unique=false;
     if (Game.map[key].mess != null) {
         increment=false;
     }
@@ -145,24 +146,10 @@ function QuestMess(dropper,x,y) {
     if (dropper.unionStarter) {
         options=['Manifesto'];
     }
-    var success=false;
-    var r=1;
-    while (!success) {
-        for (let i=-r;i<=r;i++) {
-            for (let j=-r;j<=r;j++) {
-                let testKey = (x+i)+','+(y+j);
-                if (testKey in Game.map && !Game.map[testKey].important && Game.map[testKey].passThrough()) {
-                    success=true;
-                    let choice = ROT.RNG.getItem(options);
-                    let newMess=makeMess(x+i,y+j,choice);
-                    newMess.name = dropper.name+"'s "+newMess.name;
-                    dropper.questItem=newMess;
-                    break;
-                }
-            }
-            if (success) {
-                break;
-            }
-        }
-    }
+    let choice = ROT.RNG.getItem(options);
+    let newMess = makeMess(x, y, choice);
+    newMess.unique=true;
+    dropper.questItemName = newMess.name.toLowerCase();
+    newMess.name = dropper.name + "'s " + newMess.name;
+    dropper.questItem = newMess;
 }

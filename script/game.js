@@ -597,6 +597,7 @@ var Game = {
         this.monsterList.sort(function (a,b) {
             return 2*b.level+b.playerInteractions+b.friends.length - 2*a.level+a.playerInteractions+a.friends.length;
         });
+        let questItemIndex = Math.floor(maxPlace * ROT.RNG.getUniform());
         while (level>0 && validSpots.length > maxPlace) {
             for (let i=0;i<this.monsterList.length;i++) {
                 //if (this.monsterList[i].level != level) {
@@ -605,6 +606,19 @@ var Game = {
                 if (this.monsterList[i].retired) {
                     continue; // retired never got reset. They were not in the dungeon today!
                 }
+
+                if (this.monsterList[i].questItem != null && !this.monsterList[i].questItem.pickedUp) {
+                    let questPos = this.randomFarFromPlayer();
+                    this.monsterList[i].questItem.x=questPos[0];
+                    this.monsterList[i].questItem.y=questPos[1];
+                    let questKey = questPos[0]+','+questPos[1];
+                    Game.map[questKey].mess = this.monsterList[i].questItem;
+                }
+                else if (this.monsterList[i].questItem==null && i==questItemIndex) {
+                    let questPos = this.randomFarFromPlayer();
+                    QuestMess(this.monsterList[i],questPos[0],questPos[1]);
+                }
+
                 this.monsterList[i].alive=true;
                 this.monsterList[i].retired=true;
                 ConversationBuilder.buildConvos(this.monsterList[i]);
@@ -676,7 +690,29 @@ var Game = {
         }
     },
 
-    checkConditions: function(conditions)  {
+    randomFarFromPlayer: function(tries=10) {
+        var best=[0,0,0];
+        var i=0;
+        while (i<tries) {
+            let testKey = ROT.RNG.getItem(this.freeCells);
+
+            if (testKey in Game.map && Game.map[testKey].entity == null && Game.map[testKey].mess==null && !(Game.map[testKey].important)) {
+                let parts = testKey.split(',');
+                let px = parseInt(parts[0]);
+                let py = parseInt(parts[1]);
+                let dist = Math.abs(this.player.x - px) + Math.abs(this.player.y - py);
+                if (dist > best[2]) {
+                    best[2]=dist;
+                    best[0]=px;
+                    best[1]=py;
+                }
+                tries--;
+            }
+        }
+        return [best[0],best[1]];
+    },
+
+    checkConditions: function(conditions,speaker=null)  {
         let success=true;
 
         if ('cleanliness' in conditions) {
@@ -685,9 +721,23 @@ var Game = {
             }
         }
 
+        if ('questItemGot' in conditions && speaker!=null) {
+            console.log(conditions.questItemGot+','+speaker.questItem.pickedUp);
+            if (speaker.questItem != null && conditions.questItemGot == speaker.questItem.pickedUp) {
+                success&=true;
+            }
+            else {
+                success=false;
+            }
+            console.log("success:"+success);
+        }
+
         let keys = Object.getOwnPropertyNames(conditions);
         for (let i=0;i<keys.length;i++) {
             if (keys[i]=='cleanliness') {
+                continue;
+            }
+            if (keys[i]=='questItemGot') {
                 continue;
             }
             if (keys[i] in Game.convoTags) {
