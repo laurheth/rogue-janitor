@@ -6,7 +6,7 @@ var ConversationBuilder = {
         var newConversation = [[{action: ROT.RNG.getItem(this.idleOptions),any:-1}]];
         newConversation.push(this.randomGeneric(speaker));
 
-        if (speaker.friends.length>0) {
+        if (speaker.friends.length>0 && 0.5 > ROT.RNG.getUniform()) {
             let friend=ROT.RNG.getItem(speaker.friends);
             newConversation.push(this.loveMyFriend(friend));
         }
@@ -218,7 +218,7 @@ var ConversationBuilder = {
             possibilities.push([
                 "I'm huge, which means I have huge guts, and a huge appetite!",
                 "Luckily, we have very generous and flexible lunch breaks here.",
-                "Always take your lunch break! Your health is more important than your job!"
+                "Always take your lunch break! Nothing is more important than your health!"
             ]);
         }
         if ('small' in speaker.tags) {
@@ -365,7 +365,12 @@ var ConversationBuilder = {
     },
 
     loveMyFriend: function(friend) {
-        let phrases=[friend+" and I go way back! We started working here around the same time, too.","Nothing beats just sitting back and defending some treasure with my pal, "+friend+"!","My friend, "+friend+", has such a good sense of humor."];
+        let phrases=[
+            friend+" and I go way back! We started working here around the same time, too.",
+            "Nothing beats just sitting back and defending some treasure with my pal, "+friend+"!",
+            "My friend, "+friend+", has such a good sense of humor.",
+            "We defend a lot of treasure here, but the best treasure of all is my friend "+friend+"!",
+        ];
         return [{text:ROT.RNG.getItem(phrases),any:-1}];
     },
 
@@ -467,6 +472,7 @@ var ConversationBuilder = {
             ];
             endMessages=[
                 "I know, I know... leaving "+messnamePlural+" lying around on the job. I'll do better tomorrow!",
+                "Bad habit. I will try to be more mindful not to leave "+messnamePlural+" all over the place in the future.",
             ];
         }
         else {
@@ -478,13 +484,19 @@ var ConversationBuilder = {
             ];
             endMessages=[
                 "The adventurer sure felt it, though :) Worth it?",
+                "I just so excited when I'm fighting adventurers D:",
             ];
         }
-        endMessages.push("I really appreciate you and the work you do!");
-        endMessages.push("You're really fantastic, you know that?");
-        endMessages.push("I hope you know that everybody here loves you, and loves your work.");
+        endMessages.push("You do a really amazing job around here!");
+        endMessages.push("I really heckin' appreciate the work you do!");
 
-        var newConvo= [{text:ROT.RNG.getItem(startMessages),any:1},{text:ROT.RNG.getItem(endMessages),any:-1,globalTags:{yendorPoints:2}}];
+        var newConvo= [
+            {text:ROT.RNG.getItem(startMessages),any:-1,globalTags:{yendorPoints:2}},
+        ];
+        if (ROT.RNG.getUniform()>0.6) {
+            newConvo[0].any=1;
+            newConvo.push({text:ROT.RNG.getItem(endMessages),any:-1})
+        }
         owner.convos.push(newConvo);
     },
 
