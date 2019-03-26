@@ -92,6 +92,34 @@ var ConversationBuilder = {
                 }
                 return newConvo;
             }
+            if ('depression' in speaker.convoTags && !('depressionConvoA' in speaker.convoTags) && ROT.RNG.getUniform()>0.5) {
+                var newConvo = [{
+                                    text: "How've you been doing today, friend?",
+                                    "I'm doing pretty well today!":1,
+                                    "Ehh, I've been better, but I'm alright.":2,
+                                    "Honestly, having a rough time today.":3,
+                                },
+                                {text:"I'm glad to hear that :D!",any:4},
+                                {text:"That's real. I'm glad you're doing alright, though :)",any:4},
+                                {text:"Oof. I'm sorry to hear that. I'm having a rough time, too. My anxiety is through the roof.",any:5},
+                                {text:"I'm having a hard time today. My anxiety is through the roof.",any:5},
+                                {text:"Is it okay if I talk it?",y:7,n:6},
+                                {text:"That's legit! Maybe we can chat another time :)",any:-1},
+                                {text:"I'm terrified I'll just never amount to anything, and nothing I do will ever matter.",any:8},
+                                {text:"And like... what if other folks in the dungeon are only pretending to be nice to me?",any:9},
+                                {
+                                    text:"I'm not sure if I'm making sense.",
+                                    "You're totally making sense. I feel that way sometimes too.":12,
+                                    "I'm not sure, but your feelings are real and I'm here for you.":12,
+                                    "Maybe you should vape some more?":10,
+                                    "Have you tried not worrying about things?":11
+                                },
+                                {text:"Hmm. I already vape a lot, but I'll try to vape even more!",any:-1,tags:{depressionConvoA:false}},
+                                {text:"Uh. Yes. Constantly? Nevermind.",any:-1,tags:{depressionConvoA:false},globalTags:{yendorPoints:-20}},
+                                {text:"That's comforting to hear.",any:13},
+                                {text:"Thank you for listening, friend ^.^",any:-1,tags:{depressionConvoA:true},globalTags:{yendorPoints:50}}
+                            ];
+            }
         }
         if (speaker.playerInteractions>4) {
             if ('wantsCareer' in speaker.convoTags && 'appliedToSchool' in speaker.convoTags && !('careerConcluded' in speaker.convoTags)) {
@@ -141,7 +169,7 @@ var ConversationBuilder = {
                 "Dang I love fighting adventurers!"
             ],
         ];
-        if (Game.unionist != null) {
+        if (Game.unionist != null && Game.union != this.name) {
             possibilities.push([
                 "This dungeon used to have a really bad boss. They were a mean wizard who hoarded wealth and kept docking our pay.",
                 "At some point, it got to be too much.",
@@ -211,7 +239,7 @@ var ConversationBuilder = {
             ]);
             possibilities.push([
                 "Spitting acid is fun. It is pretty messy though.",
-                "On the bright side, it kills just about any bacteria that might be growing on a surface!",
+                "On the bright side, it kills just about any bacteria that might be growing on a surface?",
                 "I havn't been sick in at least a few decades."
             ]);
         }
@@ -270,7 +298,7 @@ var ConversationBuilder = {
                 }
                 newConvo.push(next);
             }
-            console.log(newConvo);
+            //console.log(newConvo);
             return newConvo;
         }
     },
@@ -313,7 +341,7 @@ var ConversationBuilder = {
         if (ROT.RNG.getUniform()>0.5) {
             conversation[1].any=2;
             conversation.push({text:"Do you ever have rough days?",y:3,n:6});
-            conversation.push({text:"That's real. Me too, friend.",any:4});
+            conversation.push({text:"That's real. Me too, friend.",any:4,globalTags:{yendorPoints:20},tags:{depression:true}});
             conversation.push({text:"Listen, if you ever need someone to talk to, or like... vape with?",any:5});
             conversation.push({text:"I'm right here with ya.",any:-1});
             conversation.push({text:"I'm really glad to hear that, friend!",any:7});
@@ -456,7 +484,7 @@ var ConversationBuilder = {
         newConvo = [
             {text:"Hey! You've done so much cleaning, holy cow!",any:1},
             {text:"Listen, a bunch of us like to get together for dinner after work. Wanna come tonight?",y:2,n:4},
-            {text:"Radical! We'll leave together when you're ready to call it a day!",any:3,globalTags:{invitationAccepted:true}},
+            {text:"Radical! We'll leave together when you're ready to call it a day!",any:3,globalTags:{invitationAccepted:true,yendorPoints:10}},
             {text:"Remember, it doesn't need to be spotless! Your health and happiness are way more important than work; call it a day on your own terms!",any:-1},
             {text:"That's alright :) We go out every day, so you're welcome during any of them!",any:3},
         ];

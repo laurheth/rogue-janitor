@@ -83,7 +83,10 @@ var Game = {
 
         this.display.drawText(1,1,"Cleanliness: " + this.cleanPercent() + "%");
         var dayCounter="Day: "+this.day;
+        //var pointCounter = "Points: "+(this.yendorPoints+this.cleanPercent());
         this.display.drawText(2*this.offset[0]-dayCounter.length-2,1,dayCounter);
+        //this.display.drawText(2*this.offset[0]-pointCounter.length-2,2,pointCounter);
+
         if (Game.player.talking) {
             Game.player.talking.doConvo();
         }
@@ -590,11 +593,15 @@ var Game = {
         }
         let level=4;
         let maxPlace=Math.floor(validSpots.length/2);
+        // Sort monsters. Prioritize higher level, more loved by the player, more loved by eachother
+        this.monsterList.sort(function (a,b) {
+            return 2*b.level+b.playerInteractions+b.friends.length - 2*a.level+a.playerInteractions+a.friends.length;
+        });
         while (level>0 && validSpots.length > maxPlace) {
             for (let i=0;i<this.monsterList.length;i++) {
-                if (this.monsterList[i].level != level) {
-                    continue;
-                }
+                //if (this.monsterList[i].level != level) {
+                //    continue;
+                //}
                 if (this.monsterList[i].retired) {
                     continue; // retired never got reset. They were not in the dungeon today!
                 }
@@ -614,7 +621,7 @@ var Game = {
             if (validSpots.length<=maxPlace || validSpots==null) {
                 break;
             }
-            level--;
+            //level--;
         }
 
         // Add exit door

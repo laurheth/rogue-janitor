@@ -367,7 +367,7 @@ Entity.prototype.cleanerAct = function() {
     if ('monster' in this.tags) {
         if (!this.playerTalkedToday) {
             this.playerInteractions++;
-            Game.yendorPoints+=5;
+            Game.yendorPoints+=3;
             this.playerTalkedToday=true;
         }
         this.metPlayer=true;
