@@ -270,6 +270,13 @@ var ConversationBuilder = {
             ]);
         }
 
+        if (speaker.playerInteractions>1 && Game.yendorPoints>1000) {
+            possibilities.push([
+                "You do a lot of really good work around here. I'm impressed!",
+                "Remember to take a break now and then!",
+            ])
+        }
+
         let fancyOptions=3;
         var toReturn;
         var option;
