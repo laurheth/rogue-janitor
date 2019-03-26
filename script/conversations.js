@@ -81,7 +81,7 @@ var ConversationBuilder = {
                     {message:"All that time, I have yearned to be a "+speaker.convoTags.wantsCareer+".",any:9},
                     {message:"Please accept me to Monster School.",any:10},
                     {message:"Sincerely, "+speaker.name,any:11},
-                    {text:"So, what do you think??","It's good!":12,"It's bad.":12},
+                    {text:"So, what do you think??","It's good!":12,"It could use some work.":12},
                     {text:"Thanks for your opinion!! I'll keep at it and let you know when I hear back :)",any:-1,tags:{appliedToSchool:true},globalTags:{yendorPoints:50}},
                 ];
                 if (speaker.friends.length>0) {
