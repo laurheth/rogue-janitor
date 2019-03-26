@@ -13,6 +13,7 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
     this.droppedBy=null;
     let key=x+','+y;
     let increment=true;
+    this.pickedUp=false;
     if (Game.map[key].mess != null) {
         increment=false;
     }
@@ -122,7 +123,46 @@ function makeMess(x,y,name) {
         newMess = new Mess(x,y,'/','#ff0',"#000","Smashed Candleabrum",12,null,0,"","fix");
         break;
 
+        // quest items
+        case 'FavouriteHat':
+        newMess = new Mess(x,y,'^','#fff','#000','Favourite Hat',50,null,0,"","get");
+        break;
+        case 'Purse':
+        newMess = new Mess(x,y,'\u03B4','#ccc','#000','Purse',50,null,0,"","get");
+        break;
+        case 'Vuvuzela':
+        newMess = new Mess(x,y,'\u227A','#f00','#000','Vuvuzela',50,null,0,"","get");
+        break;
+        case 'Manifesto':
+        newMess = new Mess(x,y,'\u262D','#f00','#000','Manifesto',50,null,0,"",'get');
     }
 
     return newMess;
+}
+
+function QuestMess(dropper,x,y) {
+    var options=['FavouriteHat','Purse','Vuvuzela'];
+    if (dropper.unionStarter) {
+        options=['Manifesto'];
+    }
+    var success=false;
+    var r=1;
+    while (!success) {
+        for (let i=-r;i<=r;i++) {
+            for (let j=-r;j<=r;j++) {
+                let testKey = (x+i)+','+(y+j);
+                if (testKey in Game.map && !Game.map[testKey].important && Game.map[testKey].passThrough()) {
+                    success=true;
+                    let choice = ROT.RNG.getItem(options);
+                    let newMess=makeMess(x+i,y+j,choice);
+                    newMess.name = dropper.name+"'s "+newMess.name;
+                    dropper.questItem=newMess;
+                    break;
+                }
+            }
+            if (success) {
+                break;
+            }
+        }
+    }
 }

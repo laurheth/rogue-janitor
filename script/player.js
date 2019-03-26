@@ -114,6 +114,7 @@ Player.prototype.clean = function(verb) {
                 if (Game.map[key].mess.droppedBy != null) {
                     ConversationBuilder.cleanConvo(Game.map[key].mess);
                 }
+                Game.map[key].mess.pickedUp=true;
                 Game.map[key].mess=null;
                 Game.messNumbers[0]--;
                 return;

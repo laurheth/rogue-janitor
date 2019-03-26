@@ -18,6 +18,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.unionStarter=false;
     this.species=species;
     this.bonusMess=null;
+    this.questItem=null;
     if ('monster' in tags) {
         this.name=firstName+" the "+species;
         if (firstName == 'Marx') {
