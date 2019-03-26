@@ -2,6 +2,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.x=x;
     this.y=y;
     this.char=char;
+    this.hatChar=null;
     this.color=color;
     this.hp=hp;
     this.maxhp=hp;
@@ -211,6 +212,9 @@ Entity.prototype.doConvo = function() {
             if ('tags' in thisConvo) {
                 let newTags=Object.getOwnPropertyNames(thisConvo.tags);
                 for (let i=0;i<newTags.length;i++) {
+                    if (newTags[i]=='wearingHat') {
+                        this.addHat();
+                    }
                     this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
                 }
             }
@@ -601,6 +605,10 @@ Entity.prototype.addQuest=function(questConvo) {
     this.quests.push(null);
 };
 
+Entity.prototype.addHat=function() {
+    this.char = this.hatChar;
+};
+
 function AddCollectible(x,y) {
     var options=['Chest','Cauldron','Candleabra','Statue'];
     return GetEntity(ROT.RNG.getItem(options),x,y);
@@ -637,15 +645,18 @@ function GetEntity(name,x,y) {
         default:
         case 'Goblin':
         newEntity = new Entity(x,y,'g','#0f0',name,2,{monster:true},1);
+        newEntity.hatChar='\u011D';
         break;
         case 'Kobold':
         newEntity = new Entity(x,y,'k','#fa0',name,2,{monster:true,small:true},1);
         break;
         case 'Ogre':
         newEntity = new Entity(x,y,'O','#fa0',name,4,{monster:true,big:true},2);
+        newEntity.hatChar='\u00D4';
         break;
         case 'Imp':
         newEntity = new Entity(x,y,"i",'#fd1',name,3,{monster:true,ranged:1,rangeMess:'Scorch',small:true});
+        newEntity.hatChar='\u00EE';
         break;
         case 'Troll':
         newEntity = new Entity(x,y,'T','#0c0',name,6,{monster:true,big:true},3);
@@ -659,6 +670,7 @@ function GetEntity(name,x,y) {
         case 'Hydra':
         newEntity = new Entity(x,y,'H','#fa0',name,9,{monster:true,big:true},4);
         newEntity.bonusMess="HydraHead";
+        newEntity.hatChar='\u0124';
         break;
         case 'Dragon':
         newEntity = new Entity(x,y,'D','#0f0',name,7,{monster:true,ranged:2,rangeMess:'Scorch',big:true},4)

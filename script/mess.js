@@ -136,17 +136,26 @@ function makeMess(x,y,name) {
         break;
         case 'Manifesto':
         newMess = new Mess(x,y,'\u262D','#f00','#000','Manifesto',50,null,0,"",'get');
+        break;
+        case 'Umbrella':
+        newMess = new Mess(x,y,'\u0372','#f0f','#000','Umbrella',50,null,0,"",'get');
+        break
     }
 
     return newMess;
 }
 
 function QuestMess(dropper,x,y) {
-    var options=['FavouriteHat','Purse','Vuvuzela'];
+    var options=['Purse','Vuvuzela','Umbrella'];
+    if (dropper.hatChar != null) {
+        options.push('FavouriteHat');
+    }
     if (dropper.unionStarter) {
         options=['Manifesto'];
     }
     let choice = ROT.RNG.getItem(options);
+    console.log(choice);
+    console.log(options);
     let newMess = makeMess(x, y, choice);
     newMess.unique=true;
     dropper.questItemName = newMess.name.toLowerCase();

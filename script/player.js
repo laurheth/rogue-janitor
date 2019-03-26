@@ -110,7 +110,7 @@ Player.prototype.clean = function(verb) {
                         verb="pick up";
                     }
                     if (Game.map[key].mess.unique) {
-                        Game.sendMessage("You "+verb+Game.map[key].mess.name+"!");
+                        Game.sendMessage("You "+verb+" "+Game.map[key].mess.name+"!");
                     }
                     else {
                         Game.sendMessage("You "+verb+" the "+Game.map[key].mess.name.toLowerCase()+".");

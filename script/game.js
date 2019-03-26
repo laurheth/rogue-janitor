@@ -29,7 +29,7 @@ var Game = {
     convoTags:{},
     day: 1,
     unionist: null,
-    targetPoints:1500,
+    targetPoints:2000,
     yendorPoints:0,
     victory:false,
     init: function() {
@@ -597,7 +597,10 @@ var Game = {
         this.monsterList.sort(function (a,b) {
             return 2*b.level+b.playerInteractions+b.friends.length - 2*a.level+a.playerInteractions+a.friends.length;
         });
-        let questItemIndex = Math.floor(maxPlace * ROT.RNG.getUniform());
+        let questItemIndex=-1;
+        if (0.5 + 0.5*((this.day+1) % 2) > ROT.RNG.getUniform() ) {
+            questItemIndex = Math.floor(maxPlace * ROT.RNG.getUniform());
+        }
         while (level>0 && validSpots.length > maxPlace) {
             for (let i=0;i<this.monsterList.length;i++) {
                 //if (this.monsterList[i].level != level) {
@@ -614,10 +617,14 @@ var Game = {
                     let questKey = questPos[0]+','+questPos[1];
                     Game.map[questKey].mess = this.monsterList[i].questItem;
                 }
-                else if (this.monsterList[i].questItem==null && i==questItemIndex) {
-                    let questPos = this.randomFarFromPlayer();
-                    QuestMess(this.monsterList[i],questPos[0],questPos[1]);
+                else if (this.monsterList[i].questItem==null && questItemIndex>=0) {
+                    if (questItemIndex==0 || (this.unionist != null && this.unionist == this.monsterList[i].name)) {
+                        let questPos = this.randomFarFromPlayer();
+                        QuestMess(this.monsterList[i],questPos[0],questPos[1]);
+                        questItemIndex-=1000;
+                    }
                 }
+                questItemIndex--;
 
                 this.monsterList[i].alive=true;
                 this.monsterList[i].retired=true;

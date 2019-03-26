@@ -39,8 +39,17 @@ var ConversationBuilder = {
             {text:"Oh dang I lost my "+speaker.questItemName+"! Can you help me find it?",any:-1,conditions:{questItemGot:false}}
         ];
         var gotConvo = [
-            {text:"You found my "+speaker.questItemName+"! Thank you so much ^.^",any:-1,conditions:{questItemGot:true},tags:{questItemSuccess:true}}
+            {text:"You found my "+speaker.questItemName+"! Thank you so much ^.^",any:-1,conditions:{questItemGot:true},tags:{questItemSuccess:true},globalTags:{yendorPoints:50}}
         ];
+        if (speaker.questItemName.toLowerCase() == 'favourite hat') {
+            gotConvo[0].any=1;
+            gotConvo.push({
+                action: "puts on their favourite hat.",any:2,tags:{wearingHat:true}
+            });
+            gotConvo.push({
+                text: "Fits just as well as always :D",any:-1
+            })
+        }
         newConversation.push(findConvo);
         newConversation.push(gotConvo);
     },
@@ -512,7 +521,7 @@ var ConversationBuilder = {
         var victoryScene = [
             "When you arrive at work, everyone greets you enthusiastically!",
             "You've been here for a couple of weeks, and have already made a fantastic impression!",
-            "Everyone has banded together, and given you the best gift a dungeon janitor can ask for:",
+            "Everyone has banded together, and given you the best gift the dungeon has to offer:",
             "You have been gifted the legendary %c{#ff0}Mop of Yendor%c{}!",
             "It's mystic energies flow through your hands. You feel like your cleaning abilities have become supercharged. No mess will stand in your way again!",
             "%c{#ff0}You have won the hearts of your comrades and, by extension, this game. Thank you for playing!%c{}"
