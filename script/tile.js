@@ -9,6 +9,7 @@ function Tile(x,y,char,color,bgColor,seeThrough,passable,door=null,name="") {
     this.seeThrough=seeThrough;
     this.passable=passable;
     this.door=door;
+    this.secretDoor=null;
     this.open=false;
     this.important=false;
     this.name=name;
@@ -55,5 +56,18 @@ Tile.prototype.passThrough = function() {
     }
     else {
         return this.passable;
+    }
+}
+
+Tile.prototype.openSecretDoor = function() {
+    if (this.secretDoor != null) {
+        this.door=this.secretDoor.door;
+        this.char=this.secretDoor.char;
+        this.color=this.secretDoor.color;
+        this.bgColor=this.secretDoor.bgColor;
+        this.passable=true;
+        this.seeThrough=true;
+        this.open=true;
+        this.secretDoor=null;
     }
 }

@@ -124,6 +124,10 @@ Player.prototype.clean = function(verb) {
                 Game.messNumbers[0]--;
                 return;
             }
+            else if (key in Game.map && Game.map[key].mess == null && Game.map[key].entity==null && Game.map[key].secretDoor != null) {
+                Game.map[key].openSecretDoor();
+                Game.sendMessage("You found a secret passageway!");
+            }
         }
     }
 }

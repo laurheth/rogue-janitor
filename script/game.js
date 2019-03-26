@@ -4,6 +4,7 @@ var Game = {
     freeCells:[],
     hallCells:[],
     rooms:[],
+    roomCenters:[],
     player:null,
     scheduler:null,
     engine:null,
@@ -203,10 +204,89 @@ var Game = {
         this.scheduler.add(Game.player,true);
     },
 
-    generateMap: function(targSize = Math.min(400+30*this.day,800) , minMax=[4,10], spacing=5,theme=this.dungeonTheme) {
+    addSecretRoom: function(size,theme,spacing) {
+        let position=[0,0];
+        while (!this.checkFits(size,position,spacing)) {
+            position[0] += (Math.floor(5*ROT.RNG.getUniform())-2);
+            position[1] += (Math.floor(5*ROT.RNG.getUniform())-2);
+        }
+        this.roomCenters.push([position[0]+Math.floor(size[0]/2) , position[1]+Math.floor(size[1]/2)]);
+        this.buildRoom(size,position,theme);
+        this.secretCorridor(this.roomCenters,theme);
+    },
+
+    secretCorridor: function(roomCenters,theme) {
+        let lastCenter = [roomCenters[roomCenters.length-1][0], roomCenters[roomCenters.length-1][1]];
+        let index = Math.floor((roomCenters.length-1) * ROT.RNG.getUniform());
+        let best = 1000;
+        //let index=-1;
+        for (let i=0;i<roomCenters.length-1;i++) {
+            if (Math.abs(lastCenter[0]-roomCenters[i][0]) + Math.abs(lastCenter[1]-roomCenters[i][1]) < best) {
+                    index=i;
+                    best = Math.abs(lastCenter[0]-roomCenters[i][0]) + Math.abs(lastCenter[1]-roomCenters[i][1]);
+                }
+        }
+        let startCenter = roomCenters[index];
+        let direction;
+        let position=[startCenter[0],startCenter[1]];
+        if (Math.abs(lastCenter[0]-startCenter[0]) > Math.abs(lastCenter[1]-startCenter[1])) {
+            direction=[Math.sign(lastCenter[0]-startCenter[0]),0];
+        }
+        else {
+            direction=[0,Math.sign(lastCenter[1]-startCenter[1])];
+        }
+        //let keepGoing=true;
+        let secretDoorPlaced=false;
+        let outside=false;
+        while (position[0] != lastCenter[0] || position[1] != lastCenter[1]) {
+            for (let i=-1;i<2;i++) {
+                for (let j=-1;j<2;j++) {
+                    let key = (position[0]+i)+','+(position[1]+j);
+                    //this.map[key] = new Tile(position[0]+i,position[1]+j,'.',theme.floorColor,'#000',true,true);
+
+                    if (i==0 && j==0) {
+                        if (key in Game.map && !Game.map[key].passable) {
+                            if (secretDoorPlaced) {
+                                this.map[key] = new Tile(position[0]+i,position[1]+j,'.',theme.floorColor,'#000',true,true);
+                                outside=true;
+                            }
+                            else {
+                                //this.map[key].char='x';
+                                this.map[key].secretDoor = {
+                                    char:'+',
+                                    door:'-',
+                                    color:theme.doorColor[0],
+                                    bgColor:theme.doorColor[1],
+                                }
+                                secretDoorPlaced=true;
+                            }
+                        }
+                    }
+                    else {
+                        if (!(key in Game.map)) {
+                            this.map[key] = new Tile(position[0]+i,position[1]+j,'#',theme.corridorWalls[0],theme.corridorWalls[1],false,false);
+                        }
+                    }
+                }
+            }
+            if (outside) {
+                //direction=[Math.sign(lastCenter[0]-position[0]),Math.sign(lastCenter[1]-position[1])];
+                if (Math.abs(lastCenter[0]-position[0])+ ((ROT.RNG.getUniform()>0.5) ? 1 : 0) > Math.abs(lastCenter[1]-position[1])) {
+                    direction=[Math.sign(lastCenter[0]-position[0]),0];
+                }
+                else {
+                    direction=[0,Math.sign(lastCenter[1]-position[1])];
+                }
+            }
+            position[0]+=direction[0];
+            position[1]+=direction[1];
+        }
+    },
+
+    generateMap: function(targSize = 400 , minMax=[4,10], spacing=5,theme=this.dungeonTheme) {
         this.corners=[[0,0],[0,0]];
         this.messNumbers=[0,0];
-        var roomCenters=[];
+        this.roomCenters=[];
         var breaker=0;
         //let minMax=[4,10];
         //let targSize=Math.min(400+30*this.day,800);
@@ -230,24 +310,24 @@ var Game = {
                 }
                 breaker2++;
             }
-            if (roomCenters.length>0) {
-                roomCenters.push([roomCorner[0]+Math.floor(roomSize[0]/2) , roomCorner[1]+Math.floor(roomSize[1]/2)]);
+            if (this.roomCenters.length>0) {
+                this.roomCenters.push([roomCorner[0]+Math.floor(roomSize[0]/2) , roomCorner[1]+Math.floor(roomSize[1]/2)]);
             }
             else {
-                roomCenters = [[roomCorner[0]+Math.floor(roomSize[0]/2) , roomCorner[1]+Math.floor(roomSize[1]/2)]];
+                this.roomCenters = [[roomCorner[0]+Math.floor(roomSize[0]/2) , roomCorner[1]+Math.floor(roomSize[1]/2)]];
             }
             this.buildRoom(roomSize,roomCorner,theme);
             if (ROT.RNG.getUniform()>0.5 && this.freeCells.length<targSize) {
-                this.connectRoom(roomCenters,1,theme);
-                this.connectRoom(roomCenters,0,theme);
+                this.connectRoom(this.roomCenters,1,theme);
+                this.connectRoom(this.roomCenters,0,theme);
             }
             else {
-                this.connectRoom(roomCenters,-1,theme);
+                this.connectRoom(this.roomCenters,-1,theme);
             }
             breaker++;
         }
         this.staffRoomID = this.rooms.length-1;
-        this.player.moveTo(roomCenters[roomCenters.length-1][0],roomCenters[roomCenters.length-1][1]);
+        this.player.moveTo(this.roomCenters[this.roomCenters.length-1][0],this.roomCenters[this.roomCenters.length-1][1]);
     },
 
     addDoors: function(theme=this.dungeonTheme) {
@@ -536,6 +616,7 @@ var Game = {
     },
 
     moveMonstersToLounge: function() {
+        this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
         let validSpots=[];
         ConversationBuilder.usedGenericOptions=[];
         for (let x = this.rooms[this.staffRoomID][0]; x < this.rooms[this.staffRoomID][2]; x++) {
