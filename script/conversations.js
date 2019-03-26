@@ -92,7 +92,7 @@ var ConversationBuilder = {
                 }
                 return newConvo;
             }
-            if ('depression' in speaker.convoTags && !('depressionConvoA' in speaker.convoTags) && ROT.RNG.getUniform()>0.5) {
+            if ('depression' in speaker.convoTags && !('depressionConvoA' in speaker.convoTags)) {
                 var newConvo = [{
                                     text: "How've you been doing today, friend?",
                                     "I'm doing pretty well today!":1,
@@ -119,6 +119,7 @@ var ConversationBuilder = {
                                 {text:"That's comforting to hear.",any:13},
                                 {text:"Thank you for listening, friend ^.^",any:-1,tags:{depressionConvoA:true},globalTags:{yendorPoints:50}}
                             ];
+                return newConvo;
             }
         }
         if (speaker.playerInteractions>4) {
@@ -135,7 +136,7 @@ var ConversationBuilder = {
                     return [
                         {action:"wipes away tears.",any:1},
                         {text:"I didn't get into Monster School :(",any:2},
-                        {text:"I'm disappointed, but I've got a good gig here. Life goes on and all that.",any:-1},
+                        {text:"I'm disappointed, but I've got a good gig here. Life goes on and all that.",any:-1,tags:{careerConcluded:false}},
                         //{text:"I can still do "+speaker.convoTags.wantsCareer+" stuff as a hobby! I think that will be enough.",any:-1,tags:{careerConcluded:false}},
                     ];
                 }
@@ -338,13 +339,13 @@ var ConversationBuilder = {
         var conversation=[{text:ROT.RNG.getItem(openPhrases),any:1},
             {text:ROT.RNG.getItem(closePhrases),any:-1}
             ];
-        if (ROT.RNG.getUniform()>0.5) {
+        if (ROT.RNG.getUniform()>0.5 && !('depression' in Game.convoTags)) {
             conversation[1].any=2;
             conversation.push({text:"Do you ever have rough days?",y:3,n:6});
-            conversation.push({text:"That's real. Me too, friend.",any:4,globalTags:{yendorPoints:20},tags:{depression:true}});
+            conversation.push({text:"That's real. Me too, friend.",any:4,globalTags:{yendorPoints:20,depression:true},tags:{depression:true}});
             conversation.push({text:"Listen, if you ever need someone to talk to, or like... vape with?",any:5});
             conversation.push({text:"I'm right here with ya.",any:-1});
-            conversation.push({text:"I'm really glad to hear that, friend!",any:7});
+            conversation.push({text:"I'm really glad to hear that, friend!",any:7,globalTags:{depression:false}});
             conversation.push({text:"You're a cool person and you do a heck of a lot. You deserve to be happy!",any:-1});
         }
         return conversation;

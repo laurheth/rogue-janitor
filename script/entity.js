@@ -24,7 +24,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
             this.unionStarter=true;
             Game.unionist=this.name;
         }
-        if (ROT.RNG.getUniform()>0.9) {
+        if (ROT.RNG.getUniform()>0.95) {
             this.tags.careerChange=true;
         }
     }
