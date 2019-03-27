@@ -621,6 +621,12 @@ var Game = {
         // build the party room
         this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
         this.partyRoomID=this.rooms.length-1;
+
+        if ('animal' in this.convoTags && this.convoTags.animal != none) {
+            this.addSecretRoom([5,5],this.makeTheme(200,0.75),1);
+            this.animalRoomID=this.rooms.length-1;
+        }
+
         let validSpots=[];
         let validPartySpots=[];
         ConversationBuilder.usedGenericOptions=[];
