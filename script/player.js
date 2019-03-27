@@ -43,7 +43,7 @@ Player.prototype.getArt = function() {
 
 Player.prototype.act = function() {
     Game.engine.lock();
-    console.log(this.x+','+this.y);
+    //console.log(this.x+','+this.y);
     if (this.spreadCount>0 && this.spreading != null) {
         let newMess = makeMess(this.x,this.y,this.spreading);
         this.spreadCount--;
@@ -179,6 +179,12 @@ Player.prototype.handleEvent = function(e) {
             case 82:
             case 70:
             this.clean('fix');
+            this.endTurn();
+            return;
+            // wait
+            case 12:
+            case 190:
+            case 53:
             this.endTurn();
             return;
         }

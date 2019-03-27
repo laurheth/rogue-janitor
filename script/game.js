@@ -24,6 +24,7 @@ var Game = {
     adventurer: null,
     fov:null,
     monsterList:[],
+    petList:[],
     messNumbers:[0,0],
     screen: null,
     lastMessage: "",
@@ -256,7 +257,7 @@ var Game = {
                                 outside=true;
                             }
                             else {
-                                //this.map[key].char='x';
+                                this.map[key].char='x';
                                 this.map[key].secretDoor = {
                                     char:'+',
                                     door:'-',
@@ -285,7 +286,7 @@ var Game = {
                 let nextKey=(position[0]+direction[0])+','+(position[1]+direction[1]);
                 let nextnextKey=(position[0]+2*direction[0])+','+(position[1]+2*direction[1]);
                 if (nextKey in this.map && !this.map[nextKey].passable && nextnextKey in this.map && !this.map[nextnextKey].passable) {
-                    if (directionp[0]==0) {
+                    if (direction[0]==0) {
                         direction=[Math.sign(lastCenter[0]-position[0]),0];
                     }
                     else {
@@ -639,9 +640,23 @@ var Game = {
         this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
         this.partyRoomID=this.rooms.length-1;
 
-        if ('animal' in this.convoTags && this.convoTags.animal != 'none') {
+        if (1==1) {//'animal' in this.convoTags && this.convoTags.animal != 'none') {
             this.addSecretRoom([5,5],this.makeTheme(200,0.75),1);
             this.animalRoomID=this.rooms.length-1;
+            let animalCenter=[
+                Math.floor((this.rooms[this.animalRoomID][0]+this.rooms[this.animalRoomID][2])/2),
+                Math.floor((this.rooms[this.animalRoomID][1]+this.rooms[this.animalRoomID][3])/2)
+            ];
+            //console.log('center'+animalCenter);
+            let iterations=8;//Math.min(8,Math.floor(this.yendorPoints/200)+1);
+            for (let i=0;i<iterations;i++) {
+                if (i<this.petList.length) {
+                    this.petList[i].recenter(animalCenter[0],animalCenter[1]);
+                }
+                else {
+                    let newPet = new Pet(animalCenter[0],animalCenter[1],'d','Dog');
+                }
+            };
         }
 
         let validSpots=[];
@@ -848,6 +863,7 @@ var Game = {
                 }
             }
         }
+        //let newPet = new Pet(this.player.x,this.player.y,'d','red','Dog');
     },
 
     randomFarFromPlayer: function(tries=10) {
