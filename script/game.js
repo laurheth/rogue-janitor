@@ -213,8 +213,8 @@ var Game = {
             position[1] += (Math.floor(5*ROT.RNG.getUniform())-2);
         }
         this.roomCenters.push([position[0]+Math.floor(size[0]/2) , position[1]+Math.floor(size[1]/2)]);
-        this.buildRoom(size,position,theme);
         this.secretCorridor(this.roomCenters,theme);
+        this.buildRoom(size,position,theme);
     },
 
     secretCorridor: function(roomCenters,theme) {
@@ -223,20 +223,23 @@ var Game = {
         let best = 1000;
         //let index=-1;
         for (let i=0;i<roomCenters.length-1;i++) {
+            if (i==this.staffRoomID) {
+                continue;
+            }
             if (Math.abs(lastCenter[0]-roomCenters[i][0]) + Math.abs(lastCenter[1]-roomCenters[i][1]) < best) {
                     index=i;
                     best = Math.abs(lastCenter[0]-roomCenters[i][0]) + Math.abs(lastCenter[1]-roomCenters[i][1]);
                 }
         }
         let startCenter = roomCenters[index];
-        let direction;
+        let direction=[0,0];
         let position=[startCenter[0],startCenter[1]];
-        if (Math.abs(lastCenter[0]-startCenter[0]) > Math.abs(lastCenter[1]-startCenter[1])) {
+        /*if (Math.abs(lastCenter[0]-startCenter[0]) > Math.abs(lastCenter[1]-startCenter[1])) {
             direction=[Math.sign(lastCenter[0]-startCenter[0]),0];
         }
         else {
             direction=[0,Math.sign(lastCenter[1]-startCenter[1])];
-        }
+        }*/
         //let keepGoing=true;
         let secretDoorPlaced=false;
         let outside=false;
@@ -271,7 +274,7 @@ var Game = {
                     }
                 }
             }
-            if (outside) {
+            if (outside==secretDoorPlaced) {
                 //direction=[Math.sign(lastCenter[0]-position[0]),Math.sign(lastCenter[1]-position[1])];
                 if (Math.abs(lastCenter[0]-position[0])+ ((ROT.RNG.getUniform()>0.5) ? 1 : 0) > Math.abs(lastCenter[1]-position[1])) {
                     direction=[Math.sign(lastCenter[0]-position[0]),0];
@@ -279,6 +282,18 @@ var Game = {
                 else {
                     direction=[0,Math.sign(lastCenter[1]-position[1])];
                 }
+                let nextKey=(position[0]+direction[0])+','+(position[1]+direction[1]);
+                let nextnextKey=(position[0]+2*direction[0])+','+(position[1]+2*direction[1]);
+                if (nextKey in this.map && !this.map[nextKey].passable && nextnextKey in this.map && !this.map[nextnextKey].passable) {
+                    if (directionp[0]==0) {
+                        direction=[Math.sign(lastCenter[0]-position[0]),0];
+                    }
+                    else {
+                        direction=[0,Math.sign(lastCenter[1]-position[1])];
+                    }
+                }
+                //if (position[0]+direction[0])
+
             }
             position[0]+=direction[0];
             position[1]+=direction[1];
@@ -400,7 +415,9 @@ var Game = {
                 }
                 else {
                     //this.map[key]='#';
-                    this.map[key] = new Tile(i,j,'#',theme.roomWalls[0],theme.roomWalls[1],false,false);
+                    if (!(key in this.map) || !this.map[key].passable) {
+                        this.map[key] = new Tile(i,j,'#',theme.roomWalls[0],theme.roomWalls[1],false,false);
+                    }
                     if (i+roomCorner[0] < this.corners[0][0]) {
                         this.corners[0][0] = i+roomCorner[0];
                     }
@@ -622,7 +639,7 @@ var Game = {
         this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
         this.partyRoomID=this.rooms.length-1;
 
-        if ('animal' in this.convoTags && this.convoTags.animal != none) {
+        if ('animal' in this.convoTags && this.convoTags.animal != 'none') {
             this.addSecretRoom([5,5],this.makeTheme(200,0.75),1);
             this.animalRoomID=this.rooms.length-1;
         }
