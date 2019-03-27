@@ -34,6 +34,7 @@ function Player(x,y) {
     this.talking=null;
     this.reach=1;
     this.cutscene=null;
+    this.paused=false;
 }
 
 Player.prototype.getArt = function() {
@@ -126,13 +127,17 @@ Player.prototype.clean = function(verb) {
             }
             else if (key in Game.map && Game.map[key].mess == null && Game.map[key].entity==null && Game.map[key].secretDoor != null) {
                 Game.map[key].openSecretDoor();
-                Game.sendMessage("You found a secret passageway!");
+                Game.sendMessage("%c{#ff0}You found a secret passageway!%c{}");
+                return;
             }
         }
     }
 }
 
 Player.prototype.handleEvent = function(e) {
+    if (this.paused) {
+        return;
+    }
     let code = e.keyCode;
     if (this.talking != null) {
         // cancel conversation
@@ -199,6 +204,13 @@ Player.prototype.handleEvent = function(e) {
     }
 }
 
+Player.prototype.wait = function(milliseconds) {
+    this.paused=true;
+    setTimeout(function(){
+        Game.player.paused=false;
+    },milliseconds);
+}
+
 Player.prototype.moveTo = function(x,y) {
     let oldKey = this.x+','+this.y;
     let newKey = x+','+y;
@@ -206,6 +218,12 @@ Player.prototype.moveTo = function(x,y) {
     if (newKey in Game.map && Game.map[newKey].door != null && !Game.map[newKey].open) {
         Game.sendMessage("You open the door.");
         Game.map[newKey].open=true;
+        return true;
+    }
+
+    if (newKey in Game.map && Game.map[newKey].secretDoor != null && Game.map[newKey].mess==null) {
+        Game.map[key].openSecretDoor();
+        Game.sendMessage("%c{#ff0}You found a secret passageway!%c{}");
         return true;
     }
 

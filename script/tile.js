@@ -61,13 +61,13 @@ Tile.prototype.passThrough = function() {
 
 Tile.prototype.openSecretDoor = function() {
     if (this.secretDoor != null) {
+        Game.player.wait(500);
         this.door=this.secretDoor.door;
         this.char=this.secretDoor.char;
         this.color=this.secretDoor.color;
         this.bgColor=this.secretDoor.bgColor;
         this.passable=true;
         this.seeThrough=true;
-        this.open=true;
         this.secretDoor=null;
     }
 }
