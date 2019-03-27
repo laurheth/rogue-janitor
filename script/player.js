@@ -222,7 +222,7 @@ Player.prototype.moveTo = function(x,y) {
     }
 
     if (newKey in Game.map && Game.map[newKey].secretDoor != null && Game.map[newKey].mess==null) {
-        Game.map[key].openSecretDoor();
+        Game.map[newKey].openSecretDoor();
         Game.sendMessage("%c{#ff0}You found a secret passageway!%c{}");
         return true;
     }
