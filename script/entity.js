@@ -21,6 +21,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.bonusMess=null;
     this.questItem=null;
     this.questItemName="";
+    this.partying=false;
     if ('monster' in tags) {
         this.name=firstName+" the "+species;
         if (firstName == 'Marx') {
@@ -399,7 +400,7 @@ Entity.prototype.retiredAct = function() {
         this.questAct();
         return;
     }
-    if (ROT.RNG.getUniform()>0.95) {
+    if (ROT.RNG.getUniform()>0.95 || (this.partying && ROT.RNG.getUniform()>0.4)) {
         if (this.x != this.home[0] || this.y != this.home[1]) {
             this.moveTo(this.home[0],this.home[1]);
         }

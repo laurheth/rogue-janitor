@@ -17,6 +17,8 @@ var Game = {
         doorColor:['#ddd','#842'],
     },
     staffRoomID:-1,
+    animalRoomID:-1,
+    partyRoomID:-1,
     stairs:[[0,0,-1],[0,0,-1]],
     nameRegistry:[],
     adventurer: null,
@@ -116,7 +118,7 @@ var Game = {
             let sendIndex;
             do {
                 sendIndex = Math.floor(this.monsterList.length * ROT.RNG.getUniform());
-            } while (this.monsterList[sendIndex].retired == false);
+            } while (this.monsterList[sendIndex].alive == false || this.monsterList[sendIndex].retired == false || this.monsterList[sendIndex].partying);
 
             if (toReturn > this.inviteOutThreshold) {
                 this.inviteOutThreshold+=200;
@@ -616,9 +618,40 @@ var Game = {
     },
 
     moveMonstersToLounge: function() {
+        // build the party room
         this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
+        this.partyRoomID=this.rooms.length-1;
         let validSpots=[];
+        let validPartySpots=[];
         ConversationBuilder.usedGenericOptions=[];
+
+        for (let x = this.rooms[this.partyRoomID][0]; x < this.rooms[this.partyRoomID][2]; x++) {
+            for (let y = this.rooms[this.partyRoomID][1]; y < this.rooms[this.partyRoomID][3]; y++) {
+                let wallCount = 0;
+                let floorCount = 0;
+                for (let ii = -1; ii < 2; ii++) {
+                    for (let jj = -1; jj < 2; jj++) {
+                        let key = (x + ii) + ',' + (y + jj);
+                        if (key in this.map) {
+                            if (this.map[key].passable) {
+                                floorCount++;
+                            }
+                            else {
+                                wallCount++;
+                            }
+                        }
+                    }
+                }
+                if ((wallCount == 3 && floorCount == 6)) {//} || (wallCount == 5 && floorCount == 4)) {
+                    let key = x + ',' + y;
+                    if (Game.map[key].entity == null) {
+                        validPartySpots.push(key);
+                        continue;
+                    }
+                }
+            }
+        }
+
         for (let x = this.rooms[this.staffRoomID][0]; x < this.rooms[this.staffRoomID][2]; x++) {
             for (let y = this.rooms[this.staffRoomID][1]; y < this.rooms[this.staffRoomID][3]; y++) {
                 let wallCount = 0;
@@ -674,6 +707,7 @@ var Game = {
         }
         let level=4;
         let maxPlace=Math.floor(validSpots.length/2);
+        let maxParty=Math.floor(validPartySpots.length/2);
         // Sort monsters. Prioritize higher level, more loved by the player, more loved by eachother
         this.monsterList.sort(function (a,b) {
             return 2*b.level+b.playerInteractions+b.friends.length - 2*a.level+a.playerInteractions+a.friends.length;
@@ -682,48 +716,63 @@ var Game = {
         if (0.5 + 0.5*((this.day+1) % 2) > ROT.RNG.getUniform() ) {
             questItemIndex = Math.floor(maxPlace * ROT.RNG.getUniform());
         }
-        while (level>0 && validSpots.length > maxPlace) {
-            for (let i=0;i<this.monsterList.length;i++) {
-                //if (this.monsterList[i].level != level) {
-                //    continue;
-                //}
-                if (this.monsterList[i].retired) {
-                    continue; // retired never got reset. They were not in the dungeon today!
-                }
+        let partyCommenced=false;
+        let donePlacing=false;
+        for (let i = 0; i < this.monsterList.length; i++) {
+            //if (this.monsterList[i].level != level) {
+            //    continue;
+            //}
+            if (this.monsterList[i].retired || donePlacing) {
+                this.monsterList[i].alive=false;
+                continue; // retired never got reset. They were not in the dungeon today!
+            }
 
+            if (!partyCommenced) {
                 if (this.monsterList[i].questItem != null && !this.monsterList[i].questItem.pickedUp) {
                     let questPos = this.randomFarFromPlayer();
-                    this.monsterList[i].questItem.x=questPos[0];
-                    this.monsterList[i].questItem.y=questPos[1];
-                    let questKey = questPos[0]+','+questPos[1];
+                    this.monsterList[i].questItem.x = questPos[0];
+                    this.monsterList[i].questItem.y = questPos[1];
+                    let questKey = questPos[0] + ',' + questPos[1];
                     Game.map[questKey].mess = this.monsterList[i].questItem;
                 }
-                else if (this.monsterList[i].questItem==null && questItemIndex>=0) {
-                    if (questItemIndex==0 || (this.unionist != null && this.unionist == this.monsterList[i].name)) {
+                else if (this.monsterList[i].questItem == null && questItemIndex >= 0) {
+                    if (questItemIndex == 0 || (this.unionist != null && this.unionist == this.monsterList[i].name)) {
                         let questPos = this.randomFarFromPlayer();
-                        QuestMess(this.monsterList[i],questPos[0],questPos[1]);
-                        questItemIndex-=1000;
+                        QuestMess(this.monsterList[i], questPos[0], questPos[1]);
+                        questItemIndex -= 1000;
                     }
                 }
                 questItemIndex--;
 
-                this.monsterList[i].alive=true;
-                this.monsterList[i].retired=true;
+                this.monsterList[i].alive = true;
+                this.monsterList[i].retired = true;
+                this.monsterList[i].partying=false;
                 ConversationBuilder.buildConvos(this.monsterList[i]);
                 let index = Math.floor(ROT.RNG.getUniform() * validSpots.length);
-                Game.map[validSpots[index]].entity=this.monsterList[i];
+                Game.map[validSpots[index]].entity = this.monsterList[i];
                 let parts = validSpots[index].split(',');
-                this.monsterList[i].x=parseInt(parts[0]);
-                this.monsterList[i].y=parseInt(parts[1]);
-                validSpots.splice(index,1);
-                if (validSpots.length<=maxPlace || validSpots==null) {
-                    break;
+                this.monsterList[i].x = parseInt(parts[0]);
+                this.monsterList[i].y = parseInt(parts[1]);
+                validSpots.splice(index, 1);
+                if (validSpots.length <= maxPlace || validSpots == null) {
+                    partyCommenced = true;
                 }
             }
-            if (validSpots.length<=maxPlace || validSpots==null) {
-                break;
+            else {
+                this.monsterList[i].alive = true;
+                this.monsterList[i].retired = true;
+                this.monsterList[i].partying=true;
+                ConversationBuilder.buildConvos(this.monsterList[i]);
+                let index = Math.floor(ROT.RNG.getUniform() * validPartySpots.length);
+                Game.map[validPartySpots[index]].entity = this.monsterList[i];
+                let parts = validPartySpots[index].split(',');
+                this.monsterList[i].x = parseInt(parts[0]);
+                this.monsterList[i].y = parseInt(parts[1]);
+                validPartySpots.splice(index, 1);
+                if (validPartySpots.length <= maxParty || validPartySpots == null) {
+                    donePlacing=true;
+                }
             }
-            //level--;
         }
 
         // Add exit door
