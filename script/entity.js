@@ -549,7 +549,7 @@ Entity.prototype.questAct = function() {
         if (typeof this.quests[0] === "string") {
             //console.log ("is a string");
             if (this.quests[0] in ConversationBuilder) {
-                this.quests[0] = ConversationBuilder[this.quests[0]](this.convoTags);
+                this.quests[0] = ConversationBuilder[this.quests[0]](this.convoTags,this);
                 //console.log(this.quests[0]);
             }
         }
@@ -565,12 +565,13 @@ Entity.prototype.questAct = function() {
     }
     var path = [];
     var startPos = [this.x,this.y];
+    var avoidEntities=true;
     var astar = new ROT.Path.AStar(targetPos[0], targetPos[1], function (x, y) {
         if ((x==startPos[0] && y==startPos[1]) || (x==targetPos[0] && y==targetPos[1])) {
             return true;
         }
         let key = x + ',' + y;
-        if (key in Game.map && Game.map[key].passable && Game.map[key].entity==null) {
+        if (key in Game.map && Game.map[key].passable && (!avoidEntities || Game.map[key].entity==null)) {
             return true;
         }
         else {
@@ -581,7 +582,14 @@ Entity.prototype.questAct = function() {
         path.push([x,y]);
     });
     if (path==null || path.length==0) {
-        return;
+        path=[];
+        avoidEntities=false;
+        astar.compute(this.x,this.y,function(x,y){
+            path.push([x,y]);
+        });
+        if (path==null || path.length==0) {
+            return;
+        }
     }
     let dist = Math.max(Math.abs(path[1][0] - Game.player.x),Math.abs(path[1][1] - Game.player.y));
     if (path.length<2 && dist <2) {

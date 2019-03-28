@@ -668,7 +668,7 @@ var Game = {
                 }
                 if (mostLove[0]>5) {
                     this.playerPet=this.petList[mostLove[1]];
-                    this.player.cutscene=[{message:this.playerPet.name+" loves you a lot! They have adopted you.",any:-1}]
+                    this.player.cutscene=[{message:"%c{#ff0}"+this.playerPet.name+" loves you a lot! They have adopted you.%c{}",any:-1}]
                 }
             }
             //console.log('center'+animalCenter);
