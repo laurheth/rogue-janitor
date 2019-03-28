@@ -627,7 +627,7 @@ var ConversationBuilder = {
         if (speaker.name == speaker.species) {
             let names = [RandomName(false), RandomName(false), RandomName(false), RandomName(false)];
             let metConvo = [
-                { text: speaker.sound + "!!", any: 1, conditions: { petName: false } },
+                { any: 1, conditions: { petName: false } },
                 { message: "Wow! A really cute " + speaker.species.toLowerCase() + "!", any: 2 },
                 { message: "They need a name. What would you like to name them?" }
             ];
@@ -639,7 +639,15 @@ var ConversationBuilder = {
                 nextNode.tags = { petName: names[i] };
                 metConvo.push(nextNode);
             }
-            metConvo.push({ text: speaker.sound + "! :D", any: -1 });
+            metConvo.push({ any: -1 });
+            if (speaker.sound[0]=='text') {
+                metConvo[0].text=speaker.sound[1]+"! :)";
+                metConvo[metConvo.length-1].text=speaker.sound[1]+"!! :D";
+            }
+            else {
+                metConvo[0].action=speaker.sound[1].toLowerCase()+"s happily!";
+                metConvo[metConvo.length-1].action=speaker.sound[1].toLowerCase()+"s enthusiastically!! :D";
+            }
             newConversation.push(metConvo);
         }
         speaker.convos=newConversation;

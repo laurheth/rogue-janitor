@@ -13,7 +13,7 @@ function Pet(x,y,char,species) {
     this.home=null;
     this.metPlayer=false;
     this.aloofness=0.7;
-    this.sound='Bork';
+    this.sound=['text','Bork'];
 }
 
 function AddPet(x,y,species) {
@@ -23,21 +23,26 @@ function AddPet(x,y,species) {
         case 'dog':
         newPet = new Pet(x,y,'d','Dog');
         newPet.aloofness=0.6;
+        newPet.sound=['text','Bork'];
         break;
         case 'cat':
         newPet = new Pet(x,y,'c','Cat');
         newPet.aloofness=0.9;
+        newPet.sound=['text','Meow'];
         break;
         case 'rabbit':
         newPet = new Pet(x,y,'r','Rabbit');
         newPet.aloofness=0.8;
+        newPet.sound=['action','Thump'];
         break;
         case 'rat':
         newPet = new Pet(x,y,'r','Rat');
         newPet.aloofness=0.8;
+        newPet.sound=['text','Squeak'];
         break;
         case 'horse':
         newPet = new Pet(x,y,'h','Horse');
+        newPet.sound=['text','Neigh'];
         break;
     }
     return newPet;
@@ -236,6 +241,7 @@ function FoodBowl(x,y) {
     this.cleanerAct = function() {
         if (!this.full) {
             Game.sendMessage("You fill the food bowl.");
+            Game.yendorPoints+=50;
             this.full=true;
             Game.player.endTurn();
         }

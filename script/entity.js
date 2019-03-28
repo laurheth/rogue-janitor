@@ -217,6 +217,7 @@ Entity.prototype.doConvo = function() {
                         this.addHat();
                     }
                     if (newTags[i]=="petName") {
+                        Game.nameRegistry.push(thisConvo.tags[newTags[i]]);
                         this.name=thisConvo.tags[newTags[i]]+" the "+this.species;
                     }
                     this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
