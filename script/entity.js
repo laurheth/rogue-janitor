@@ -223,6 +223,8 @@ Entity.prototype.doConvo = function() {
                     }
                     if (newTags[i]=='petAction') {
                         this.petAction(thisConvo.tags[newTags[i]]);
+                        delete thisConvo.tags[newTags[i]];
+                        continue;
                     }
                     this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
                 }
@@ -578,6 +580,9 @@ Entity.prototype.questAct = function() {
     astar.compute(this.x,this.y,function(x,y){
         path.push([x,y]);
     });
+    if (path==null || path.length==0) {
+        return;
+    }
     let dist = Math.max(Math.abs(path[1][0] - Game.player.x),Math.abs(path[1][1] - Game.player.y));
     if (path.length<2 && dist <2) {
         if (dist<2) {

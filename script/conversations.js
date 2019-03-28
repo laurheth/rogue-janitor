@@ -527,13 +527,48 @@ var ConversationBuilder = {
 
     coffeeConvo: function(tags) {
         var newConvo;
-        newConvo = [
-            {text:"Hey! I'm running to the cafe. Want anything?","I'd love a coffee!":1,"How about some tea?":2,"Can I have a donut?":3,"No thanks":4},
-            {text:"Wicked! I'll bring you some coffee when I've got it!",any:-1,tags:{food:'coffee'}},
-            {text:"Sweet! I'll bring you some tea when I've got it!",any:-1,tags:{food:'tea'}},
-            {text:"Awesome! I'll bring you back a donut when I've got it!",any:-1,tags:{food:'donut'}},
-            {text:"Okie doke!",any:-1},
-        ];
+        let option=Math.floor(4*ROT.RNG.getUniform());
+        let words=['Wicked','Sweet','Awesome','Tubular','Mondo','Heinous','Excellent','Epic','Metal','Hardcore'];
+        switch (option) {
+            default:
+            case 0:
+            newConvo = [
+                {text:"Hey! I'm running to the cafe. Want anything?","I'd love a coffee!":1,"How about some tea?":2,"Can I have a donut?":3,"No thanks":4},
+                {text:ROT.RNG.getItem(words)+"! I'll bring you some coffee when I've got it!",any:-1,tags:{food:'coffee'}},
+                {text:ROT.RNG.getItem(words)+"! I'll bring you some tea when I've got it!",any:-1,tags:{food:'tea'}},
+                {text:ROT.RNG.getItem(words)+"! I'll bring you back a donut when I've got it!",any:-1,tags:{food:'donut'}},
+                {text:"Okie doke!",any:-1},
+            ];
+            break;
+            case 1:
+            newConvo = [
+                {text:"I'm going to go swing by Monster Pizza. Want anything?","Pepperoni!":1,"Marinara's my favourite!":2,"Vegetables! All of them!":3,"No thanks":4},
+                {text:ROT.RNG.getItem(words)+"! I'll be back with a pepperoni pizza shortly :D",any:-1,tags:{food:'pepperoni pizza'}},
+                {text:ROT.RNG.getItem(words)+"! Pizza marinara coming right up :)",any:-1,tags:{food:'pizza marinara'}},
+                {text:ROT.RNG.getItem(words)+"! Vegetable pizza coming up!",any:-1,tags:{food:'vegetable pizza'}},
+                {text:"Okie doke!",any:-1},
+            ];
+            break;
+            case 2:
+            newConvo = [
+                {text:"I'm going to "+RandomName(false)+"'s Healthy Select. Want anything?","How about a yummy wrap?":1,"Guacamole!":2,"Salad!":3,"No thanks":4},
+                {text:ROT.RNG.getItem(words)+"! I'll bring you your wrap when I've got it!",any:-1,tags:{food:'wrap'}},
+                {text:ROT.RNG.getItem(words)+"! I'll bring you ssome guacamole when it's ready!",any:-1,tags:{food:'guacamole'}},
+                {text:ROT.RNG.getItem(words)+"! Salad, on its way!",any:-1,tags:{food:'salad'}},
+                {text:"Okie doke!",any:-1},
+            ];
+            break;
+            case 3:
+            newConvo = [
+                {text:"I'm going to "+RandomName(false)+"'s All-day Breakfast. Want anything?","Pancakes please!":1,"Tofu Scramble would be awesome!":2,"Bagel!":3,"No thanks":4},
+                {text:ROT.RNG.getItem(words)+"! Pancakes will be on their way shortly!",any:-1,tags:{food:'pancakes'}},
+                {text:ROT.RNG.getItem(words)+"! I will be back with your tofu scramble!",any:-1,tags:{food:'tofu scramble'}},
+                {text:ROT.RNG.getItem(words)+"! Bagels rule! I will bring you a bagel!",any:-1,tags:{food:'bagel'}},
+                {text:"Okie doke!",any:-1},
+            ];
+            break;
+        }
+        
         return newConvo;
     },
 

@@ -93,6 +93,7 @@ Pet.prototype.cleanerAct = function() {
 };
 
 Pet.prototype.recenter = function(x,y) {
+    Game.scheduler.add(this,true);
     let dx=0;
     let dy=0;
     this.playerTalkedToday=false;
@@ -109,6 +110,8 @@ Pet.prototype.recenter = function(x,y) {
             }
         }
     }
+    this.x=x+dx;
+    this.y=y+dy;
     this.home=[this.x,this.y];
 };
 
@@ -153,6 +156,9 @@ Pet.prototype.act = function() {
         }
         else {
             var targetPos=[this.home[0],this.home[1]];
+            if (Game.playerPet==this) {
+                targetPos=[Game.player.x,Game.player.y];
+            }
             /*if (ROT.RNG.getUniform()>0.3 ) {
                 let key = ROT.RNG.getItem(Game.freeCells);
                 let parts=key.split(',');
@@ -271,7 +277,7 @@ Pet.prototype.runAnimations=function() {
     var positions=[this.x,this.y];
     var animQueue=this.animQueue;
     var time=0;
-    var limits={'hug':30,'pet':16};
+    var limits={'hug':20,'pet':16};
     var anim=setInterval(function() {
         let drawPos=[positions[0]+Game.offset[0]-Game.player.x,positions[1]+Game.offset[1]-Game.player.y];
         Game.drawMap();
@@ -281,6 +287,7 @@ Pet.prototype.runAnimations=function() {
             case 'hug':
             if (time>limits['hug']) {
                 animQueue.shift();
+                time=0;
             }
             else {
                 let color=ROT.Color.toHex(ROT.Color.hsl2rgb([parseFloat(time)/parseFloat(limits['hug']),1,0.5]));
@@ -290,6 +297,7 @@ Pet.prototype.runAnimations=function() {
             case 'pet':
             if (time>limits['pet']) {
                 animQueue.shift();
+                time=0;
             }
             else {
                 //let color=ROT.Color.toHex(ROT.Color.hsl2rgb([parseFloat(time)/parseFloat(limits['hug']),1,0.5]));

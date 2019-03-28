@@ -265,7 +265,7 @@ var Game = {
                                 outside=true;
                             }
                             else {
-                                //this.map[key].char='x';
+                                this.map[key].char='x';
                                 this.map[key].secretDoor = {
                                     char:'+',
                                     door:'-',
@@ -658,7 +658,19 @@ var Game = {
             let feederPos=[ this.rooms[this.animalRoomID][0]+1 , this.rooms[this.animalRoomID][1]+1 ];
             let foodBowl = new FoodBowl(feederPos[0],feederPos[1]);
             //let feederKey = feederPos[0]+','+feederPos[1];
-            
+            if (this.petList.length>0 && this.playerPet==null && this.player.cutscene==null) {
+                let mostLove=[-1,-1];
+                for (let i=0;i<this.petList.length;i++) {
+                    if (this.petList[i].playerInteractions>mostLove[0]) {
+                        mostLove[0]=this.petList[i].playerInteractions;
+                        mostLove[1]=i;
+                    }
+                }
+                if (mostLove[0]>5) {
+                    this.playerPet=this.petList[mostLove[1]];
+                    this.player.cutscene=[{message:this.playerPet.name+" loves you a lot! They have adopted you.",any:-1}]
+                }
+            }
             //console.log('center'+animalCenter);
             let iterations=Math.min(8,Math.floor(this.yendorPoints/200)+2);
             for (let i=0;i<iterations;i++) {
