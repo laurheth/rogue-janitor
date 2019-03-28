@@ -25,6 +25,7 @@ var Game = {
     fov:null,
     monsterList:[],
     petList:[],
+    playerPet:null,
     messNumbers:[0,0],
     screen: null,
     lastMessage: "",
@@ -651,7 +652,12 @@ var Game = {
             let iterations=8;//Math.min(8,Math.floor(this.yendorPoints/200)+1);
             for (let i=0;i<iterations;i++) {
                 if (i<this.petList.length) {
-                    this.petList[i].recenter(animalCenter[0],animalCenter[1]);
+                    if (this.petList[i]==this.playerPet) {
+                        this.petList[i].recenter(this.player.x,this.player.y);
+                    }
+                    else {
+                        this.petList[i].recenter(animalCenter[0],animalCenter[1]);
+                    }
                 }
                 else {
                     let newPet = new Pet(animalCenter[0],animalCenter[1],'d','Dog');
@@ -800,7 +806,7 @@ var Game = {
                 this.monsterList[i].alive = true;
                 this.monsterList[i].retired = true;
                 this.monsterList[i].partying=true;
-                ConversationBuilder.buildConvos(this.monsterList[i]);
+                ConversationBuilder.buildConvos(this.monsterList[i],true);
                 let index = Math.floor(ROT.RNG.getUniform() * validPartySpots.length);
                 Game.map[validPartySpots[index]].entity = this.monsterList[i];
                 let parts = validPartySpots[index].split(',');

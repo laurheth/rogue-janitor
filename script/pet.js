@@ -12,14 +12,56 @@ function Pet(x,y,char,species) {
     this.failures=0;
     this.home=null;
     this.metPlayer=false;
+    this.aloofness=0.7;
+    this.sound='Bork';
 }
 
 //function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attachToWall=false) {
 Pet.prototype = Object.create(Entity.prototype);
 
+Pet.prototype.cleanerAct = function() {
+    if (!this.playerTalkedToday) {
+        this.playerInteractions++;
+        Game.yendorPoints+=2;
+        this.playerTalkedToday=true;
+    }
+    Game.player.talking=this;
+    if (this.convos.length <= 1) {
+        ConversationBuilder.petConvo(this);
+    }
+    this.metPlayer=true;
+    let choice=this.convos.length-1;
+    if (choice>=0) {
+        let acceptable=true;
+        do {
+            acceptable=true;
+            if ('conditions' in this.convos[choice][0]) {
+                acceptable = Game.checkConditions(this.convos[choice][0].conditions,this);
+            }
+            if (!acceptable) {
+                choice--;
+            }
+            if (choice < 0) {
+                break;
+            }
+        } while(!acceptable);
+        this.convoIndex=choice;
+        if (choice>=0) {
+            this.convoInnerDex=0;
+        }
+    }
+    else {
+        this.convoIndex=-1;
+    }
+    window.addEventListener("keydown",this);
+    window.addEventListener("keypress",this);
+    Game.drawMap();
+};
+
 Pet.prototype.recenter = function(x,y) {
     let dx=0;
     let dy=0;
+    this.playerTalkedToday=false;
     while (!this.moveTo(x+dx,y+dy)) {
         let r=0;
         r++;
@@ -64,7 +106,7 @@ Pet.prototype.act = function() {
 
     if (this.steps<0) {
         this.sleep += Math.floor(10*ROT.RNG.getUniform());
-        if (ROT.RNG.getUniform()>0.3) {
+        if (ROT.RNG.getUniform()<this.aloofness) {
             this.steps += Math.floor(20*ROT.RNG.getUniform());
             do {
                 this.direction[0] = Math.floor(3*ROT.RNG.getUniform())-1;

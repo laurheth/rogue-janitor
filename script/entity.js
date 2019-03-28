@@ -216,6 +216,9 @@ Entity.prototype.doConvo = function() {
                     if (newTags[i]=='wearingHat') {
                         this.addHat();
                     }
+                    if (newTags[i]=="petName") {
+                        this.name=thisConvo.tags[newTags[i]]+" the "+this.species;
+                    }
                     this.convoTags[newTags[i]]=thisConvo.tags[newTags[i]];
                 }
             }
@@ -700,7 +703,7 @@ function GetEntity(name,x,y) {
     return newEntity;
 }
 
-function RandomName() {
+function RandomName(register=true) {
     var sg=new ROT.StringGenerator({order:2});
     var nameList=[
         'Ralph',
@@ -746,6 +749,8 @@ function RandomName() {
         name=sg.generate();
         name = name.charAt(0).toUpperCase()+name.slice(1)
     } while (name.length < 3 || name.length > 11 || Game.nameRegistry.indexOf(name)>=0);
-    Game.nameRegistry.push(name);
+    if (register) {
+        Game.nameRegistry.push(name);
+    }
     return name;
 }
