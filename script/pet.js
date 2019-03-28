@@ -16,12 +16,39 @@ function Pet(x,y,char,species) {
     this.sound='Bork';
 }
 
+function AddPet(x,y,species) {
+    let newPet;
+    switch (species) {
+        default:
+        case 'dog':
+        newPet = new Pet(x,y,'d','Dog');
+        newPet.aloofness=0.6;
+        break;
+        case 'cat':
+        newPet = new Pet(x,y,'c','Cat');
+        newPet.aloofness=0.9;
+        break;
+        case 'rabbit':
+        newPet = new Pet(x,y,'r','Rabbit');
+        newPet.aloofness=0.8;
+        break;
+        case 'rat':
+        newPet = new Pet(x,y,'r','Rat');
+        newPet.aloofness=0.8;
+        break;
+        case 'horse':
+        newPet = new Pet(x,y,'h','Horse');
+        break;
+    }
+    return newPet;
+}
+
 //function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attachToWall=false) {
 Pet.prototype = Object.create(Entity.prototype);
 
 Pet.prototype.cleanerAct = function() {
+    this.playerInteractions++;
     if (!this.playerTalkedToday) {
-        this.playerInteractions++;
         Game.yendorPoints+=2;
         this.playerTalkedToday=true;
     }
@@ -171,3 +198,46 @@ Pet.prototype.act = function() {
 };
 
 Pet.prototype.constructor=Pet;
+
+function FoodBowl(x,y) {
+    this.x=x;
+    this.y=y;
+    let dx=0;
+    let dy=0;
+    this.full=false;
+    this.color='#fff';
+    //let key = (x+dx)+','+(y+dy);
+    let testKey=x+','+y;
+    while (!(testKey in Game.map) || !Game.map[testKey].passThrough()) {
+        let r=-1;
+        r++;
+        for (let i=-r;i<=r;i++) {
+            for (let j=-r;j<=r;j++) {
+                testKey=(i+x)+','+(j+y);
+                if (testKey in Game.map && Game.map[testKey].passThrough()) {
+                    dx=i;
+                    dy=j;
+                }
+            }
+        }
+    }
+    this.x+=dx;
+    this.y+=dy;
+    testKey=this.x+','+this.y;
+    Game.map[testKey].entity=this;
+    this.getArt = function() {
+        if (this.full) {
+            return ['\u2200',this.color,'#000'];
+        }
+        else {
+            return ['\u2228',this.color,'#000'];
+        }
+    }
+    this.cleanerAct = function() {
+        if (!this.full) {
+            Game.sendMessage("You fill the food bowl.");
+            this.full=true;
+            Game.player.endTurn();
+        }
+    }
+}

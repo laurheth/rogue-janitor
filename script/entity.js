@@ -699,6 +699,7 @@ function GetEntity(name,x,y) {
         break;
         case 'ExitDoor':
         newEntity = new Entity(x,y,'X','#fff','Exit Door',1,{exit:true},1,'#c33',true);
+        break;
     }
     return newEntity;
 }

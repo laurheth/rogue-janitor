@@ -641,15 +641,19 @@ var Game = {
         this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
         this.partyRoomID=this.rooms.length-1;
 
-        if (1==1) {//'animal' in this.convoTags && this.convoTags.animal != 'none') {
+        if ('animal' in this.convoTags && this.convoTags.animal != 'none') {
             this.addSecretRoom([5,5],this.makeTheme(200,0.75),1);
             this.animalRoomID=this.rooms.length-1;
             let animalCenter=[
                 Math.floor((this.rooms[this.animalRoomID][0]+this.rooms[this.animalRoomID][2])/2),
                 Math.floor((this.rooms[this.animalRoomID][1]+this.rooms[this.animalRoomID][3])/2)
             ];
+            let feederPos=[ this.rooms[this.animalRoomID][0]+1 , this.rooms[this.animalRoomID][1]+1 ];
+            let foodBowl = new FoodBowl(feederPos[0],feederPos[1]);
+            //let feederKey = feederPos[0]+','+feederPos[1];
+            
             //console.log('center'+animalCenter);
-            let iterations=8;//Math.min(8,Math.floor(this.yendorPoints/200)+1);
+            let iterations=Math.min(8,Math.floor(this.yendorPoints/200)+2);
             for (let i=0;i<iterations;i++) {
                 if (i<this.petList.length) {
                     if (this.petList[i]==this.playerPet) {
@@ -660,7 +664,7 @@ var Game = {
                     }
                 }
                 else {
-                    let newPet = new Pet(animalCenter[0],animalCenter[1],'d','Dog');
+                    let newPet = AddPet(animalCenter[0],animalCenter[1],this.convoTags.animal);//new Pet(animalCenter[0],animalCenter[1],'d','Dog');
                 }
             };
         }
