@@ -213,6 +213,11 @@ var ConversationBuilder = {
             [
                 "Dang I love fighting adventurers!"
             ],
+            [
+                "The dungeon is run as a workers co-op.",
+                "We used to have a Boss but... heh.",
+                "Anyway, I don't know about you, but I for one think things run a lot better when there's no bosses!"
+            ],
         ];
         if (Game.unionist != null && Game.union != this.name) {
             possibilities.push([
@@ -293,7 +298,14 @@ var ConversationBuilder = {
             possibilities.push([
                 "You do a lot of really good work around here. I'm impressed!",
                 "Remember to take a break now and then!",
-            ])
+            ]);
+        }
+
+        if (speaker.playerInteractions>2) {
+            possibilities.push([
+                "There's a few secret rooms in the dungeon. Try to find them!",
+                "One of them is a VERY good place to party."
+            ]);
         }
 
         let fancyOptions=3;
