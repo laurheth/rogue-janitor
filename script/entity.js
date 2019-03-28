@@ -22,6 +22,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.questItem=null;
     this.questItemName="";
     this.partying=false;
+    this.lastSeen=10;
     if ('monster' in tags) {
         this.name=firstName+" the "+species;
         if (firstName == 'Marx') {
@@ -430,6 +431,7 @@ Entity.prototype.act = function() {
         this.retiredAct();
         return;
     }
+    this.lastSeen++;
     this.drinking--;
     if (this.drinking==0) {
         this.drinking=Math.floor(300*ROT.RNG.getUniform())+100;
@@ -484,6 +486,7 @@ Entity.prototype.act = function() {
 }
 
 Entity.prototype.getArt = function() {
+    this.lastSeen=0;
     if (this.alive) {
         return [this.char,this.color,this.bgColor];
     }

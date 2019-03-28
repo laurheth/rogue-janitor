@@ -121,6 +121,15 @@ Pet.prototype.act = function() {
         this.runAnimations();
         return;
     }
+    if (this.lastSeen<=1 && ROT.RNG.getUniform()>0.95 && (Game.lastMessage==null || Game.lastMessage=="")) {
+        let punctuation=['.','.','!','!','!!'];
+        if (this.sound[0]=='text') {
+            Game.sendMessage(this.sound[1]+ROT.RNG.getItem(punctuation));
+        }
+        else {
+            Game.sendMessage(this.name+" "+this.sound[1].toLowerCase()+'s'+ROT.RNG.getItem(punctuation));
+        }
+    }
     //console.log('pet act');
     if (this.home==null) {
         this.home=[this.x,this.y];
