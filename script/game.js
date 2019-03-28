@@ -641,7 +641,7 @@ var Game = {
         this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
         this.partyRoomID=this.rooms.length-1;
 
-        if (1==1){//'animal' in this.convoTags && this.convoTags.animal != 'none') {
+        if ('animal' in this.convoTags && this.convoTags.animal != 'none') {
             this.addSecretRoom([5,5],this.makeTheme(200,0.75),1);
             this.animalRoomID=this.rooms.length-1;
             let animalCenter=[
@@ -664,7 +664,7 @@ var Game = {
                     }
                 }
                 else {
-                    let newPet = AddPet(animalCenter[0],animalCenter[1],'dog');//this.convoTags.animal);//new Pet(animalCenter[0],animalCenter[1],'d','Dog');
+                    let newPet = AddPet(animalCenter[0],animalCenter[1],this.convoTags.animal);//new Pet(animalCenter[0],animalCenter[1],'d','Dog');
                 }
             };
         }
