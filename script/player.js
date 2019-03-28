@@ -127,6 +127,7 @@ Player.prototype.clean = function(verb) {
             }
             else if (key in Game.map && Game.map[key].mess == null && Game.map[key].entity==null && Game.map[key].secretDoor != null) {
                 Game.map[key].openSecretDoor();
+                Game.yendorPoints+=10;
                 Game.sendMessage("%c{#ff0}You found a secret passageway!%c{}");
                 return;
             }

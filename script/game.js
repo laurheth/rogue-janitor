@@ -221,19 +221,26 @@ var Game = {
 
     secretCorridor: function(roomCenters,theme) {
         let lastCenter = [roomCenters[roomCenters.length-1][0], roomCenters[roomCenters.length-1][1]];
-        let index = Math.floor((roomCenters.length-1) * ROT.RNG.getUniform());
+        let index;// = Math.floor((roomCenters.length-1) * ROT.RNG.getUniform());
+        let allCells=this.freeCells.concat(this.hallCells);
         let best = 1000;
+        let startCenter=[0,0];
         //let index=-1;
-        for (let i=0;i<roomCenters.length-1;i++) {
-            if (i==this.staffRoomID) {
-                continue;
-            }
-            if (Math.abs(lastCenter[0]-roomCenters[i][0]) + Math.abs(lastCenter[1]-roomCenters[i][1]) < best) {
-                    index=i;
-                    best = Math.abs(lastCenter[0]-roomCenters[i][0]) + Math.abs(lastCenter[1]-roomCenters[i][1]);
+        for (let i = 0; i < allCells.length - 1; i++) {
+            let key = allCells[i];
+            if (key in this.map && this.map[key].mess == null && this.map[key].passThrough()) {
+                let parts=key.split(',');
+                let px=parseInt(parts[0]);
+                let py=parseInt(parts[1]);
+                if (Math.abs(lastCenter[0] - px) + Math.abs(lastCenter[1] - py) < best) {
+                    index = i;
+                    best = Math.abs(lastCenter[0] - px) + Math.abs(lastCenter[1] - py);
+                    startCenter[0]=px;
+                    startCenter[1]=py;
                 }
+            }
         }
-        let startCenter = roomCenters[index];
+        //let startCenter = roomCenters[index];
         let direction=[0,0];
         let position=[startCenter[0],startCenter[1]];
         /*if (Math.abs(lastCenter[0]-startCenter[0]) > Math.abs(lastCenter[1]-startCenter[1])) {
@@ -258,7 +265,7 @@ var Game = {
                                 outside=true;
                             }
                             else {
-                                this.map[key].char='x';
+                                //this.map[key].char='x';
                                 this.map[key].secretDoor = {
                                     char:'+',
                                     door:'-',

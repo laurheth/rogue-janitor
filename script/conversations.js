@@ -1,10 +1,17 @@
 var ConversationBuilder = {
     usedGenericOptions:[],
     idleOptions: ["is vaping.","is enjoying a relaxing drink.","is reading a book.","is having a coffee.","is eating an apple."],
+    partyOptions: ["is vaping.","is enjoying a relaxing drink.","is dancing.","is headbanging."],
     buildConvos: function(speaker,party=false) {
         speaker.playerTalkedToday=false;
-        var newConversation = [[{action: ROT.RNG.getItem(this.idleOptions),any:-1}]];
-        newConversation.push(this.randomGeneric(speaker));
+        var newConversation;
+        if (!party) {
+            newConversation = [[{action: ROT.RNG.getItem(this.idleOptions),any:-1}]];
+        }
+        else {
+            newConversation = [[{action: ROT.RNG.getItem(this.partyOptions),any:-1}]];
+        }
+        newConversation.push(this.randomGeneric(speaker,party));
 
         if (speaker.friends.length>0 && 0.5 > ROT.RNG.getUniform()) {
             let friend=ROT.RNG.getItem(speaker.friends);
@@ -26,6 +33,17 @@ var ConversationBuilder = {
 
         if (speaker.questItem != null && !('questItemSuccess' in speaker.convoTags)) {
             this.searchQuestConvo(newConversation,speaker);
+        }
+
+        if (party) {
+            let partyRoomDiscovery=[
+                {text:"Welcome to the %c{#f0f}Secret Party room%c{}!",any:1,conditions:{foundPartyRoom:false}},
+                {text:"This used to be where we held union meetings...",any:2},
+                {text:"But since overthrowing the boss, we can have those meetings publicly instead!",any:3},
+                {text:"We've still got this room though so, now we use it to party!",any:4},
+                {text:"Hang out and dance for a while :)",any:-1,globalTags:{foundPartyRoom:true}}
+            ];
+            newConversation.push(partyRoomDiscovery);
         }
 
         if (!speaker.metPlayer) {
