@@ -624,6 +624,41 @@ var ConversationBuilder = {
         let idlePet = ["is running around."];
         var newConversation = [[{ action: ROT.RNG.getItem(idlePet), any: -1 }]];
 
+        let interactConvo=[{any:1}];
+        if (speaker.sound[0]=='text') {
+            interactConvo[0].text=speaker.sound[1]+"!";
+        }
+        else {
+            interactConvo[0].action=speaker.sound[1].toLowerCase()+"s happily!";
+        }
+
+        interactConvo.push({
+            message:'What will you do?',
+            'Pet them!':2,
+            'Play with them!':3,
+            'Hug them!':4
+        });
+
+        interactConvo.push({
+            message:'You pet '+speaker.name+'!',
+            any:-1,
+            tags:{petAction:'pet'}
+        });
+
+        interactConvo.push({
+            message:'You throw a toy. '+speaker.name+' runs after it, then keeps running!',
+            any:-1,
+            tags:{petAction:'play'}
+        });
+
+        interactConvo.push({
+            message:'You hug '+speaker.name+'. They are very, very soft!',
+            any:-1,
+            tags:{petAction:'hug'},
+        });
+
+        newConversation.push(interactConvo);
+
         if (speaker.name == speaker.species) {
             let names = [RandomName(false), RandomName(false), RandomName(false), RandomName(false)];
             let metConvo = [

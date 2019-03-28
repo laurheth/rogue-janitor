@@ -14,6 +14,8 @@ function Pet(x,y,char,species) {
     this.metPlayer=false;
     this.aloofness=0.7;
     this.sound=['text','Bork'];
+    this.animQueue=[];
+    this.animating=false;
 }
 
 function AddPet(x,y,species) {
@@ -58,9 +60,9 @@ Pet.prototype.cleanerAct = function() {
         this.playerTalkedToday=true;
     }
     Game.player.talking=this;
-    if (this.convos.length <= 1) {
-        ConversationBuilder.petConvo(this);
-    }
+
+    ConversationBuilder.petConvo(this);
+
     this.metPlayer=true;
     let choice=this.convos.length-1;
     if (choice>=0) {
@@ -112,6 +114,10 @@ Pet.prototype.recenter = function(x,y) {
 
 // Override act. Animals do what they're gonna do
 Pet.prototype.act = function() {
+    if (this.animQueue.length>0) {
+        this.runAnimations();
+        return;
+    }
     //console.log('pet act');
     if (this.home==null) {
         this.home=[this.x,this.y];
@@ -201,6 +207,107 @@ Pet.prototype.act = function() {
         }
     }
 };
+
+Pet.prototype.petAction = function(action) {
+    switch(action) {
+        default:
+        case 'play':
+            var targetPos=[0,0];
+            let key = ROT.RNG.getItem(Game.freeCells);
+            let parts = key.split(',');
+            targetPos[0] = parseInt(parts[0]);
+            targetPos[1] = parseInt(parts[1]);
+
+            var path = [[this.x, this.y]];
+            var astar = new ROT.Path.AStar(targetPos[0], targetPos[1], function (x, y) {
+                if ((x == path[0][0] && y == path[0][1]) || (x == targetPos[0] && y == targetPos[1])) {
+                    return true;
+                }
+                let key = x + ',' + y;
+                if (key in Game.map && Game.map[key].passThrough()) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+            astar.compute(this.x, this.y, function (x, y) {
+                path.push([x, y]);
+            });
+            this.steps=-1;
+            this.sleep=-1;
+            if (path == null) {
+                this.path = [];
+                do {
+                    this.direction[0] = Math.floor(3*ROT.RNG.getUniform())-1;
+                    this.direction[1] = Math.floor(3*ROT.RNG.getUniform())-1;
+                } while (this.direction[0]==0 && this.direction[1]==0); 
+                this.steps+=20;
+            }
+            else {
+                this.path = path;
+                this.path.shift();
+                this.path.shift();
+            }
+            break;
+        case 'pet':
+            this.doAnimation('pet');
+        case 'hug':
+            this.doAnimation('hug');
+            //this.runAnimation();
+            Game.player.wait(1000);
+            break;
+    }
+};
+
+Pet.prototype.doAnimation=function(anim) {
+    this.animating=true;
+    this.animQueue.push(anim);
+    //Game.engine.lock();
+};
+
+Pet.prototype.runAnimations=function() {
+    Game.engine.lock();
+    var positions=[this.x,this.y];
+    var animQueue=this.animQueue;
+    var time=0;
+    var limits={'hug':30,'pet':16};
+    var anim=setInterval(function() {
+        let drawPos=[positions[0]+Game.offset[0]-Game.player.x,positions[1]+Game.offset[1]-Game.player.y];
+        Game.drawMap();
+
+        switch(animQueue[0]) {
+            default:
+            case 'hug':
+            if (time>limits['hug']) {
+                animQueue.shift();
+            }
+            else {
+                let color=ROT.Color.toHex(ROT.Color.hsl2rgb([parseFloat(time)/parseFloat(limits['hug']),1,0.5]));
+                Game.display.draw(drawPos[0],drawPos[1]-1.0,'\u2665',color);
+            }
+            break;
+            case 'pet':
+            if (time>limits['pet']) {
+                animQueue.shift();
+            }
+            else {
+                //let color=ROT.Color.toHex(ROT.Color.hsl2rgb([parseFloat(time)/parseFloat(limits['hug']),1,0.5]));
+                let petSet=0.3*Math.sin(3.14159 * (parseFloat(time)/4));
+                let color='#fff';
+                Game.display.draw(drawPos[0],drawPos[1]-petSet-0.6,'-',color);
+            }
+            break;
+        }
+
+        if (animQueue == null || animQueue.length==0) {
+            clearInterval(anim);
+            Game.engine.unlock();
+        }
+
+        time++;
+    },50);
+}
 
 Pet.prototype.constructor=Pet;
 
