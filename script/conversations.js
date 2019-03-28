@@ -624,24 +624,24 @@ var ConversationBuilder = {
         let idlePet = ["is running around."];
         var newConversation = [[{ action: ROT.RNG.getItem(idlePet), any: -1 }]];
 
-
-        let names = [RandomName(false), RandomName(false), RandomName(false), RandomName(false)];
-        let metConvo = [
-            { text: speaker.sound + "!!", any: 1, conditions: { petName: false } },
-            { message: "Wow! A really cute " + speaker.species.toLowerCase() + "!", any: 2 },
-            { message: "They need a name. What would you like to name them?" }
-        ];
-        let finalNode = metConvo.length + names.length;
-        for (let i = 0; i < names.length; i++) {
-            metConvo[2][names[i]] = (metConvo.length);
-            let nextNode = { message: "The " + speaker.species + "'s name is now " + names[i] + "!" };
-            nextNode.any = finalNode;
-            nextNode.tags = { petName: names[i] };
-            metConvo.push(nextNode);
+        if (speaker.name == speaker.species) {
+            let names = [RandomName(false), RandomName(false), RandomName(false), RandomName(false)];
+            let metConvo = [
+                { text: speaker.sound + "!!", any: 1, conditions: { petName: false } },
+                { message: "Wow! A really cute " + speaker.species.toLowerCase() + "!", any: 2 },
+                { message: "They need a name. What would you like to name them?" }
+            ];
+            let finalNode = metConvo.length + names.length;
+            for (let i = 0; i < names.length; i++) {
+                metConvo[2][names[i]] = (metConvo.length);
+                let nextNode = { message: "The " + speaker.species + "'s name is now " + names[i] + "!" };
+                nextNode.any = finalNode;
+                nextNode.tags = { petName: names[i] };
+                metConvo.push(nextNode);
+            }
+            metConvo.push({ text: speaker.sound + "! :D", any: -1 });
+            newConversation.push(metConvo);
         }
-        metConvo.push({ text: speaker.sound + "! :D", any: -1 });
-
-        newConversation.push(metConvo);
         speaker.convos=newConversation;
     },
 }

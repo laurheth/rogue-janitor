@@ -727,7 +727,6 @@ function RandomName(register=true) {
         'Samson',
         'Steph',
         'Chomps',
-        'Bites',
         'Claws',
         'Sauce',
         'Newt',
@@ -740,6 +739,7 @@ function RandomName(register=true) {
         'Carol',
         'Red',
         'Green',
+        'Robert',
     ];
     for (let i=0;i<nameList.length;i++) {
         sg.observe(nameList[i].toLowerCase());
