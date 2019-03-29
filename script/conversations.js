@@ -315,6 +315,73 @@ var ConversationBuilder = {
             possibilities.push([
                 "I really appreciate all the work you do here!"
             ]);
+            if (speaker.species != 'Hydra') {
+                possibilities.push([
+                    "We fight adventurers, but it's more like really intense LARPing.",
+                    "Monsters are never severely injured; sometimes we're a little sore.",
+                    "Hydras lose a few heads but that's kind of like a haircut for them so, it's fine?",
+                    "Adventurers want as authentic an experience as they can get, but we never actually kill them.",
+                    "We beat them up and take their money to fund the dungeon, and they just keep returning!"
+                ]);
+            }
+            else {
+                possibilities.push([
+                    "I lose heads all the time.",
+                    "People think each head has their own brain and they get lost every time...",
+                    "But that's silly!",
+                    "The truth is: Hydra brains are stored in the bones."
+                ]);
+            }
+            if (speaker.species == 'Dragon') {
+                possibilities.push([
+                    "I have a treasure hoard at home that I like to sleep on.",
+                    "I'm not a rich dragon, though. No, my hoard consists of stuffed animals, anime, and dice."
+                ]);
+                possibilities.push([
+                    "I love table top roleplaying!",
+                    "My favourite game is Offices and Humans.",
+                    "My best character is a level 12 Receptionist named Mx. Drizzle Snapper!",
+                    "They're chaotic good which means they like to steal office supplies and give them to school children."
+                ]);
+                possibilities.push([
+                    "I've got a HUGE dice collection.",
+                    "I live in a warehouse, because I'm so big, and I sleep on a pile of dice that fills half of it.",
+                    "It's my hoard ^.^"
+                ]);
+            }
+        }
+
+        if (speaker.playerInteractions>3) {
+            possibilities.push([
+                "I worked some pretty friggin bad jobs before I got this one.",
+                "Capitalism does it's damndest to make us all miserable.",
+                "Makes you think your worth is tied into how well you do your job, and nothing else.",
+                "Well nuts to that! You're awesome for your own sake! We all are!",
+                "Financial circumstance might mean you have to do a bad job, but never forget:",
+                "You're more than whatever job you have to do to survive."
+            ]);
+            possibilities.push([
+                "One perk of this place is the excellent medical benefits.",
+                "We're pretty safe with our fighting, but you still get bumped around a fair bit. Injuries happen.",
+                "As such, our health plan pretty much covers everything.",
+                "Including trans healthcare!",
+                "All healthcare should be free, and trans rights are human rights!"
+            ])
+        }
+        
+        if (speaker.playerInteractions>5) {
+            possibilities.push(["Trans Rights!"]);
+        }
+
+
+        if (speaker.playerInteractions>3 && Game.yendorPoints<200) {
+            possibilities.push([
+                "Wow! You've been here for several days and...",
+                "Havn't done much cleaning?",
+                "Honestly, that's fine though.",
+                "From each according to their ability, and to each according to their needs!",
+                "I think you're a hella cool person and I don't mind!!"
+            ]);
         }
 
         let fancyOptions=3;
