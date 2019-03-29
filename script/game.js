@@ -34,7 +34,7 @@ var Game = {
     convoTags:{},
     day: 1,
     unionist: null,
-    targetPoints:2000,
+    targetPoints:1400,
     yendorPoints:0,
     victory:false,
     init: function() {

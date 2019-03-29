@@ -124,6 +124,9 @@ Pet.prototype.act = function() {
     if (this.spreadCount>0 && this.spreading != null) {
         let newMess = makeMess(this.x,this.y,this.spreading);
         this.spreadCount--;
+        if (this.spreadCount==0 && newMess.spreads!=null && newMess.spreads!="") {
+            newMess.spread(this);
+        }
     }
     this.lastSeen++;
     if (this.lastSeen<=1 && ROT.RNG.getUniform()>0.95 && (Game.lastMessage==null || Game.lastMessage=="")) {

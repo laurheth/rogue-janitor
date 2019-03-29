@@ -12,12 +12,20 @@ var ConversationBuilder = {
         else {
             newConversation = [[{action: ROT.RNG.getItem(this.partyOptions),any:-1}]];
         }
-        newConversation.push(this.randomGeneric(speaker,party));
 
-        if (speaker.friends.length>0 && 0.5 > ROT.RNG.getUniform()) {
+        let specificConvo = this.specificConvo(speaker);
+
+        if (specificConvo != null) {
+            newConversation.push(specificConvo);
+        }
+        else if (speaker.friends.length>0 && 0.1 > ROT.RNG.getUniform()) {
             let friend=ROT.RNG.getItem(speaker.friends);
             newConversation.push(this.loveMyFriend(friend));
         }
+        else {
+            newConversation.push(this.randomGeneric(speaker,party));
+        }
+
         //return newConversation;
         if (speaker.damagedealt>=4) {
             newConversation.push(this.lottaDamage(speaker));
@@ -26,11 +34,6 @@ var ConversationBuilder = {
             newConversation.push(this.noDamage(speaker));
         }
         //newConversation.push(this.impressed());
-        let specificConvo = this.specificConvo(speaker);
-
-        if (specificConvo != null) {
-            newConversation.push(specificConvo);
-        }
 
         if (speaker.questItem != null && !('questItemSuccess' in speaker.convoTags)) {
             this.searchQuestConvo(newConversation,speaker);
@@ -75,38 +78,6 @@ var ConversationBuilder = {
     },
 
     specificConvo: function(speaker) {
-        if (speaker.playerInteractions > 0) {
-            if ('wantsCareer' in speaker.convoTags) {
-                if (speaker.convoTags.wantsCareer == 'painter' || speaker.convoTags.wantsCareer == 'artist' || speaker.convoTags.wantsCareer == 'interior designer') {
-                    if (ROT.RNG.getUniform() > 0.5) {
-                        speaker.convoTags.wantsToPaint = true;
-                    }
-                    if ('wantsToPaint' in speaker.convoTags && speaker.convoTags.wantsToPaint) {
-                        return [
-                            { text: "Hmm... I've been thinking, the colors on these walls are getting kind of old!", any: 1 },
-                            { text: "Do you think I should repaint the dungeon?", y: 2, n: 9 },
-                            {
-                                text: "Heck yeah! What colour do you think I should go with?",
-                                "How about a nice dark purple?": 3,
-                                "Lets make everything red!": 4,
-                                "Hmm... Lets make it green!": 5,
-                                "Blue, like the sky!": 6,
-                                "Lets make it a nice golden yellow!": 7,
-                                "Honestly, it's rustic, but I like the classic colours!": 8,
-                                globalTags:{yendorPoints:20}
-                            },
-                            { text: "Heck yeah! I'll have the dungeon purple by tomorrow :D", any: -1, globalTags: { paint: 'purple' } },
-                            { text: "Bold! I like it. The dungeon will be red by tomorrow!", any: -1, globalTags: { paint: 'red' } },
-                            { text: "How vibrant! I'll paint it green overnight tonight :D", any: -1, globalTags: { paint: 'green' } },
-                            { text: "Nice! Good way to make the inside feel outdoorsy. Blue, coming up!", any: -1, globalTags: { paint: 'blue' } },
-                            { text: "I like it! The dungeon will be yellow by tomorrow :D", any: -1, globalTags: { paint: 'yellow' } },
-                            { text: "Fair! Sometimes, classic really is the best! I'll have it painted tomorrow :)", any: -1, globalTags: { paint: 'default' } },
-                            { text: "Fair! I just wanna practice on something... let me know if you change your mind!", any: -1 }
-                        ];
-                    }
-                }
-            }
-        }
         if (speaker.playerInteractions > 2) {
             if ('wantsCareer' in speaker.convoTags && !('appliedToSchool' in speaker.convoTags)) {
                 var newConvo= [
@@ -183,6 +154,38 @@ var ConversationBuilder = {
                         {text:"I'm disappointed, but I've got a good gig here. Life goes on and all that.",any:-1,tags:{careerConcluded:false}},
                         //{text:"I can still do "+speaker.convoTags.wantsCareer+" stuff as a hobby! I think that will be enough.",any:-1,tags:{careerConcluded:false}},
                     ];
+                }
+            }
+        }
+        if (speaker.playerInteractions > 0) {
+            if ('wantsCareer' in speaker.convoTags) {
+                if (speaker.convoTags.wantsCareer == 'painter' || speaker.convoTags.wantsCareer == 'artist' || speaker.convoTags.wantsCareer == 'interior designer') {
+                    if (ROT.RNG.getUniform() > 0.5) {
+                        speaker.convoTags.wantsToPaint = true;
+                    }
+                    if ('wantsToPaint' in speaker.convoTags && speaker.convoTags.wantsToPaint) {
+                        return [
+                            { text: "Hmm... I've been thinking, the colors on these walls are getting kind of old!", any: 1 },
+                            { text: "Do you think I should repaint the dungeon?", y: 2, n: 9 },
+                            {
+                                text: "Heck yeah! What colour do you think I should go with?",
+                                "How about a nice dark purple?": 3,
+                                "Lets make everything red!": 4,
+                                "Hmm... Lets make it green!": 5,
+                                "Blue, like the sky!": 6,
+                                "Lets make it a nice golden yellow!": 7,
+                                "Honestly, it's rustic, but I like the classic colours!": 8,
+                                globalTags:{yendorPoints:20}
+                            },
+                            { text: "Heck yeah! I'll have the dungeon purple by tomorrow :D", any: -1, globalTags: { paint: 'purple' } },
+                            { text: "Bold! I like it. The dungeon will be red by tomorrow!", any: -1, globalTags: { paint: 'red' } },
+                            { text: "How vibrant! I'll paint it green overnight tonight :D", any: -1, globalTags: { paint: 'green' } },
+                            { text: "Nice! Good way to make the inside feel outdoorsy. Blue, coming up!", any: -1, globalTags: { paint: 'blue' } },
+                            { text: "I like it! The dungeon will be yellow by tomorrow :D", any: -1, globalTags: { paint: 'yellow' } },
+                            { text: "Fair! Sometimes, classic really is the best! I'll have it painted tomorrow :)", any: -1, globalTags: { paint: 'default' } },
+                            { text: "Fair! I just wanna practice on something... let me know if you change your mind!", any: -1 }
+                        ];
+                    }
                 }
             }
         }
@@ -433,6 +436,8 @@ var ConversationBuilder = {
             conversation.push({text:"I'm right here with ya.",any:-1});
             conversation.push({text:"I'm really glad to hear that, friend!",any:7,globalTags:{depression:false}});
             conversation.push({text:"You're a cool person and you do a heck of a lot. You deserve to be happy!",any:-1});
+
+            conversation[0].conditions={depression:false};
         }
         return conversation;
     },

@@ -28,6 +28,9 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
     else if (spreads != null && key in Game.map && (!Game.map[key].passable || Game.map[key].important)) {
         Game.map[key].mess=this;
         this.char = Game.map[key].char;
+        if (this.char=='#') {
+            this.char='x';
+        }
         let newbgColor = ROT.Color.fromString(this.color);
         newbgColor=ROT.Color.multiply(newbgColor,[100,100,100]);
         this.bgColor = ROT.Color.toHex(newbgColor);
@@ -160,6 +163,7 @@ function makeMess(x,y,name) {
 function QuestMess(dropper,x,y) {
     var options=['Purse','Vuvuzela','Umbrella'];
     if (dropper.hatChar != null) {
+        options.push('FavouriteHat');
         options.push('FavouriteHat');
     }
     if (dropper.unionStarter) {

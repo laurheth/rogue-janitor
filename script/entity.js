@@ -423,6 +423,9 @@ Entity.prototype.retiredAct = function() {
     if (this.spreadCount>0 && this.spreading != null) {
         let newMess = makeMess(this.x,this.y,this.spreading);
         this.spreadCount--;
+        if (this.spreadCount==0 && newMess.spreads!=null && newMess.spreads!="") {
+            newMess.spread(this);
+        }
     }
     if (this.home == null) {
         this.home = [this.x,this.y];
@@ -462,6 +465,9 @@ Entity.prototype.act = function() {
     if (this.spreadCount>0 && this.spreading != null) {
         let newMess = makeMess(this.x,this.y,this.spreading);
         this.spreadCount--;
+        if (this.spreadCount==0 && newMess.spreads!=null && newMess.spreads!="") {
+            newMess.spread(this);
+        }
     }
     if (!this.active) {
         let dx = Math.floor(3*ROT.RNG.getUniform())-1;
