@@ -72,20 +72,22 @@ var Game = {
         if (Game.player.instructions) {
             let instructions=[
                 ["--- Rogue Janitor ---",0],
-                ["A game about cleaning dungeons",0],
+                ["A game about cleaning dungeons.",0],
                 ["",0],
                 ["--- Movement ---",0],
-                ["Move with arrow keys, numpad, using VI keys (hjkl, yubn)",0],
+                ["Move with arrow keys, numpad, or with VI keys (hjkl, yubn)",0],
                 ["Wait with %c{#ff0}.%c{} or %c{#ff0}5%c{}",24],
                 ["",0],
                 ["--- Cleaning ---",0],
                 ["(%c{#ff0}M%c{})op messes.",12],
                 ["(%c{#ff0}P%c{})ick up or (%c{#ff0}G%c{})et garbage or other items.",24],
-                ["(%c{#ff0}F%c{})ix or (%c{#ff0}R%c{})epair broken furnitude.",24],
+                ["(%c{#ff0}F%c{})ix or (%c{#ff0}R%c{})epair broken furniture.",24],
+                ["All cleaning methods can reveal hidden doors!",0],
                 ["",0],
                 ["--- Other ---",0],
                 ["(%c{#ff0}O%c{})pen or (%c{#ff0}C%c{})lose doors.",24],
                 ["(%c{#ff0}EX%c{})amine your surroundings.",12],
+                ["Walk into monsters and other objects to interact with them.",0],
                 ["Display this help prompt with %c{#ff0}?%c{}",12]
             ];
             let halfLength=Math.floor(instructions.length/2);
