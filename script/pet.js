@@ -121,6 +121,10 @@ Pet.prototype.act = function() {
         this.runAnimations();
         return;
     }
+    if (this.spreadCount>0 && this.spreading != null) {
+        let newMess = makeMess(this.x,this.y,this.spreading);
+        this.spreadCount--;
+    }
     this.lastSeen++;
     if (this.lastSeen<=1 && ROT.RNG.getUniform()>0.95 && (Game.lastMessage==null || Game.lastMessage=="")) {
         let punctuation=['.','.','!','!','!!'];

@@ -419,6 +419,10 @@ Entity.prototype.cleanerAct = function() {
 }
 
 Entity.prototype.retiredAct = function() {
+    if (this.spreadCount>0 && this.spreading != null) {
+        let newMess = makeMess(this.x,this.y,this.spreading);
+        this.spreadCount--;
+    }
     if (this.home == null) {
         this.home = [this.x,this.y];
     }
@@ -504,7 +508,7 @@ Entity.prototype.getArt = function() {
     this.lastSeen=0;
     if (this.alive) {
         let testKey=this.x+','+this.y;
-        if (testKey in Game.map && Game.map[testKey].mess==null) {
+        if (testKey in Game.map && (!('loot' in this.tags) || Game.map[testKey].mess==null)) {
             return [this.char,this.color,this.bgColor];
         }
         else {
