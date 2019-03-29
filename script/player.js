@@ -152,6 +152,7 @@ Player.prototype.doExamine = function(code) {
         switch (code) {
             default:
             return;
+            case 69:
             case 88:
             case 27:
             case 8:
