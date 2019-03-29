@@ -306,6 +306,12 @@ var ConversationBuilder = {
                 "There's a few secret rooms in the dungeon. Try to find them!",
                 "One of them is a VERY good place to party."
             ]);
+            possibilities.push([
+                "I'm really glad you started working here!"
+            ]);
+            possibilities.push([
+                "I really appreciate all the work you do here!"
+            ]);
         }
 
         let fancyOptions=3;
@@ -655,7 +661,7 @@ var ConversationBuilder = {
             var description=[
                 "It's really delightful, and you have a fantastic night with your comrades!",
                 "You have a really wonderful evening!",
-                "It's so fun! You are rejuvinated by the fun night!"
+                "It's so fun! You are rejuvenated by the fun night!"
             ];
             switch(Game.convoTags.dinnerPlan) {
                 default:
