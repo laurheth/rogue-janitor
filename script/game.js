@@ -29,6 +29,8 @@ var Game = {
     messNumbers:[0,0],
     screen: null,
     lastMessage: "",
+    lastlastMessage: "",
+    lastlastMessageTime:-1,
     coffeeThreshold:Math.floor(40*ROT.RNG.getUniform())+20,
     inviteOutThreshold:Math.floor(15*ROT.RNG.getUniform())+80,
     convoTags:{},
@@ -176,12 +178,19 @@ var Game = {
             msg=null;
         }
         if (msg != null) {
+            this.lastlastMessage=msg;
+            this.lastlastMessageTime=4;
             this.lastMessage=msg;
             this.display.drawText(2,2*this.offset[1]-2,"> "+msg);
         }
         else {
             if (this.lastMessage != "") {
                 this.display.drawText(2,2*this.offset[1]-2,"> "+this.lastMessage);
+            }
+            else {
+                if (this.lastlastMessage != "" && this.lastlastMessageTime>=0) {
+                    this.display.drawText(2,2*this.offset[1]-2,"%c{#444}> "+this.lastlastMessage+"%c{}");
+                }
             }
         }
     },

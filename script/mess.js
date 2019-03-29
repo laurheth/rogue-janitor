@@ -29,7 +29,7 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
         Game.map[key].mess=this;
         this.char = Game.map[key].char;
         if (this.char=='#') {
-            this.char='x';
+            this.char='\u266F';
         }
         let newbgColor = ROT.Color.fromString(this.color);
         newbgColor=ROT.Color.multiply(newbgColor,[100,100,100]);
@@ -154,14 +154,28 @@ function makeMess(x,y,name) {
         break;
         case 'Umbrella':
         newMess = new Mess(x,y,'\u0372','#f0f','#000','Umbrella',50,null,0,"",'get');
-        break
+        break;
+        case 'DiceBag':
+        newMess = new Mess(x,y,'\u03C3','#ff0','#000','Dice Bag',50,null,0,"",'get');
+        break;
+        case 'Cello':
+        newMess = new Mess(x,y,'\u03A6','#fa0','#000','Cello',50,null,0,"",'get');
+        break;
+        case 'Gender':
+        let color=ROT.Color.toHex(ROT.Color.hsl2rgb([ROT.RNG.getUniform(),1,0.5]));
+        newMess = new Mess(x,y,'\u26A7',color,'#000','Gender',50,null,0,"",'get');
+        break;
     }
 
     return newMess;
 }
 
 function QuestMess(dropper,x,y) {
-    var options=['Purse','Vuvuzela','Umbrella'];
+    var options=['Purse','Vuvuzela','Umbrella','DiceBag','Cello','Gender'];
+    if (dropper.species=='Dragon') {
+        options.push('DiceBag');
+        options.push('DiceBag');
+    }
     if (dropper.hatChar != null) {
         options.push('FavouriteHat');
         options.push('FavouriteHat');

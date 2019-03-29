@@ -297,6 +297,7 @@ Player.prototype.moveTo = function(x,y) {
         return false;
     }
     Game.lastMessage="";
+    Game.lastlastMessageTime--;
     /*console.log(Game.getRoomIndex(x,y));
     if (Game.getRoomIndex(x,y)>=0) {
         console.log('Exits:'+Game.rooms[Game.getRoomIndex(x,y)][4]);
