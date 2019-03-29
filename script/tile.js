@@ -14,6 +14,7 @@ function Tile(x,y,char,color,bgColor,seeThrough,passable,door=null,name="") {
     this.important=false;
     this.name=name;
     this.lastSeen=" ";
+    this.visible=false;
 }
 
 Tile.prototype.getArt = function() {
@@ -31,10 +32,12 @@ Tile.prototype.getArt = function() {
         art=[this.char,this.color,this.bgColor];
     }
     this.lastSeen=art[0];
+    this.visible=true;
     return art;
 }
 
 Tile.prototype.getMemoryArt = function() {
+    this.visible=false;
     return [this.lastSeen,'#555','#000'];
 }
 

@@ -92,6 +92,47 @@ var Game = {
         this.display.drawText(2*this.offset[0]-dayCounter.length-2,1,dayCounter);
         //this.display.drawText(2*this.offset[0]-pointCounter.length-2,2,pointCounter);
 
+        if (Game.player.examining != null) {
+            this.display.draw(Game.player.examining[0]+Game.offset[0]-Game.player.x,Game.player.examining[1]+Game.offset[1]-Game.player.y,'X','#ff0');
+            let lookKey=Game.player.examining[0]+','+Game.player.examining[1];
+            if (lookKey in this.map && this.map[lookKey].visible) {
+                if (this.map[lookKey].entity != null) {
+                    if (this.map[lookKey].entity == Game.player) {
+                        this.sendMessage("It's you!");
+                    }
+                    else {
+                        this.sendMessage(this.map[lookKey].entity.name+".");
+                    }
+                }
+                else if (this.map[lookKey].mess != null) {
+                    this.sendMessage(this.map[lookKey].mess.name+".");
+                }
+                else if (this.map[lookKey].door != null) {
+                    if (this.map[lookKey].open) {
+                        this.sendMessage("Open door.");
+                    }
+                    else {
+                        this.sendMessage("Closed door.");
+                    }
+                }
+                else if (!this.map[lookKey].passable) {
+                    this.sendMessage("Wall.");
+                }
+                else if (this.map[lookKey].char=='>') {
+                    this.sendMessage("Down staircase.");
+                }
+                else if (this.map[lookKey].char=='<') {
+                    this.sendMessage("Up staircase.");
+                }
+                else {
+                    this.sendMessage("Floor.");
+                }
+            }
+            else {
+                this.sendMessage("You can't see that area.");
+            }
+        }
+
         if (Game.player.talking) {
             Game.player.talking.doConvo();
         }
@@ -243,12 +284,12 @@ var Game = {
         //let startCenter = roomCenters[index];
         let direction=[0,0];
         let position=[startCenter[0],startCenter[1]];
-        /*if (Math.abs(lastCenter[0]-startCenter[0]) > Math.abs(lastCenter[1]-startCenter[1])) {
+        if (Math.abs(lastCenter[0]-startCenter[0]) > Math.abs(lastCenter[1]-startCenter[1])) {
             direction=[Math.sign(lastCenter[0]-startCenter[0]),0];
         }
         else {
             direction=[0,Math.sign(lastCenter[1]-startCenter[1])];
-        }*/
+        }
         //let keepGoing=true;
         let secretDoorPlaced=false;
         let outside=false;

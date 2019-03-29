@@ -35,6 +35,7 @@ function Player(x,y) {
     this.reach=1;
     this.cutscene=null;
     this.paused=false;
+    this.examining=null;
 }
 
 Player.prototype.getArt = function() {
@@ -135,19 +136,39 @@ Player.prototype.clean = function(verb) {
     }
 }
 
+Player.prototype.doExamine = function(code) {
+    if (!(code in this.keyMap)) {
+        switch (code) {
+            default:
+            return;
+            case 88:
+            case 27:
+            case 8:
+            this.examining=null;
+        }
+    }
+    else {
+        let diff = ROT.DIRS[8][this.keyMap[code]];
+        if (Math.abs(this.examining[0]+diff[0] - this.x)<Game.offset[0]) {
+            this.examining[0]+=diff[0];
+        }
+        if (Math.abs(this.examining[1]+diff[1] - this.y)<Game.offset[1]) {
+            this.examining[1]+=diff[1];
+        }
+    }
+    Game.drawMap();
+}
+
 Player.prototype.handleEvent = function(e) {
     if (this.paused) {
         return;
     }
     let code = e.keyCode;
     if (this.talking != null) {
-        // cancel conversation
-        /*if (code == 27 || code == 8 || code == 88) {
-            this.talking.cancelConvo();
-//            this.talking.convoIndex=-1;
-            this.talking=null;
-            Game.drawMap();
-        }*/
+        return;
+    }
+    if (this.examining != null) {
+        this.doExamine(code);
         return;
     }
     //console.log(this.keyMap);
@@ -181,6 +202,11 @@ Player.prototype.handleEvent = function(e) {
             case 70:
             this.clean('fix');
             this.endTurn();
+            return;
+            // x to examine
+            case 88:
+            this.examining=[this.x,this.y];
+            Game.drawMap();
             return;
             // wait
             case 12:

@@ -335,6 +335,7 @@ function FoodBowl(x,y) {
     let dx=0;
     let dy=0;
     this.full=false;
+    this.name="Empty Food Bowl";
     this.color='#fff';
     //let key = (x+dx)+','+(y+dy);
     let testKey=x+','+y;
@@ -366,6 +367,7 @@ function FoodBowl(x,y) {
     this.cleanerAct = function() {
         if (!this.full) {
             Game.sendMessage("You fill the food bowl.");
+            this.name="Full Food Bowl";
             Game.yendorPoints+=50;
             this.full=true;
             Game.player.endTurn();
