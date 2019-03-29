@@ -237,6 +237,8 @@ var Game = {
 
     generateDungeon: function() {
         var thetheme=this.dungeonTheme;
+        this.coffeeThreshold = Math.floor(10*ROT.RNG.getUniform()+20*ROT.RNG.getUniform())+30;
+        this.inviteOutThreshold =Math.floor(7*ROT.RNG.getUniform()+8*ROT.RNG.getUniform())+80;
         //thetheme=this.makeTheme(300.0/360);
         if ('paint' in this.convoTags) {
             switch(this.convoTags.paint) {
@@ -260,7 +262,7 @@ var Game = {
                 break;
             }
         }
-        this.generateMap(Math.min(400+30*this.day,800),[4,10],5,thetheme);
+        this.generateMap(430,[4,10],5,thetheme);
         this.addStairs();
         this.adventurer = new Adventurer(this.stairs[0][0],this.stairs[0][1]);
         this.populateRooms();

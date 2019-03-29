@@ -215,8 +215,8 @@ var ConversationBuilder = {
             ],
             [
                 "The dungeon is run as a workers co-op.",
-                "We used to have a Boss but... heh.",
-                "Anyway, I don't know about you, but I for one think things run a lot better when there's no bosses!"
+                "We used to have a Boss but... well, lets just say these teeth and claws aren't just for show!",
+                "I don't know about you, but I for one think things run a lot better when there's no bosses!"
             ],
         ];
         if (Game.unionist != null && Game.union != this.name) {
@@ -528,14 +528,14 @@ var ConversationBuilder = {
             ];
             endMessages=[
                 "The adventurer sure felt it, though :) Worth it?",
-                "I just so excited when I'm fighting adventurers D:",
+                "I just get so excited when I'm fighting adventurers D:",
             ];
         }
         endMessages.push("You do a really amazing job around here!");
         endMessages.push("I really heckin' appreciate the work you do!");
 
         var newConvo= [
-            {text:ROT.RNG.getItem(startMessages),any:-1,globalTags:{yendorPoints:2}},
+            {text:ROT.RNG.getItem(startMessages),any:-1,globalTags:{yendorPoints:3}},
         ];
         if (ROT.RNG.getUniform()>0.6) {
             newConvo[0].any=1;
@@ -672,7 +672,7 @@ var ConversationBuilder = {
                 case 'dinner':
                 description.push("You have a really delicious meal and are pleasantly full by the end of it!");
                 description.push("It's buffet style and you get a lot of really good food!");
-                description.push("You have some ramen. At the end, your fortune cookies says:'Your day tomorrow will be "+ROT.RNG.getItem(this.words)+"'. Wow!");
+                description.push("You have some ramen. At the end, your fortune cookie says:'Your day tomorrow will be "+ROT.RNG.getItem(this.words).toLowerCase()+"'. Wow!");
                 break;
                 case 'dancing':
                 description.push("You dance the whole night. It's so fun and energetic!");
@@ -730,6 +730,24 @@ var ConversationBuilder = {
         }
         
         return nextConvo;
+    },
+
+    startGameCutscene: function() {
+        let newConvo=[];
+        let text=[
+            'Welcome to %c{#ff0}Rogue Janitor%c{}!',
+            'You have a new job as dungeon janitor for the %c{#f00}Comrade Dungeon%c{}, and today is your first day!',
+            'The monsters of the dungeon have just finished a busy work day and are relaxing in the staff lounge...',
+            '...but your day is just beginning!',
+            'Talk to your comrades, get to know them, and %c{#ff0}clean the dungeon%c{}!',
+            'Press %c{#ff0}?%c{} at any time for instructions!'
+        ];
+        for (let i=0;i<text.length;i++) {
+            let nextNode = {message:text[i],any:(i+1)};
+            newConvo.push(nextNode);
+        }
+        newConvo[newConvo.length-1].any=-1;
+        return newConvo;
     },
 
     petConvo: function(speaker) {

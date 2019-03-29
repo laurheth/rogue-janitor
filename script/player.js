@@ -37,7 +37,7 @@ function Player(x,y) {
     this.spreadCount=0;
     this.talking=null;
     this.reach=1;
-    this.cutscene=null;
+    this.cutscene=ConversationBuilder.startGameCutscene();
     this.paused=false;
     this.examining=null;
     this.instructions=false;
