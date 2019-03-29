@@ -38,6 +38,18 @@ function Mess(x,y,char,color,bgColor,name,importance,spreads=null,spreadCount=0,
     }
 }
 
+Mess.prototype.getAction = function() {
+    if (this.cleanMethod=='get') {
+        return '%c{#ff0}P%c{}ick it up!';
+    }
+    else if (this.cleanMethod=='mop') {
+        return '%c{#ff0}M%c{}op it!';
+    }
+    else if (this.cleanMethod=='fix') {
+        return 'You can %c{#ff0}f%c{}ix it!';
+    }
+}
+
 Mess.prototype.getArt = function() {
     return [this.char, this.color, this.bgColor];
 }
@@ -103,7 +115,7 @@ function makeMess(x,y,name) {
         newMess = new Mess(x,y,'/','#fa0','#000',"Smashed Treasure Chest",12,"Splinters",2,"","fix");
         break;
         case 'Splinters':
-        newMess = new Mess(x,y,',','#fa0','#000',"Broken Wood",4,null,0,"");
+        newMess = new Mess(x,y,',','#fa0','#000',"Splinters",4,null,0,"");
         break;
         case 'TippedCauldron':
         newMess = new Mess(x,y,'C','#ccc','#000',"Tipped Over Cauldron",12,"Water",2,"","fix");

@@ -105,7 +105,7 @@ var Game = {
                     }
                 }
                 else if (this.map[lookKey].mess != null) {
-                    this.sendMessage(this.map[lookKey].mess.name+".");
+                    this.sendMessage(this.map[lookKey].mess.name+". "+this.map[lookKey].mess.getAction());
                 }
                 else if (this.map[lookKey].door != null) {
                     if (this.map[lookKey].open) {

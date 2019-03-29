@@ -103,9 +103,15 @@ Player.prototype.clean = function(verb) {
             }
             let key = (this.x+i)+','+(this.y+j);
             if (key in Game.map && Game.map[key].mess != null && Game.map[key].mess.cleanMethod == verb) {
-                if (verb=='fix' && Game.map[key].entity==null) {
-                    Game.map[key].entity = Game.map[key].mess.parent;
-                    Game.sendMessage("You fix the "+Game.map[key].entity.name.toLowerCase()+".");
+                if (verb=='fix') {
+                    if (Game.map[key].entity==null) {
+                        Game.map[key].entity = Game.map[key].mess.parent;
+                        Game.sendMessage("You fix the "+Game.map[key].entity.name.toLowerCase()+".");
+                    }
+                    else {
+                        Game.sendMessage("You try to fix the "+Game.map[key].mess.parent.name.toLowerCase()+" but the "+Game.map[key].entity.name.toLowerCase()+" is in the way!");
+                        return;
+                    }
                 }
                 else {
                     if (verb=='get') {

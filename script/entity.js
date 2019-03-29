@@ -390,6 +390,21 @@ Entity.prototype.cleanerAct = function() {
     }
     else if ('loot' in this.tags) {
         // push stuff around?
+        let diff=[this.x-Game.player.x , this.y-Game.player.y];
+        let currentPos=[this.x,this.y];
+        if (!this.moveTo(this.x+diff[0],this.y+diff[1])) {
+            let currentKey=this.x+','+this.y;
+            Game.map[currentKey].entity=null;
+            Game.player.moveTo(currentPos[0],currentPos[1]);
+            this.moveTo(currentPos[0]-diff[0],currentPos[1]-diff[1]);
+            Game.sendMessage("You switch places with the "+this.name+".");
+        }
+        else {
+            Game.player.moveTo(currentPos[0],currentPos[1]);
+            Game.sendMessage("You push the "+this.name+".");
+        }
+        Game.drawMap();
+        Game.player.endTurn();
     } 
     else if ('exit' in this.tags) {
         Game.player.talking=this;
@@ -488,7 +503,13 @@ Entity.prototype.act = function() {
 Entity.prototype.getArt = function() {
     this.lastSeen=0;
     if (this.alive) {
-        return [this.char,this.color,this.bgColor];
+        let testKey=this.x+','+this.y;
+        if (testKey in Game.map && Game.map[testKey].mess==null) {
+            return [this.char,this.color,this.bgColor];
+        }
+        else {
+            return [this.char,this.color,Game.map[testKey].mess.color];
+        }
     }
     else {
         return ['%','#f00','#000'];
