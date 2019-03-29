@@ -68,6 +68,34 @@ var Game = {
 
     drawMap: function() {
         this.display.clear();
+
+        if (Game.player.instructions) {
+            let instructions=[
+                ["--- Rogue Janitor ---",0],
+                ["A game about cleaning dungeons",0],
+                ["",0],
+                ["--- Movement ---",0],
+                ["Move with arrow keys, numpad, using VI keys (hjkl, yubn)",0],
+                ["Wait with %c{#ff0}.%c{} or %c{#ff0}5%c{}",24],
+                ["",0],
+                ["--- Cleaning ---",0],
+                ["(%c{#ff0}M%c{})op messes.",12],
+                ["(%c{#ff0}P%c{})ick up or (%c{#ff0}G%c{})et garbage or other items.",24],
+                ["(%c{#ff0}F%c{})ix or (%c{#ff0}R%c{})epair broken furnitude.",24],
+                ["",0],
+                ["--- Other ---",0],
+                ["(%c{#ff0}O%c{})pen or (%c{#ff0}C%c{})lose doors.",24],
+                ["(%c{#ff0}EX%c{})amine your surroundings.",12],
+                ["Display this help prompt with %c{#ff0}?%c{}",12]
+            ];
+            let halfLength=Math.floor(instructions.length/2);
+            for (let i=0;i<instructions.length;i++) {
+                let halfwidth=Math.floor((instructions[i][0].length - instructions[i][1])/2);
+                this.display.drawText(this.offset[0]-halfwidth,this.offset[1]-halfLength+i,instructions[i][0]);
+            }
+            return;
+        }
+
         for (let i=-this.offset[0]+this.player.x;i<=this.offset[0]+this.player.x;i++) {
             for (let j=-this.offset[1]+this.player.y;j<=this.offset[1]+this.player.y;j++) {
                 let key=i+','+j;
@@ -830,6 +858,8 @@ var Game = {
             //if (this.monsterList[i].level != level) {
             //    continue;
             //}
+            this.monsterList[i].spreadCount=-1;
+            this.monsterList[i].spreading=null;
             if (this.monsterList[i].retired || donePlacing) {
                 this.monsterList[i].alive=false;
                 continue; // retired never got reset. They were not in the dungeon today!

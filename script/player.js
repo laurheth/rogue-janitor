@@ -6,6 +6,7 @@ function Player(x,y) {
     this.bgColor='#000';
     this.keyMap = {};
     this.keyMap[38] = 0;
+    this.keyMap[87] = 0;
     this.keyMap[75] =0;
     this.keyMap[104] = 0;
     this.keyMap[85] = 1;
@@ -13,18 +14,21 @@ function Player(x,y) {
     this.keyMap[105] = 1;
     this.keyMap[76] = 2;
     this.keyMap[39] = 2;//76
+    this.keyMap[68] = 2;
     this.keyMap[102] = 2;
     this.keyMap[78] = 3;
     this.keyMap[34] = 3;//78
     this.keyMap[99] = 3;
     this.keyMap[74] = 4;
     this.keyMap[40] = 4;//74
+    this.keyMap[83] = 4;
     this.keyMap[98] = 4;
     this.keyMap[66] = 5;
     this.keyMap[35] = 5;//66
     this.keyMap[97] = 5;
     this.keyMap[72] = 6;
     this.keyMap[37] = 6;//72
+    this.keyMap[65] = 6;
     this.keyMap[100] = 6;
     this.keyMap[89] = 7;
     this.keyMap[36] = 7;//89
@@ -36,6 +40,7 @@ function Player(x,y) {
     this.cutscene=null;
     this.paused=false;
     this.examining=null;
+    this.instructions=false;
 }
 
 Player.prototype.getArt = function() {
@@ -177,6 +182,13 @@ Player.prototype.handleEvent = function(e) {
         this.doExamine(code);
         return;
     }
+    if (this.instructions) {
+        if (code==88 || code==27 || code==8 || code == 191) {
+            this.instructions=false;
+        }
+        Game.drawMap();
+        return;
+    }
     //console.log(this.keyMap);
     if (!(code in this.keyMap)) {
         switch (code) {
@@ -210,10 +222,16 @@ Player.prototype.handleEvent = function(e) {
             this.endTurn();
             return;
             // x to examine
+            case 69:
             case 88:
             this.examining=[this.x,this.y];
             Game.drawMap();
             return;
+            // open help
+            case 191:
+            this.instructions=true;
+            Game.drawMap();
+            return
             // wait
             case 12:
             case 190:

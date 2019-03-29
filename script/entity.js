@@ -353,6 +353,7 @@ Entity.prototype.handleEvent = function(e) {
 // talk to
 Entity.prototype.cleanerAct = function() {
     if ('monster' in this.tags) {
+        Game.lastMessage="";
         if (!this.playerTalkedToday) {
             this.playerInteractions++;
             Game.yendorPoints+=3;
