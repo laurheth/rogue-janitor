@@ -169,7 +169,10 @@ var Game = {
         }
     },
 
-    sendMessage: function(msg=null) {
+    sendMessage: function(msg=null,important=true) {
+        if (this.lastMessage != "" && !important) {
+            msg=null;
+        }
         if (msg != null) {
             this.lastMessage=msg;
             this.display.drawText(2,2*this.offset[1]-2,"> "+msg);
@@ -277,18 +280,18 @@ var Game = {
         this.scheduler.add(Game.player,true);
     },
 
-    addSecretRoom: function(size,theme,spacing) {
+    addSecretRoom: function(size,theme,spacing,doorSound=null) {
         let position=[0,0];
         while (!this.checkFits(size,position,spacing)) {
             position[0] += (Math.floor(5*ROT.RNG.getUniform())-2);
             position[1] += (Math.floor(5*ROT.RNG.getUniform())-2);
         }
         this.roomCenters.push([position[0]+Math.floor(size[0]/2) , position[1]+Math.floor(size[1]/2)]);
-        this.secretCorridor(this.roomCenters,theme);
+        this.secretCorridor(this.roomCenters,theme,doorSound);
         this.buildRoom(size,position,theme);
     },
 
-    secretCorridor: function(roomCenters,theme) {
+    secretCorridor: function(roomCenters,theme,doorSound=null) {
         let lastCenter = [roomCenters[roomCenters.length-1][0], roomCenters[roomCenters.length-1][1]];
         let index;// = Math.floor((roomCenters.length-1) * ROT.RNG.getUniform());
         let allCells=this.freeCells.concat(this.hallCells);
@@ -334,12 +337,13 @@ var Game = {
                                 outside=true;
                             }
                             else {
-                                this.map[key].char='x';
+                                //this.map[key].char='x';
                                 this.map[key].secretDoor = {
                                     char:'+',
                                     door:'-',
                                     color:theme.doorColor[0],
                                     bgColor:theme.doorColor[1],
+                                    sound:doorSound,
                                 }
                                 secretDoorPlaced=true;
                             }
@@ -714,11 +718,30 @@ var Game = {
 
     moveMonstersToLounge: function() {
         // build the party room
-        this.addSecretRoom([5,5],this.makeTheme(300,0.9),1);
+        this.addSecretRoom([5,5],this.makeTheme(300,0.9),1,"You hear the sound of muffled music.");
         this.partyRoomID=this.rooms.length-1;
 
         if ('animal' in this.convoTags && this.convoTags.animal != 'none') {
-            this.addSecretRoom([5,5],this.makeTheme(200,0.75),1);
+            let doorSound;
+            switch (this.convoTags.animal) {
+                default:
+                case 'dog':
+                doorSound="You hear the faint sound of barking.";
+                break;
+                case 'cat':
+                doorSound="You hear a muffled meowing sound.";
+                break;
+                case 'rat':
+                doorSound="You hear a muffled squeaking sound.";
+                break;
+                case 'rabbit':
+                doorSound="You hear the sound of thumping.";
+                break;
+                case 'horse':
+                doorSound="You hear sound of galloping."
+                break;
+            }
+            this.addSecretRoom([5,5],this.makeTheme(200,0.75),1,doorSound);
             this.animalRoomID=this.rooms.length-1;
             let animalCenter=[
                 Math.floor((this.rooms[this.animalRoomID][0]+this.rooms[this.animalRoomID][2])/2),

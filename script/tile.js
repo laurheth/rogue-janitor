@@ -33,6 +33,13 @@ Tile.prototype.getArt = function() {
     }
     this.lastSeen=art[0];
     this.visible=true;
+    if (this.secretDoor != null) {
+        let dist = Math.abs(this.x - Game.player.x)+Math.abs(this.y-Game.player.y);
+        let probability=1.0/parseFloat(0.5*dist);//Math.pow(0.7,parseFloat(dist));
+        if (ROT.RNG.getUniform()<probability) {
+            Game.sendMessage(this.secretDoor.sound,false);
+        }
+    }
     return art;
 }
 
