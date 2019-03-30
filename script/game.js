@@ -896,9 +896,15 @@ var Game = {
             //}
             this.monsterList[i].spreadCount=-1;
             this.monsterList[i].spreading=null;
+            this.monsterList[i].alive=false; // default, incase we run out of space
             if (this.monsterList[i].retired || donePlacing) {
-                this.monsterList[i].alive=false;
                 continue; // retired never got reset. They were not in the dungeon today!
+            }
+
+            // Remove them from their current location if they are still there
+            let alivePosKey=this.monsterList[i].x+','+this.monsterList[i].y;
+            if (alivePosKey in this.map && this.map[alivePosKey].entity == this.monsterList[i]) {
+                this.map[alivePosKey].entity=null;
             }
 
             if (!partyCommenced) {
