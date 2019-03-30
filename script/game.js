@@ -921,7 +921,7 @@ var Game = {
                 this.monsterList[i].alive = true;
                 this.monsterList[i].retired = true;
                 this.monsterList[i].partying=false;
-                ConversationBuilder.buildConvos(this.monsterList[i]);
+                //ConversationBuilder.buildConvos(this.monsterList[i]);
                 let index = Math.floor(ROT.RNG.getUniform() * validSpots.length);
                 Game.map[validSpots[index]].entity = this.monsterList[i];
                 let parts = validSpots[index].split(',');
@@ -936,7 +936,7 @@ var Game = {
                 this.monsterList[i].alive = true;
                 this.monsterList[i].retired = true;
                 this.monsterList[i].partying=true;
-                ConversationBuilder.buildConvos(this.monsterList[i],true);
+                //ConversationBuilder.buildConvos(this.monsterList[i],true);
                 let index = Math.floor(ROT.RNG.getUniform() * validPartySpots.length);
                 Game.map[validPartySpots[index]].entity = this.monsterList[i];
                 let parts = validPartySpots[index].split(',');
@@ -945,6 +945,17 @@ var Game = {
                 validPartySpots.splice(index, 1);
                 if (validPartySpots.length <= maxParty || validPartySpots == null) {
                     donePlacing=true;
+                }
+            }
+        }
+
+        // do conversations in reverse order
+        for (let j = 0; j < 2; j++) {
+            for (let i = this.monsterList.length - 1; i >= 0; i--) {
+                if (this.monsterList[i].alive) {
+                    if ((j==0) == (!this.monsterList[i].partying)) {
+                        ConversationBuilder.buildConvos(this.monsterList[i],j!=0);
+                    }
                 }
             }
         }

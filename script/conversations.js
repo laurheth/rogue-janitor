@@ -78,7 +78,7 @@ var ConversationBuilder = {
     },
 
     specificConvo: function(speaker) {
-        if (speaker.playerInteractions > 2) {
+        if (speaker.playerInteractions > 1) {
             if ('wantsCareer' in speaker.convoTags && !('appliedToSchool' in speaker.convoTags)) {
                 var newConvo= [
                     {text: "So, I've been thinking of applying to Monster School to become a "+speaker.convoTags.wantsCareer+"!",any:1},
@@ -137,7 +137,7 @@ var ConversationBuilder = {
                 return newConvo;
             }
         }
-        if (speaker.playerInteractions>4) {
+        if (speaker.playerInteractions>3) {
             if ('wantsCareer' in speaker.convoTags && 'appliedToSchool' in speaker.convoTags && !('careerConcluded' in speaker.convoTags)) {
                 if (speaker.convoTags.appliedToSchool) {
                     return [
@@ -304,7 +304,7 @@ var ConversationBuilder = {
             ]);
         }
 
-        if (speaker.playerInteractions>2) {
+        if (speaker.playerInteractions>0) {
             possibilities.push([
                 "There's a few secret rooms in the dungeon. Try to find them!",
                 "One of them is a VERY good place to party."
@@ -351,7 +351,7 @@ var ConversationBuilder = {
             }
         }
 
-        if (speaker.playerInteractions>3) {
+        if (speaker.playerInteractions>1) {
             possibilities.push([
                 "I worked some pretty friggin bad jobs before I got this one.",
                 "Capitalism does it's damndest to make us all miserable.",
@@ -369,7 +369,7 @@ var ConversationBuilder = {
             ])
         }
         
-        if (speaker.playerInteractions>5) {
+        if (speaker.playerInteractions>2) {
             possibilities.push(["Trans Rights!"]);
         }
 
