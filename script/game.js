@@ -36,7 +36,7 @@ var Game = {
     convoTags:{},
     day: 1,
     unionist: null,
-    targetPoints:1400,
+    targetPoints:1500,
     yendorPoints:0,
     victory:false,
     init: function() {
@@ -884,10 +884,7 @@ var Game = {
         this.monsterList.sort(function (a,b) {
             return 2*b.level+b.playerInteractions+b.friends.length - 2*a.level+a.playerInteractions+a.friends.length;
         });
-        let questItemIndex=-1;
-        if (0.5 + 0.5*((this.day+1) % 2) > ROT.RNG.getUniform() ) {
-            questItemIndex = Math.floor(maxPlace * ROT.RNG.getUniform());
-        }
+        let questItemIndex = Math.floor(maxPlace * ROT.RNG.getUniform());
         let partyCommenced=false;
         let donePlacing=false;
         for (let i = 0; i < this.monsterList.length; i++) {

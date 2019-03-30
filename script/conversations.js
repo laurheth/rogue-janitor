@@ -18,7 +18,7 @@ var ConversationBuilder = {
         if (specificConvo != null) {
             newConversation.push(specificConvo);
         }
-        else if (speaker.friends.length>0 && 0.1 > ROT.RNG.getUniform()) {
+        else if (speaker.friends.length>0 && 0.2 > ROT.RNG.getUniform()) {
             let friend=ROT.RNG.getItem(speaker.friends);
             newConversation.push(this.loveMyFriend(friend));
         }
