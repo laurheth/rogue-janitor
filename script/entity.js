@@ -50,6 +50,7 @@ function Entity(x,y,char,color,species,hp=1,tags={},level=1,bgColor='#000',attac
     this.quests=[];
     this.convoOptions={};
     this.convoTags={};
+    this.lastConvoChange=0;
     this.lastDay=1;
     if ('monster' in tags) {
         Game.scheduler.add(this,true);
@@ -197,6 +198,17 @@ Entity.prototype.cancelConvo = function() {
     //Game.drawMap();
 }
 
+Entity.prototype.progressConvo = function(newInnerDex) {
+    let d = new Date();
+    let n = d.getTime();
+    if ((n-this.lastConvoChange)>200) {
+        this.lastConvoChange=n;
+        this.convoInnerDex=newInnerDex;
+        return true;
+    }
+    return false;
+}
+
 Entity.prototype.doConvo = function() {
     //console.log(this.convoIndex + ',' + this.convoInnerDex);
     if (this.convoIndex>=0) {
@@ -326,8 +338,9 @@ Entity.prototype.handleEvent = function(e) {
                 if ((keyCode == 27 || keyCode == 8 || keyCode == 88 || keyCode==13) && (charCode == 0)) {
                     //console.log('4');
 
-                    this.convoInnerDex = thisConvo[this.convoInnerDex].any;
-                    success = true;
+                    //this.convoInnerDex = thisConvo[this.convoInnerDex].any;
+                    success = this.progressConvo(thisConvo[this.convoInnerDex].any);
+                    //success = true;
                 }
             }
         }
@@ -336,12 +349,14 @@ Entity.prototype.handleEvent = function(e) {
         //let thisConvo = this.convos[this.convoIndex];
         ch = ch.toLowerCase();
         if (ch in thisConvo[this.convoInnerDex]) {
-            this.convoInnerDex = thisConvo[this.convoInnerDex][ch];
-            success=true;
+            //this.convoInnerDex = thisConvo[this.convoInnerDex][ch];
+            success = this.progressConvo(thisConvo[this.convoInnerDex][ch]);
+            //success=true;
         }
         else if (ch in this.convoOptions) {
-            this.convoInnerDex = this.convoOptions[ch];
-            success=true;
+            //this.convoInnerDex = this.convoOptions[ch];
+            success = this.progressConvo(this.convoOptions[ch]);
+            //success=true;
         }
     }
     if (success) {
