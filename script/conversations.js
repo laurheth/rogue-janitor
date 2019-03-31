@@ -306,6 +306,9 @@ var ConversationBuilder = {
 
         if (speaker.playerInteractions>0) {
             possibilities.push([
+                "Honestly life, and the world, are pretty scary sometimes."
+            ]);
+            possibilities.push([
                 "There's a few secret rooms in the dungeon. Try to find them!",
                 "One of them is a VERY good place to party."
             ]);

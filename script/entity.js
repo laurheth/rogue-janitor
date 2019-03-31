@@ -818,7 +818,7 @@ function RandomName(register=true) {
     do {
         name=sg.generate();
         name = name.charAt(0).toUpperCase()+name.slice(1)
-    } while (name.length < 3 || name.length > 11 || Game.nameRegistry.indexOf(name)>=0);
+    } while (name.length < 3 || name.length > 11 || Game.nameRegistry.indexOf(name)>=0 || name.toLowerCase().indexOf('bitch')>=0);
     if (register) {
         Game.nameRegistry.push(name);
     }
