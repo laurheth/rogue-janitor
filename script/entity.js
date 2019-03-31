@@ -393,7 +393,8 @@ Entity.prototype.cleanerAct = function() {
             } while(!acceptable);
             this.convoIndex=choice;
             if (choice>=0) {
-                this.convoInnerDex=0;
+                //this.convoInnerDex=0;
+                this.progressConvo(0);
             }
         }
         else {
@@ -425,7 +426,7 @@ Entity.prototype.cleanerAct = function() {
     else if ('exit' in this.tags) {
         Game.player.talking=this;
         this.convoIndex=0;
-        this.convoInnerDex=0;
+        this.progressConvo(0);
         this.convos=[];
         this.convos.push(ConversationBuilder.exitPrompt());
         window.addEventListener("keydown",this);

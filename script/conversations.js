@@ -137,7 +137,7 @@ var ConversationBuilder = {
                 return newConvo;
             }
         }
-        if (speaker.playerInteractions>3) {
+        if (speaker.playerInteractions>2) {
             if ('wantsCareer' in speaker.convoTags && 'appliedToSchool' in speaker.convoTags && !('careerConcluded' in speaker.convoTags)) {
                 if (speaker.convoTags.appliedToSchool) {
                     return [
