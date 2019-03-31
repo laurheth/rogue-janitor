@@ -306,9 +306,6 @@ var ConversationBuilder = {
 
         if (speaker.playerInteractions>0) {
             possibilities.push([
-                "Honestly life, and the world, are pretty scary sometimes."
-            ]);
-            possibilities.push([
                 "There's a few secret rooms in the dungeon. Try to find them!",
                 "One of them is a VERY good place to party."
             ]);
@@ -369,11 +366,16 @@ var ConversationBuilder = {
                 "As such, our health plan pretty much covers everything.",
                 "Including trans healthcare!",
                 "All healthcare should be free, and trans rights are human rights!"
-            ])
+            ]);
         }
         
         if (speaker.playerInteractions>2) {
             possibilities.push(["Trans Rights!"]);
+            possibilities.push([
+                "Honestly life, and the world, are pretty scary sometimes.",
+                "But we've got each other, and one way or another, we're going to make it through!",
+                "Come hang out with me any time you want to :)"
+            ]);
         }
 
 
