@@ -1,6 +1,6 @@
 # Rogue Janitor
 
-A game about cleaning dungeons and hanging out with your comrades.
+A game about cleaning dungeons and hanging out with your comrades. It is playable either on [GitHub](https://laurheth.github.io/rogue-janitor/) or on [itch.io](https://laurheth.itch.io/rogue-janitor)
 
 ## The Dungeon is a messy place...
 
