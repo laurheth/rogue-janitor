@@ -101,19 +101,13 @@ Player.prototype.openClose=function(openclose) {
 }
 
 Player.prototype.clean = function(verb) {
-    let fixSelf=false;
-    let mopSelf=false;
+    let doSelf=null;
     for (let i=-this.reach;i<=this.reach;i++) {
         for (let j=-this.reach;j<=this.reach;j++) {
             let key = (this.x+i)+','+(this.y+j);
             if (i==0 && j==0 && verb!='get') {
                 if (key in Game.map && Game.map[key].mess != null && Game.map[key].mess.cleanMethod == verb) {
-                    if (verb=='mop') {
-                        mopSelf=true;
-                    }
-                    else if (verb=='fix') {
-                        fixSelf=true;
-                    }
+                    doSelf=Game.map[key].mess;
                 }
                 continue;
             }
@@ -155,11 +149,24 @@ Player.prototype.clean = function(verb) {
             }
         }
     }
-    if (fixSelf) {
-        Game.sendMessage("Must be standing next to broken objects to fix them.");
+    if (doSelf != null) {
+        if (doSelf.unique) {
+            Game.sendMessage("Stand next to "+doSelf.name+" to "+verb+" it.");
+        }
+        else {
+            let message="Stand next to the "+doSelf.name.toLowerCase()+" to "+verb;
+            if (doSelf.name.charAt(doSelf.name.length-1)=='s') {
+                message+=" them.";
+            }
+            else {
+                message+=" it.";
+            }
+            Game.sendMessage(message);
+        }
     }
-    else if (mopSelf) {
-        Game.sendMessage("Must be standing next to messes to mop them.")
+    else {
+        Game.lastMessage="";
+        Game.lastlastMessageTime--;
     }
 }
 
