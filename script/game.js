@@ -84,6 +84,7 @@ var Game = {
                 ["(%c{#ff0}M%c{})op messes.",12],
                 ["(%c{#ff0}P%c{})ick up or (%c{#ff0}G%c{})et garbage or other items.",24],
                 ["(%c{#ff0}F%c{})ix or (%c{#ff0}R%c{})epair broken furniture.",24],
+                ["All cleaning methods affect tiles you are next to.",0],
                 ["All cleaning methods can reveal hidden doors!",0],
                 ["",0],
                 ["--- Other ---",0],
